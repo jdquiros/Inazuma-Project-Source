@@ -2,7 +2,7 @@
 - [ ] Start cementing design
 - [ ] First design of test level
 - [x] Running and Jumping
-- [ ] Tile collision
+- [x] Tile collision
 - [ ] Enemy scripting
 - [ ] SFX first wave
 - [ ] Idle sprite
