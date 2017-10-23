@@ -7,3 +7,4 @@
 - [ ] SFX first wave
 - [ ] Idle sprite
 - [ ] Tile art
+- [ ] Player Sword Attacks
