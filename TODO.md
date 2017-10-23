@@ -3,6 +3,7 @@
 - [x] First design of test level
 - [x] Running and Jumping
 - [x] Tile collision
+- [x] Basic camera system
 - [ ] Enemy scripting
 - [ ] SFX first wave
 - [ ] Idle sprite
