@@ -11,7 +11,7 @@
 - [ ] Idle sprite
 - [ ] Tile art
 - [x] Player Sword Attacks
-- [ ] Drop through one-way platforms
-- [ ] Dash
+- [x] Drop through one-way platforms
+- [x] Dash
 - [ ] Player Death on collision with certain triggers (spikes etc)
 
