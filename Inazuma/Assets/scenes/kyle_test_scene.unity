@@ -137,7 +137,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 27877359}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 309.075, y: 187.25, z: 0}
+  m_LocalPosition: {x: 169.65, y: 128.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 537400977}
@@ -245,22 +245,22 @@ MonoBehaviour:
   attackButton: 106
   dashButton: 304
   health: 1
-  maxHorizontalVelocity: 40
-  maxVerticalVelocity: 50
-  acceleration: 60
-  deceleration: 160
-  passiveDeceleration: 120
-  airAccelerationFactor: 0.5
-  gravity: 60
-  jumpForce: 30
-  jumpButtonReleaseFactor: 0.5
-  attackDuration: 0.3
-  attackWindUp: 0.1
-  timeBetweenAttacks: 0.2
-  attackHitBoxDist: 1.2
-  dashDuration: 0.2
-  dashAcceleration: 800
-  dashMaxVelocity: 60
+  maxHorizontalVelocity: 12
+  maxVerticalVelocity: 17.5
+  acceleration: 100
+  deceleration: 250
+  passiveDeceleration: 50
+  airAccelerationFactor: 0.3
+  gravity: 30
+  jumpForce: 13
+  jumpButtonReleaseFactor: 0.3
+  attackDuration: 0.05
+  attackWindUp: 0.05
+  timeBetweenAttacks: 0.15
+  attackHitBoxDist: 1.5
+  dashDuration: 0.38
+  dashAcceleration: 130
+  dashMaxVelocity: 17
   dashCooldown: 0
   isDashing: 0
   velocityRestrictionRate: 500
@@ -861,7 +861,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 537400973}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 475.5, y: 267.5, z: 0}
+  m_LocalPosition: {x: 261, y: 183.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 27877360}
@@ -2135,7 +2135,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1300429803}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 309.075, y: -181.9, z: 0}
+  m_LocalPosition: {x: 169.65, y: -124.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 537400977}
