@@ -16,8 +16,8 @@ TagManager:
   - groundLayer
   - oneWayLayer
   - hazardLayer
-  - 
-  - 
+  - enemyLayer
+  - attackLayer
   - 
   - 
   - 

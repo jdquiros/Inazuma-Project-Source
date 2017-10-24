@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public KeyCode rightButton = KeyCode.RightArrow;
     public KeyCode upButton = KeyCode.UpArrow;
     public KeyCode downButton = KeyCode.DownArrow;
+    public KeyCode jumpButton = KeyCode.Space;
+    public KeyCode attackButton = KeyCode.V;
     /*
      *                      ^ positiveY
      *                      |
@@ -35,7 +37,13 @@ public class PlayerController : MonoBehaviour
     public float gravity = 0;                   //should be positive
     public float jumpForce = 0;                 //should be positive
     public float jumpButtonReleaseFactor = 1f;  //total velocity will be mulitiplied by this factor when the jump button is released
-                                                //AND before the apex of the jump is reached
+                                                //AND before the apex of the jump is reached (from 0.0 to 1.0)
+
+    public float attackDuration = 0f;           //active time for an attack
+    public float attackWindUp = 0f;             //time between key input and active frames
+    public float timeBetweenAttacks = 0f;       //delay between the end of one attack and the windup of another
+    public float attackHitBoxDist = 0f;         //distance between center of player's gameObject and center of Hitbox.  Does not affect hitBox size or shape
+    private bool canAttack = true;                     //can the player attack this frame
 
     private float xVelocity = 0;                //-maxHorizontalVelocity < xVelocity < maxHorizontalVelocity
     private float yVelocity = 0;                //-maxVerticalVelocity < yVelocity < maxVerticalVelocity
@@ -44,12 +52,24 @@ public class PlayerController : MonoBehaviour
     private bool jumpKeyHeld = false;           //tracks if the player was holding the jump key last frame, to run code when the player releases it
     private float jumpApexTimer = 0;            //time until char reaches apex of jump.  value based on jumpForce
 
+
+    private enum Direction
+    {
+        Right, DownRight,Down, DownLeft, Left, UpLeft, Up, UpRight
+    }
+    private Direction aimDirection;                                 //NESW direction based on held keys (8 directions)
+    private Direction facingDirection = Direction.Right;            //character is facing left or right (character can face a direction with no input)
+
+    private HitBoxReport attackHitBoxReport;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
+        attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
     }
     void Start()
     {
+       
     }
 
     // Update is called once per frame
@@ -57,7 +77,7 @@ public class PlayerController : MonoBehaviour
     {
         if (charController.isGrounded)
             canJump = true;
-        if (Input.GetKeyDown(upButton))
+        if (Input.GetKeyDown(jumpButton))
         {
             //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
             if (charController.isGrounded && !jumping && canJump)
@@ -68,11 +88,16 @@ public class PlayerController : MonoBehaviour
         updateHorizontalVelocity();
         updateVerticalVelocity();
         updatePosition();
-        //Prime31.CharacterController2D.CharacterCollisionState2D colState = charController.collisionState;
-        //print(colState.ToString());
-        //EventSystem es;
-        //charController.onControllerCollidedEvent;
+        updateDirections();
 
+        if (Input.GetKeyDown(attackButton))
+        {
+            if (canAttack)
+            {
+                StartCoroutine(attack(getAimVector(aimDirection)));
+                
+            }
+        }
 
     }
     private void moveHorizontal(float xV)
@@ -160,13 +185,13 @@ public class PlayerController : MonoBehaviour
             {
                 //if this is >0, then character is rising until apex.
                 jumpApexTimer -= Time.deltaTime;
-                if (!Input.GetKey(upButton) && jumpKeyHeld)
+                if (!Input.GetKey(jumpButton) && jumpKeyHeld)
                 {
                     //you release the jump key before you reach the apex
                     jumpApexTimer = 0;
                     yVelocity *= jumpButtonReleaseFactor;
                 }
-                jumpKeyHeld = Input.GetKey(upButton);
+                jumpKeyHeld = Input.GetKey(jumpButton);
                 if (yVelocity < 0)
                 {
                     //you hit the ceiling or something, so the apex timer is not applicable anymore
@@ -198,5 +223,90 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded()
     {
         return charController.isGrounded;
+    }
+    private void updateDirections()
+    {
+        if (Input.GetKey(rightButton))
+            facingDirection = Direction.Right;
+        else if (Input.GetKey(leftButton))
+            facingDirection = Direction.Left;
+
+        aimDirection = getAimDirection();
+       
+    }
+    private Direction getAimDirection()
+    {
+        if(Input.GetKey(upButton) && Input.GetKey(rightButton))         //upright
+            return Direction.UpRight;
+        if (Input.GetKey(upButton) && Input.GetKey(leftButton))         //upleft
+            return Direction.UpLeft;
+        if (Input.GetKey(downButton) && Input.GetKey(rightButton))       //downright
+            return Direction.DownRight;
+        if (Input.GetKey(downButton) && Input.GetKey(leftButton))        //downLeft
+            return Direction.DownLeft;
+        if (Input.GetKey(upButton))                                     //up
+            return Direction.Up;
+        if (Input.GetKey(rightButton))                                   //right
+            return Direction.Right;
+        if (Input.GetKey(downButton))                                    //down
+            return Direction.Down;
+        if (Input.GetKey(leftButton))                                    //left
+            return Direction.Left;
+
+        return facingDirection;         //If no key input, default to where your character is facing
+
+    }
+    private Vector3 getAimVector(Direction dir)
+    {
+        Vector3 result = Vector3.zero;
+        switch (dir)
+        {
+            case Direction.Up:
+                result = new Vector3(0, 1, 0);
+                break;
+            case Direction.UpRight:
+                result = new Vector3(0.707f, 0.707f, 0);    //distance is approximately 1f, but diagonal.  we shouldn't need this but why not
+                break;
+            case Direction.Right:
+                result = new Vector3(1, 0, 0);
+                break;
+            case Direction.DownRight:
+                result = new Vector3(0.707f, -0.707f, 0);
+                break;
+            case Direction.Down:
+                result = new Vector3(0, -1, 0);
+                break;
+            case Direction.DownLeft:
+                result = new Vector3(-0.707f, -0.707f, 0);
+                break;
+            case Direction.Left:
+                result = new Vector3(-1, 0, 0);
+                break;
+            case Direction.UpLeft:
+                result = new Vector3(-0.707f, 0.707f, 0);
+                break;
+        }
+        return result;
+    }
+    void onHitBoxCollision(Collider2D other)
+    {
+        print("Hit: " + other.name);        //currently triggers when hitbox enters gameObject in EnemyLayer.  Layer interaction can be changed in projectsettings->physics2D
+        
+    }
+    private IEnumerator attack(Vector3 aimVector)
+    {
+        canAttack = false;
+          SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();           //for debug
+          spriteRenderer.color = Color.cyan;                                                  //windup: cyan
+        
+        yield return new WaitForSeconds(attackWindUp);
+        attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg*Mathf.Atan2(aimVector.y, aimVector.x));
+        attackHitBoxReport.enableHitBox(attackDuration);
+          spriteRenderer.color = Color.red;                                                   //active frames: red
+        yield return new WaitForSeconds(attackDuration);        
+          spriteRenderer.color = Color.gray;                                                  //cooldown: gray
+        yield return new WaitForSeconds(timeBetweenAttacks);
+          spriteRenderer.color = Color.yellow;                                                //default: yellow
+        canAttack = true;
     }
 }
