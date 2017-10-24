@@ -137,7 +137,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 27877359}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 169.65, y: 128.45, z: 0}
+  m_LocalPosition: {x: 383.17496, y: 187.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 537400977}
@@ -343,7 +343,7 @@ MonoBehaviour:
     m_Bits: 256
   triggerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   oneWayPlatformMask:
     serializedVersion: 2
     m_Bits: 512
@@ -861,7 +861,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 537400973}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 261, y: 183.5, z: 0}
+  m_LocalPosition: {x: 589.5, y: 267.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 27877360}
@@ -2135,7 +2135,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1300429803}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 169.65, y: -124.78, z: 0}
+  m_LocalPosition: {x: 383.17496, y: -181.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 537400977}
@@ -2200,7 +2200,9 @@ MonoBehaviour:
 
     -magenta->dashing
 
-    -gray->attack/dash cooldown'
+    -gray->attack/dash cooldown
+
+    -black->dead'
 --- !u!222 &1300429807
 CanvasRenderer:
   m_ObjectHideFlags: 0

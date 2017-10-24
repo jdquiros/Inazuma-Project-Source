@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
      *                      |
      *                      V negativeY
      */
+    private bool allowPlayerInput;
     public int health = 1;
     private bool playerDead = false;
     public float maxHorizontalVelocity = 0;     //should be positive
@@ -87,7 +88,7 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        
+        allowPlayerInput = true;
     }   
 
     // Update is called once per frame
@@ -97,7 +98,7 @@ public class PlayerController : MonoBehaviour
             canJump = true;
         if (!isDashing)
         {
-            if (Input.GetKeyDown(jumpButton))
+            if (Input.GetKeyDown(jumpButton) && allowPlayerInput)
             {
                 //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
                 if (charController.isGrounded && !jumping && canJump)
@@ -105,16 +106,16 @@ public class PlayerController : MonoBehaviour
                     jump();
                 }
             }
-            if (Input.GetKeyDown(downButton))
+            if (Input.GetKeyDown(downButton) && allowPlayerInput)
             {
                 attemptDropThroughPlatform();
             }
-            if (Input.GetKeyDown(dashButton) && canDash)
+            if (Input.GetKeyDown(dashButton) && canDash && allowPlayerInput)
             {
                 dash();
             }
         }
-        if (Input.GetKeyDown(attackButton))
+        if (Input.GetKeyDown(attackButton) && allowPlayerInput)
         {
             if (canAttack)
             {
@@ -176,7 +177,7 @@ public class PlayerController : MonoBehaviour
             //regular movement, not dashing
             float xVelToAdd = 0f;
 
-            if (Input.GetKey(leftButton))
+            if (Input.GetKey(leftButton) && allowPlayerInput)
             {
                 if (xVelocity <= 0)
                 {
@@ -190,7 +191,7 @@ public class PlayerController : MonoBehaviour
                     xVelToAdd = (-deceleration) * Time.deltaTime;
                 }
             }
-            else if (Input.GetKey(rightButton))
+            else if (Input.GetKey(rightButton) && allowPlayerInput)
             {
                 if (xVelocity >= 0)
                 {
@@ -411,21 +412,16 @@ public class PlayerController : MonoBehaviour
         print("Hit: " + other.name);        //currently triggers when hitbox enters gameObject in EnemyLayer.  Layer interaction can be changed in projectsettings->physics2D
         
     }
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        print("HEY");
-        if(collision.gameObject.layer == LayerMask.NameToLayer("hazardLayer"))
-        {
-            print("hazard: " + collision.gameObject.name);
-        }
-    }
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        print("HAY");
+        if(collision.gameObject.layer == LayerMask.NameToLayer("hazardLayer"))
+        {
+            damagePlayer(1000000000);       //definitely kill the player
+        }
     }
     private IEnumerator attack(Vector3 aimVector)
     {
-        print("ATTACK");
         canAttack = false;
         canDash = false;
                      //for debug
@@ -444,7 +440,6 @@ public class PlayerController : MonoBehaviour
     }
     private void dash()
     {
-        print("DASH");
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
@@ -463,6 +458,8 @@ public class PlayerController : MonoBehaviour
             //this code runs only once when the player dies
             playerDead = true;
             print("Player is Dead");
+            allowPlayerInput = false;
+            spriteRenderer.color = Color.black;
         }
     }
     public bool isDead()
