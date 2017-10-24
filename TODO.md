@@ -13,5 +13,5 @@
 - [x] Player Sword Attacks
 - [x] Drop through one-way platforms
 - [x] Dash
-- [ ] Player Death on collision with certain triggers (spikes etc)
+- [x] Player Death on collision with certain triggers (spikes etc)
 
