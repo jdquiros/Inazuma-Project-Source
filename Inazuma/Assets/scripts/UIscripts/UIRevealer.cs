@@ -15,9 +15,24 @@ public class UIRevealer : MonoBehaviour
     }
     public bool revealed;
     public Direction anchorDirection;
-    public float speedFactor;
-    private Vector3 hiddenPosition;
-    private Vector3 revealedPosition;
+    public enum SpeedType
+    {
+        linear,
+        multiplicative
+    }
+    public SpeedType speedType;
+    public float speed;             //if linear, move x% of screen per second.  if multiplicative, multiply distance from target by speed every frame
+    private float[] hiddenAnchors;
+    private float[] revealedAnchors;
+    /*
+     *   --------[2,3]
+     *   |         |
+     *   |         |
+     * [0,1]--------
+     */
+    private Vector2 moveVector;
+    private RectTransform myTransform;
+    public float snapTolerance = 0.05f;
     private bool moving;
     public bool revealOnLoad;
     public bool hideOnLoad;
@@ -40,31 +55,51 @@ public class UIRevealer : MonoBehaviour
             //for easier viewing of UI underneath and it will re-enable on scene start
             GetComponent<Image>().enabled = true;
         }
-        revealedPosition = transform.localPosition;  //saves current location for when the UI is revealed later
+        myTransform = GetComponent<RectTransform>();
+        revealedAnchors = new float[4];
+        hiddenAnchors = new float[4];
+        revealedAnchors[0] = myTransform.anchorMin.x;  //saves current location for when the UI is revealed later
+        revealedAnchors[1] = myTransform.anchorMin.y;
+        revealedAnchors[2] = myTransform.anchorMax.x;
+        revealedAnchors[3] = myTransform.anchorMax.y;
+
+        switch (anchorDirection)
+        {
+            case (Direction.Up):
+                hiddenAnchors[0] = revealedAnchors[0];
+                hiddenAnchors[1] = revealedAnchors[1] + (1-revealedAnchors[1])+0.1f;
+                hiddenAnchors[2] = revealedAnchors[2];
+                hiddenAnchors[3] = revealedAnchors[3] + (1-revealedAnchors[1])+0.1f;
+                moveVector = new Vector2(0, 1);
+                break;
+            case (Direction.Down):
+                hiddenAnchors[0] = revealedAnchors[0];
+                hiddenAnchors[1] = revealedAnchors[1] - (revealedAnchors[3]+0.1f);
+                hiddenAnchors[2] = revealedAnchors[2];
+                hiddenAnchors[3] = revealedAnchors[3] - (revealedAnchors[3]+0.1f);
+                moveVector = new Vector2(0, -1);
+                break;
+            case (Direction.Right):
+                hiddenAnchors[0] = revealedAnchors[0] + (1-revealedAnchors[0])+0.1f;
+                hiddenAnchors[1] = revealedAnchors[1];
+                hiddenAnchors[2] = revealedAnchors[2] + (1-revealedAnchors[0])+0.1f;
+                hiddenAnchors[3] = revealedAnchors[3];
+                moveVector = new Vector2(1, 0);
+                break;
+            case (Direction.Left):
+                hiddenAnchors[0] = revealedAnchors[0] - (revealedAnchors[2]+0.1f);
+                hiddenAnchors[1] = revealedAnchors[1];
+                hiddenAnchors[2] = revealedAnchors[2] - (revealedAnchors[2]+0.1f);
+                hiddenAnchors[3] = revealedAnchors[3];
+                moveVector = new Vector2(-1, 0);
+                break;
+        }
         if (!revealed)
         {
-            //If default state is "not revealed" move to hidden position
-            switch (anchorDirection)
-            {
-                case (Direction.Up):
-                    transform.position += Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-                    break;
-
-                case (Direction.Down):
-                    transform.position += Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-                    break;
-
-                case (Direction.Left):
-                    transform.position += Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-                    break;
-                case (Direction.Right):
-                    transform.position += Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-                    break;
-            }
-
+            setRectTransform(hiddenAnchors);
         }
 
-        hiddenPosition = getHiddenPosition();
+        
         moving = false;
         if (revealOnLoad)  //UI element spawns offscreen and begins revealing instantly
         {
@@ -82,11 +117,11 @@ public class UIRevealer : MonoBehaviour
 
         if (revealed && moving)
         {
-            moveToLocation(revealedPosition);
+            moveToLocation(revealedAnchors,-moveVector);
         }
         else if (!revealed && moving)
         {
-            moveToLocation(hiddenPosition);
+            moveToLocation(hiddenAnchors,moveVector);
         }
         if (Input.GetKeyDown("space") && debug) //For testing purposes only.  Manual activation of all uirevealers
         {
@@ -101,19 +136,45 @@ public class UIRevealer : MonoBehaviour
 
         }
     }
-    public void moveToLocation(Vector3 target)
+    public void moveToLocation(float[] targetAnchors, Vector3 move)
     {
         //moves towards location, snaps to location once close enough
-        transform.localPosition += (target - transform.localPosition) * (speedFactor / 100f) * (1 - Time.deltaTime);
-        if (Vector3.Distance(transform.localPosition, target) < 1)
+        float[] newAnchors = new float[4];
+        newAnchors[0] = myTransform.anchorMin.x;
+        newAnchors[1] = myTransform.anchorMin.y;
+        newAnchors[2] = myTransform.anchorMax.x;
+        newAnchors[3] = myTransform.anchorMax.y;
+        switch (speedType)
         {
-            moving = false;
-            transform.localPosition = target;
-        }
-        if (speedFactor == 100f)
-        {
-            moving = false;
-            transform.localPosition = target;
+            case (SpeedType.linear):
+                newAnchors[0] += move.x *speed * Time.deltaTime;
+                newAnchors[1] += move.y * speed * Time.deltaTime;
+                newAnchors[2] += move.x * speed * Time.deltaTime;
+                newAnchors[3] += move.y * speed * Time.deltaTime;
+                if(Vector2.Distance(new Vector2(newAnchors[0],newAnchors[1]),new Vector2(targetAnchors[0], targetAnchors[1])) < speed*Time.deltaTime)
+                {
+                    setRectTransform(targetAnchors);
+                    moving = false;
+                } else
+                {
+                    setRectTransform(newAnchors);
+                }
+                break;
+            case (SpeedType.multiplicative):
+                newAnchors[0] += Mathf.Abs(moveVector.x)*(targetAnchors[0] - newAnchors[0]) * speed * Time.deltaTime;
+                newAnchors[1] += Mathf.Abs(moveVector.y) * (targetAnchors[1] - newAnchors[1]) * speed * Time.deltaTime;
+                newAnchors[2] += Mathf.Abs(moveVector.x)*(targetAnchors[2] - newAnchors[2]) * speed * Time.deltaTime;
+                newAnchors[3] += Mathf.Abs(moveVector.y) * (targetAnchors[3] - newAnchors[3]) * speed * Time.deltaTime;
+                if (Vector2.Distance(new Vector2(newAnchors[0], newAnchors[1]), new Vector2(targetAnchors[0], targetAnchors[1])) < snapTolerance)
+                {
+                    setRectTransform(targetAnchors);
+                    moving = false;
+                }
+                else
+                {
+                    setRectTransform(newAnchors);
+                }
+                break;
         }
     }
     public void revealUI()
@@ -132,62 +193,16 @@ public class UIRevealer : MonoBehaviour
     }
     public void hideImmediately()
     {
-        transform.localPosition = hiddenPosition;
+        setRectTransform(hiddenAnchors);
         revealed = false;
         moving = false;
     }
-    private Vector3 getHiddenPosition()
+    
+    private void setRectTransform(float[] anchors)
     {
-        //returns the point that is offscreen that the UI element will move to when set to "not revealed"
-        if (revealed)
-        {
-            switch (anchorDirection)
-            {
-                case (Direction.Up):
-                    return transform.localPosition + Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-
-                case (Direction.Down):
-                    return transform.localPosition + Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-
-                case (Direction.Left):
-                    return transform.localPosition + Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-                case (Direction.Right):
-                    return transform.localPosition + Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-            }
-            return transform.localPosition;
-        }
-        else
-        {
-            return transform.localPosition;
-        }
-
+        myTransform.anchorMin = new Vector2(anchors[0], anchors[1]);
+        myTransform.anchorMax = new Vector2(anchors[2], anchors[3]);
     }
-    private Vector3 getRevealedPosition()
-    {
-        //returns the point that is onscreen that the UI element will move to when set to "revealed"
-        if (!revealed)
-        {
-            switch (anchorDirection)
-            {
-                case (Direction.Up):
-                    return transform.localPosition - Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-                case (Direction.Down):
-                    return transform.localPosition - Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-                case (Direction.Left):
-                    return transform.localPosition - Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-                case (Direction.Right):
-                    return transform.localPosition - Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-
-
-            }
-            return transform.localPosition;
-        }
-        else
-        {
-            return transform.localPosition;
-        }
-    }
-
 
 
 
