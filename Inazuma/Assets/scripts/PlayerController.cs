@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public KeyCode downButton = KeyCode.DownArrow;
     public KeyCode jumpButton = KeyCode.Space;
     public KeyCode attackButton = KeyCode.V;
+    public KeyCode dashButton = KeyCode.LeftShift;
     /*
      *                      ^ positiveY
      *                      |
@@ -27,6 +28,8 @@ public class PlayerController : MonoBehaviour
      *                      |
      *                      V negativeY
      */
+    public int health = 1;
+    private bool playerDead = false;
     public float maxHorizontalVelocity = 0;     //should be positive
     public float maxVerticalVelocity = 0;       //should be positive
 
@@ -43,7 +46,20 @@ public class PlayerController : MonoBehaviour
     public float attackWindUp = 0f;             //time between key input and active frames
     public float timeBetweenAttacks = 0f;       //delay between the end of one attack and the windup of another
     public float attackHitBoxDist = 0f;         //distance between center of player's gameObject and center of Hitbox.  Does not affect hitBox size or shape
-    private bool canAttack = true;                     //can the player attack this frame
+    private bool canAttack = true;              //can the player attack this frame.  you cannot attack while dashing
+
+    public float dashDuration = 0f;             //duration of dash
+    private float dashTimer = 0f;
+    public float dashAcceleration = 0f;         //acceleration of dash
+    public float dashMaxVelocity = 0f;          //maximum velocity during dash
+    public float dashCooldown = 0f;             //cooldown between dashes
+    private float dashCooldownTimer = 0f;
+    private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
+    [HideInInspector]
+    public bool isDashing = false;
+    public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
+
+    public float instantDropDistance = 0.2f;    //instantly moves player down this distance when dropping through a platform.  If the character does not drop, increase this value
 
     private float xVelocity = 0;                //-maxHorizontalVelocity < xVelocity < maxHorizontalVelocity
     private float yVelocity = 0;                //-maxVerticalVelocity < yVelocity < maxVerticalVelocity
@@ -60,44 +76,57 @@ public class PlayerController : MonoBehaviour
     private Direction aimDirection;                                 //NESW direction based on held keys (8 directions)
     private Direction facingDirection = Direction.Right;            //character is facing left or right (character can face a direction with no input)
 
-    private HitBoxReport attackHitBoxReport;
+    private HitBoxReport attackHitBoxReport;                        //activates hitbox for attacks and reports collisions
+    private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
     void Start()
     {
-       
-    }
+        
+    }   
 
     // Update is called once per frame
     void Update()
     {
         if (charController.isGrounded)
             canJump = true;
-        if (Input.GetKeyDown(jumpButton))
+        if (!isDashing)
         {
-            //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
-            if (charController.isGrounded && !jumping && canJump)
+            if (Input.GetKeyDown(jumpButton))
             {
-                jump();
+                //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
+                if (charController.isGrounded && !jumping && canJump)
+                {
+                    jump();
+                }
+            }
+            if (Input.GetKeyDown(downButton))
+            {
+                attemptDropThroughPlatform();
+            }
+            if (Input.GetKeyDown(dashButton) && canDash)
+            {
+                dash();
             }
         }
-        updateHorizontalVelocity();
-        updateVerticalVelocity();
-        updatePosition();
-        updateDirections();
-
         if (Input.GetKeyDown(attackButton))
         {
             if (canAttack)
             {
                 StartCoroutine(attack(getAimVector(aimDirection)));
-                
             }
         }
+        if(isDashing)
+            updateDashing();
+        updateHorizontalVelocity();
+        updateVerticalVelocity();
+        updatePosition();
+        updateDirections();
 
     }
     private void moveHorizontal(float xV)
@@ -111,65 +140,105 @@ public class PlayerController : MonoBehaviour
     }
     private void moveVertical(float yV)
     {
+        Vector3 position = transform.position;
         charController.move(new Vector2(0, yV));
+        if (yV > 0 && transform.position.y <= position.y)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
+        {
+            yVelocity = 0;
+        }
     }
     private void updatePosition()
     {
-        moveHorizontal(xVelocity);
-        moveVertical(yVelocity);
+        moveHorizontal(xVelocity*Time.deltaTime);
+        moveVertical(yVelocity*Time.deltaTime);
     }
     private void updateHorizontalVelocity()
     {
-        float xVelToAdd = 0f;
-
-        if (Input.GetKey(leftButton))
+        if (isDashing)
         {
-            if (xVelocity <= 0)
+            
+            switch (facingDirection)
             {
-                //accelerating left
-                xVelToAdd = (-acceleration) * Time.deltaTime;
-
+                case Direction.Right:
+                    xVelocity += dashAcceleration * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, dashMaxVelocity);
+                    //cap max speed, else increase it
+                    break;
+                case Direction.Left:
+                    xVelocity += (-dashAcceleration) * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, -dashMaxVelocity);
+                    //cap max speed, else increase it
+                    break;
             }
-            else
-            {
-                //decelerating left
-                xVelToAdd = (-deceleration) * Time.deltaTime;
-            }
-        }
-        else if (Input.GetKey(rightButton))
-        {
-            if (xVelocity >= 0)
-            {
-                //accelerating right
-                xVelToAdd = acceleration * Time.deltaTime;
-            }
-            else
-            {
-                //decelerating right
-                xVelToAdd = deceleration * Time.deltaTime;
-
-            }
-
         }
         else
         {
-            //not moving left or right.  slow down through passive deceleration
-            if (xVelocity > 0)
+            //regular movement, not dashing
+            float xVelToAdd = 0f;
+
+            if (Input.GetKey(leftButton))
             {
-                xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
-                xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                if (xVelocity <= 0)
+                {
+                    //accelerating left
+                    xVelToAdd = (-acceleration) * Time.deltaTime;
+
+                }
+                else
+                {
+                    //decelerating left
+                    xVelToAdd = (-deceleration) * Time.deltaTime;
+                }
             }
-            else if (xVelocity < 0)
+            else if (Input.GetKey(rightButton))
             {
-                xVelToAdd = passiveDeceleration * Time.deltaTime;
-                xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                if (xVelocity >= 0)
+                {
+                    //accelerating right
+                    xVelToAdd = acceleration * Time.deltaTime;
+                }
+                else
+                {
+                    //decelerating right
+                    xVelToAdd = deceleration * Time.deltaTime;
+
+                }
+
+            }
+            else
+            {
+                //not moving left or right.  slow down through passive deceleration
+                if (xVelocity > 0)
+                {
+                    xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                    xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                }
+                else if (xVelocity < 0)
+                {
+                    xVelToAdd = passiveDeceleration * Time.deltaTime;
+                    xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                }
+            }
+            if (!charController.isGrounded)
+                xVelToAdd *= airAccelerationFactor;
+            //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
+
+            
+            xVelocity = xVelocity + xVelToAdd;      //set speeds
+
+            //clamp to speed maximums
+            if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+            {
+                xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+            }
+            else if (xVelocity < (-maxHorizontalVelocity))
+            {
+                xVelocity += velocityRestrictionRate * Time.deltaTime;
+                xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
             }
         }
-        if (!charController.isGrounded)
-            xVelToAdd *= airAccelerationFactor;
-        //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
-        xVelocity = Mathf.Clamp(xVelocity + xVelToAdd, -maxHorizontalVelocity, maxHorizontalVelocity);
-        //ensure xVelocity < maxHorizontalVelocity
+        
     }
     private void updateVerticalVelocity()
     {
@@ -177,7 +246,7 @@ public class PlayerController : MonoBehaviour
         if (!charController.isGrounded)
         {
             yVelToAdd = (-gravity) * Time.deltaTime;
-        }
+        } 
 
         if (jumping)
         {
@@ -205,20 +274,67 @@ public class PlayerController : MonoBehaviour
                 jumping = false;
             }
         }
-        yVelocity = Mathf.Clamp(yVelocity + yVelToAdd, -maxVerticalVelocity, maxVerticalVelocity);
+        if(isDashing)           //ignore gravity during dash
+        {
+            yVelocity = -0.001f;
+            yVelToAdd = 0f;
+            jumping = false;        //cancel jump physics
+            jumpApexTimer = 0;
+        }
+        if (isGrounded())
+        {
+            yVelocity = Mathf.Max(-0.001f, yVelocity);       //reset velocity to zero (almost) when you are on the ground.  
+        } else {
+            yVelocity = Mathf.Clamp(yVelocity + yVelToAdd, -maxVerticalVelocity, maxVerticalVelocity);
+        }
 
+    }
+    private void updateDashing()
+    {
+        if (isDashing)
+        {
+            if (dashTimer > 0)
+            {
+                dashTimer -= Time.deltaTime;
+                spriteRenderer.color = Color.magenta;
+            }
+            else
+            {
+                dashTimer = 0;
+                dashCooldownTimer = dashCooldown;
+                isDashing = false;
+                canAttack = true;
+                spriteRenderer.color = Color.gray;
+                if (dashCooldownTimer > 0)
+                {
+                    dashCooldownTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    dashCooldownTimer = 0;
+                    canDash = true;
+                    spriteRenderer.color = Color.yellow;
+                }
+            }
+        }
+        
     }
     private void jump()
     {
-        //you can't jump while in the air
-        if (!charController.isGrounded)
-        {
-            print("JUMPERROR: character not grounded");
-        }
         yVelocity = jumpForce;
+        canJump = false;
         jumping = true;
         jumpApexTimer = jumpForce / gravity;
 
+    }
+    private void attemptDropThroughPlatform()
+    {
+        if (isGrounded())
+        {
+            yVelocity = 0;
+            charController.ignoreOneWayPlatformsThisFrame = true;
+            charController.move(Vector3.down * instantDropDistance);
+        }
     }
     public bool isGrounded()
     {
@@ -226,11 +342,13 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (Input.GetKey(rightButton))
-            facingDirection = Direction.Right;
-        else if (Input.GetKey(leftButton))
-            facingDirection = Direction.Left;
-
+        if (!isDashing)                             //you cannot change your facing direction while dashing
+        {
+            if (Input.GetKey(rightButton))          
+                facingDirection = Direction.Right;
+            else if (Input.GetKey(leftButton))
+                facingDirection = Direction.Left;
+        }
         aimDirection = getAimDirection();
        
     }
@@ -293,10 +411,24 @@ public class PlayerController : MonoBehaviour
         print("Hit: " + other.name);        //currently triggers when hitbox enters gameObject in EnemyLayer.  Layer interaction can be changed in projectsettings->physics2D
         
     }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        print("HEY");
+        if(collision.gameObject.layer == LayerMask.NameToLayer("hazardLayer"))
+        {
+            print("hazard: " + collision.gameObject.name);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        print("HAY");
+    }
     private IEnumerator attack(Vector3 aimVector)
     {
+        print("ATTACK");
         canAttack = false;
-          SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();           //for debug
+        canDash = false;
+                     //for debug
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
@@ -305,8 +437,37 @@ public class PlayerController : MonoBehaviour
           spriteRenderer.color = Color.red;                                                   //active frames: red
         yield return new WaitForSeconds(attackDuration);        
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
+        canDash = true;                                                                       //player can dash during attack cooldown
         yield return new WaitForSeconds(timeBetweenAttacks);
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
     }
+    private void dash()
+    {
+        print("DASH");
+        canDash = false;
+        isDashing = true;
+        dashTimer = dashDuration;
+        canAttack = false;
+    }
+    public void damagePlayer(int dmg)
+    {
+        setHealth(health - dmg);
+        
+    }
+    private void setHealth(int hp)
+    {
+        health = hp;
+        if (health <= 0 && !playerDead)
+        {
+            //this code runs only once when the player dies
+            playerDead = true;
+            print("Player is Dead");
+        }
+    }
+    public bool isDead()
+    {
+        return playerDead;
+    }
+    
 }

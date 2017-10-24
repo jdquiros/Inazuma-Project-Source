@@ -8,6 +8,8 @@ public class HitBoxReport : MonoBehaviour {
     public GameObject reportTarget;     //default is parent gameobject
     private PolygonCollider2D col;
     private float enableTimer = 0f;
+
+    private SpriteRenderer spriteRenderer; //for debug;
     private void Awake()
     {
         if(reportTarget == null)
@@ -17,6 +19,7 @@ public class HitBoxReport : MonoBehaviour {
             reportTarget = transform.parent.gameObject;     
         }
         col = GetComponent<PolygonCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     void Start () {
         col.enabled = false;               //leave disabled until told to be enabled
@@ -29,10 +32,12 @@ public class HitBoxReport : MonoBehaviour {
             if(enableTimer > 0)
             {
                 enableTimer -= Time.deltaTime;
+                spriteRenderer.color = new Color(1, 0, 0, 0.25f);
             } else
             {
                 enableTimer = 0;
                 col.enabled = false;
+                spriteRenderer.color = Color.clear;
             }
         }
 	}
