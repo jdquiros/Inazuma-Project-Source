@@ -156,13 +156,7 @@ public class PlayerController : MonoBehaviour
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
-        if (movementState == MovementState.Free){ 
-        if (wasGrounded && !isGrounded() && !jumping)
-            {
-                yVelocity = 0;
-                charController.move(new Vector2(0, 25) * Time.deltaTime);
-            }
-        }
+        
 
 
     }
@@ -182,6 +176,14 @@ public class PlayerController : MonoBehaviour
         if (yV > 0 && transform.position.y <= position.y)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
         {
             yVelocity = 0;
+        }
+        if (movementState == MovementState.Free)
+        {
+            if (wasGrounded && !isGrounded() && !jumping)
+            {
+                yVelocity = 0;
+                transform.position = position;
+            }
         }
     }
     private void updatePosition()
@@ -329,7 +331,7 @@ public class PlayerController : MonoBehaviour
                 }
                 if (isGrounded() && !jumping)
                 {
-                    yVelocity = -25f;       //reset velocity to zero (almost) when you are on the ground.  
+                    yVelocity = -25f;       //downward force so you stick to slopes
                 }
                 else
                 {
@@ -376,6 +378,7 @@ public class PlayerController : MonoBehaviour
                     isDashing = false;
                     canAttack = true;
                     movementState = MovementState.Free;
+                    spriteRenderer.color = Color.gray;
                 }
                 break;
             case (MovementState.Lunge):
@@ -399,7 +402,7 @@ public class PlayerController : MonoBehaviour
                     {
                         dashCooldownTimer -= Time.deltaTime;
                     }
-                    else
+                    else if(isGrounded())       //do not finish cooldown until you are grounded
                     {
                         dashCooldownTimer = 0;
                         canDash = true;

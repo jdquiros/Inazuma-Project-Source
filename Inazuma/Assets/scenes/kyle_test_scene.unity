@@ -207,7 +207,7 @@ MonoBehaviour:
   dashDuration: 0.38
   dashAcceleration: 130
   dashMaxVelocity: 17
-  dashCooldown: 2
+  dashCooldown: 0.5
   isDashing: 0
   velocityRestrictionRate: 500
   instantDropDistance: 0.2
