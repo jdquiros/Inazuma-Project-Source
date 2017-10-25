@@ -11,6 +11,7 @@ public class MainMenuController : MonoBehaviour {
         MainMenu, LevelSelect, Credits, None
     }
     private MenuState menuState = MenuState.MainMenu;
+    public bool debug = false;
     public EventSystem eventSystem;
     public Button playButton;
     public Button levelSelectButton;
@@ -87,6 +88,11 @@ public class MainMenuController : MonoBehaviour {
         title.startColorChange();
 
         eventSystem.SetSelectedGameObject(null);
+        if (!debug)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
     public void levelSelectButtonPress()
     {

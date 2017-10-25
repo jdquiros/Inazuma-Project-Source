@@ -2326,6 +2326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d2231a6dfce844296715ef893b5040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 1
   eventSystem: {fileID: 1649734913}
   playButton: {fileID: 988924647}
   levelSelectButton: {fileID: 1280318609}
