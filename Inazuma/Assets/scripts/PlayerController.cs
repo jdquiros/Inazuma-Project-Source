@@ -90,6 +90,8 @@ public class PlayerController : MonoBehaviour
     private HitBoxReport attackHitBoxReport;                        //activates hitbox for attacks and reports collisions
     private SpriteRenderer spriteRenderer;
 
+    private bool wasGrounded;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -142,13 +144,18 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
         }
-
-
+        wasGrounded = isGrounded();
         updateDashing();
         updateHorizontalVelocity();
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
+        if (wasGrounded && !isGrounded() && !jumping)
+        {
+            yVelocity = 0;
+            charController.move(new Vector2(0, 25)*Time.deltaTime);
+        }
+
 
     }
     private void moveHorizontal(float xV)
@@ -312,9 +319,9 @@ public class PlayerController : MonoBehaviour
                         jumping = false;
                     }
                 }
-                if (isGrounded())
+                if (isGrounded() && !jumping)
                 {
-                    yVelocity = Mathf.Max(-0.001f, yVelocity);       //reset velocity to zero (almost) when you are on the ground.  
+                    yVelocity = -25f;       //reset velocity to zero (almost) when you are on the ground.  
                 }
                 else
                 {
