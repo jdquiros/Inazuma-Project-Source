@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public KeyCode downButton = KeyCode.S;
     public KeyCode jumpButton = KeyCode.Space;
     public KeyCode attackButton = KeyCode.J;
-    public KeyCode attackDashButton = KeyCode.K;
+    public KeyCode LungeButton = KeyCode.K;
     public KeyCode dashButton = KeyCode.LeftShift;
     /*
      *                      ^ positiveY
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, AttackDash
+        Paralyzed, Free, Dash, Lunge
     }
     private MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
         Right, DownRight, Down, DownLeft, Left, UpLeft, Up, UpRight
     }
     private Direction aimDirection;                                 //NESW direction based on held keys (8 directions)
+    private Direction dashDirection;
     private Direction facingDirection = Direction.Right;            //character is facing left or right (character can face a direction with no input)
 
     private HitBoxReport attackHitBoxReport;                        //activates hitbox for attacks and reports collisions
@@ -130,11 +131,12 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(attack(getAimVector(aimDirection)));
                     }
                 }
-                if (Input.GetKeyDown(attackDashButton))
+                if (Input.GetKeyDown(LungeButton))
                 {
                     if (canAttack)
                     {
                         aimDirection = getAimDirection();
+                        dashDirection = aimDirection;
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
@@ -263,7 +265,7 @@ public class PlayerController : MonoBehaviour
                         break;
                 }
                 break;
-            case (MovementState.AttackDash):
+            case (MovementState.Lunge):
                 xVelocity += forcedMoveVector.x * dashAcceleration * Time.deltaTime;
                 xVelocity = Mathf.Clamp(xVelocity, -dashMaxVelocity, dashMaxVelocity);
                 break;
@@ -327,10 +329,8 @@ public class PlayerController : MonoBehaviour
                     jumpApexTimer = 0;
                 }
                 break;
-            case (MovementState.AttackDash):
-                Vector3 moveVector = getAimVector(aimDirection);
-                moveVector += Vector3.down * 0.001f;
-                yVelocity += moveVector.y * dashAcceleration * Time.deltaTime;
+            case (MovementState.Lunge):
+                yVelocity += forcedMoveVector.y * dashAcceleration * Time.deltaTime;
                 yVelocity = Mathf.Clamp(yVelocity, -dashMaxVelocity, dashMaxVelocity);
                 jumping = false;
                 jumpApexTimer = 0;
@@ -363,7 +363,7 @@ public class PlayerController : MonoBehaviour
                     movementState = MovementState.Free;
                 }
                 break;
-            case (MovementState.AttackDash):
+            case (MovementState.Lunge):
                 if (dashTimer > 0)
                 {
                     dashTimer -= Time.deltaTime;
@@ -506,7 +506,7 @@ public class PlayerController : MonoBehaviour
         {
             ++enemyHits;
             if (enemyHits == 1)
-                lungeDash(getAimVector(aimDirection));
+                lungeDash(getAimVector(dashDirection));
         }
     }
     
@@ -540,7 +540,7 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
     {
-        movementState = MovementState.AttackDash;
+        movementState = MovementState.Lunge;
         canAttack = false;
         canDash = false;
         spriteRenderer.color = Color.blue;
@@ -589,7 +589,7 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         dashTimer = dashDuration;
         canAttack = false;
-        movementState = MovementState.AttackDash;
+        movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * dashMaxVelocity;
         yVelocity = forcedMoveVector.y * dashMaxVelocity;
       
