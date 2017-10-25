@@ -17,7 +17,7 @@
 
 # Future To-do
 - [ ] Main Menu
-- [ ] Preserve level state when respawning
+- [x] Preserve level state when respawning
 - [ ] Attack animations
 - [ ] Credits screen
 - [ ] Pause Menu (maybe)
