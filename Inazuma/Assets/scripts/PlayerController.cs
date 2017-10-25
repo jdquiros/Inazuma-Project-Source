@@ -76,6 +76,7 @@ public class PlayerController : MonoBehaviour
     private bool jumping = false;               //is the player current jumping (jumping has different physics than general gravity)
     private bool jumpKeyHeld = false;           //tracks if the player was holding the jump key last frame, to run code when the player releases it
     private float jumpApexTimer = 0;            //time until char reaches apex of jump.  value based on jumpForce
+    private bool lungeAttacking = false;
 
     private Vector3 forcedMoveVector;
     int enemyHits = 0;                          //# of enemies hit in a single attack
@@ -387,7 +388,6 @@ public class PlayerController : MonoBehaviour
                 {
                     dashTimer = 0;
                     isDashing = false;
-
                     spriteRenderer.color = Color.yellow;
                     movementState = MovementState.Free;
                 }
@@ -516,10 +516,11 @@ public class PlayerController : MonoBehaviour
     }
     void onHitBoxCollision(Collider2D other)
     {
-        if(other.gameObject.layer == LayerMask.NameToLayer("enemyLayer"))
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("enemyLayer"))
         {
             ++enemyHits;
-            if (enemyHits == 1)
+            if (enemyHits == 1 && lungeAttacking)
                 lungeDash(getAimVector(dashDirection));
         }
     }
@@ -554,6 +555,7 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
     {
+        lungeAttacking = true;
         movementState = MovementState.Lunge;
         canAttack = false;
         canDash = false;
@@ -565,11 +567,13 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(attackDuration);
         spriteRenderer.color = Color.gray;
-        
-        if(dashCooldownTimer <= 0)
+        lungeAttacking = false;
+
+        if (dashCooldownTimer <= 0)
         {
             canDash = true;
         }
+       
         yield return new WaitForSeconds(timeBetweenAttacks);
         spriteRenderer.color = Color.yellow;
         canAttack = true;
