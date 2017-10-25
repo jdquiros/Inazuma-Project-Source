@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         Paralyzed, Free, Dash, Lunge
     }
-    private MovementState movementState = MovementState.Free;
+    public MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
     public int health = 1;
     private bool playerDead = false;
@@ -101,11 +101,16 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         allowPlayerInput = true;
+        //charController.warpToGrounded();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(GameState.getState() != (int)GameState.State.Gameplay)
+        {
+            movementState = MovementState.Paralyzed;
+        }
         if (charController.isGrounded)
             canJump = true;
         switch (movementState) {
@@ -333,7 +338,7 @@ public class PlayerController : MonoBehaviour
             case (MovementState.Dash):
                 if (isDashing)           //ignore gravity during dash
                 {
-                    yVelocity = -25;    //ensure you stay grounded
+                    yVelocity = -0.001f;    //ensure you stay grounded
                     jumping = false;        //cancel jump physics
                     jumpApexTimer = 0;
                 }
@@ -625,5 +630,8 @@ public class PlayerController : MonoBehaviour
     {
         return playerDead;
     }
-    
+    public void setMovementState(int x)
+    {
+        movementState = (MovementState)x;
+    }
 }

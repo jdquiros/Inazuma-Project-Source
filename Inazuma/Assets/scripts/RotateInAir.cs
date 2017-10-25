@@ -13,7 +13,7 @@ public class RotateInAir : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!playerController.isGrounded() && !playerController.isDashing)
+        if (!playerController.isGrounded() && !playerController.isDashing && (int)playerController.movementState != 0)
         {
             transform.Rotate(new Vector3(0, 0, rotationSpeed));
         } else
