@@ -150,12 +150,14 @@ public class PlayerController : MonoBehaviour
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
-        if (wasGrounded && !isGrounded() && !jumping)
+        if (movementState == MovementState.Free)
         {
-            yVelocity = 0;
-            charController.move(new Vector2(0, 25)*Time.deltaTime);
+            if (wasGrounded && !isGrounded() && !jumping)
+            {
+                yVelocity = 0;
+                charController.move(new Vector2(0, 25) * Time.deltaTime);
+            }
         }
-
 
     }
     private void moveHorizontal(float xV)
