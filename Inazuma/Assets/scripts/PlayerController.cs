@@ -9,12 +9,13 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     Prime31.CharacterController2D charController;
 
-    public KeyCode leftButton = KeyCode.LeftArrow;
-    public KeyCode rightButton = KeyCode.RightArrow;
-    public KeyCode upButton = KeyCode.UpArrow;
-    public KeyCode downButton = KeyCode.DownArrow;
+    public KeyCode leftButton = KeyCode.A;
+    public KeyCode rightButton = KeyCode.D;
+    public KeyCode upButton = KeyCode.W;
+    public KeyCode downButton = KeyCode.S;
     public KeyCode jumpButton = KeyCode.Space;
-    public KeyCode attackButton = KeyCode.V;
+    public KeyCode attackButton = KeyCode.J;
+    public KeyCode attackDashButton = KeyCode.K;
     public KeyCode dashButton = KeyCode.LeftShift;
     /*
      *                      ^ positiveY
@@ -28,6 +29,11 @@ public class PlayerController : MonoBehaviour
      *                      |
      *                      V negativeY
      */
+    public enum MovementState
+    {
+        Paralyzed, Free, Dash, AttackDash
+    }
+    private MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
     public int health = 1;
     private bool playerDead = false;
@@ -71,10 +77,11 @@ public class PlayerController : MonoBehaviour
     private bool jumpKeyHeld = false;           //tracks if the player was holding the jump key last frame, to run code when the player releases it
     private float jumpApexTimer = 0;            //time until char reaches apex of jump.  value based on jumpForce
 
-
+    private Vector3 forcedMoveVector;
+    int enemyHits = 0;                          //# of enemies hit in a single attack
     private enum Direction
     {
-        Right, DownRight,Down, DownLeft, Left, UpLeft, Up, UpRight
+        Right, DownRight, Down, DownLeft, Left, UpLeft, Up, UpRight
     }
     private Direction aimDirection;                                 //NESW direction based on held keys (8 directions)
     private Direction facingDirection = Direction.Right;            //character is facing left or right (character can face a direction with no input)
@@ -91,39 +98,50 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         allowPlayerInput = true;
-    }   
+    }
 
     // Update is called once per frame
     void Update()
     {
         if (charController.isGrounded)
             canJump = true;
-        if (!isDashing)
-        {
-            if (Input.GetKeyDown(jumpButton) && allowPlayerInput)
-            {
-                //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
-                if (charController.isGrounded && !jumping && canJump)
+        switch (movementState) {
+            case MovementState.Free:
+                if (Input.GetKeyDown(jumpButton))
                 {
-                    jump();
+                    //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
+                    if (charController.isGrounded && !jumping && canJump)
+                    {
+                        jump();
+                    }
                 }
-            }
-            if (Input.GetKeyDown(downButton) && allowPlayerInput)
-            {
-                attemptDropThroughPlatform();
-            }
-            if (Input.GetKeyDown(dashButton) && canDash && allowPlayerInput)
-            {
-                dash();
-            }
+                if (Input.GetKeyDown(downButton))
+                {
+                    attemptDropThroughPlatform();
+                }
+                if (Input.GetKeyDown(dashButton) && canDash)
+                {
+                    dash(facingDirection);
+                }
+                if (Input.GetKeyDown(attackButton))
+                {
+                    if (canAttack)
+                    {
+                        StartCoroutine(attack(getAimVector(aimDirection)));
+                    }
+                }
+                if (Input.GetKeyDown(attackDashButton))
+                {
+                    if (canAttack)
+                    {
+                        aimDirection = getAimDirection();
+                        StartCoroutine(lungeAttack(getAimVector(aimDirection)));
+                    }
+                }
+                break;
         }
-        if (Input.GetKeyDown(attackButton) && allowPlayerInput)
-        {
-            if (canAttack)
-            {
-                StartCoroutine(attack(getAimVector(aimDirection)));
-            }
-        }
+
+
         updateDashing();
         updateHorizontalVelocity();
         updateVerticalVelocity();
@@ -151,197 +169,250 @@ public class PlayerController : MonoBehaviour
     }
     private void updatePosition()
     {
-        moveHorizontal(xVelocity*Time.deltaTime);
-        moveVertical(yVelocity*Time.deltaTime);
+        moveHorizontal(xVelocity * Time.deltaTime);
+        moveVertical(yVelocity * Time.deltaTime);
     }
     private void updateHorizontalVelocity()
     {
-        if (isDashing)
+        switch (movementState)
         {
-            
-            switch (facingDirection)
-            {
-                case Direction.Right:
-                    xVelocity += dashAcceleration * Time.deltaTime;
-                    xVelocity = Mathf.Min(xVelocity, dashMaxVelocity);
-                    //cap max speed, else increase it
-                    break;
-                case Direction.Left:
-                    xVelocity += (-dashAcceleration) * Time.deltaTime;
-                    xVelocity = Mathf.Max(xVelocity, -dashMaxVelocity);
-                    //cap max speed, else increase it
-                    break;
-            }
-        }
-        else
-        {
-            //regular movement, not dashing
-            float xVelToAdd = 0f;
-
-            if (Input.GetKey(leftButton) && allowPlayerInput && !Input.GetKey(rightButton))
-            {
-                if (xVelocity <= 0)
+            case (MovementState.Free):
+                //regular movement, not dashing
+                float xVelToAdd = 0f;
+                if (Input.GetKey(leftButton) && !Input.GetKey(rightButton))
                 {
-                    //accelerating left
-                    xVelToAdd = (-acceleration) * Time.deltaTime;
-                    
+                    if (xVelocity <= 0)
+                    {
+                        //accelerating left
+                        xVelToAdd = (-acceleration) * Time.deltaTime;
+
+
+                    }
+                    else
+                    {
+                        //decelerating left
+                        xVelToAdd = (-deceleration) * Time.deltaTime;
+
+                    }
+                }
+                else if (Input.GetKey(rightButton) && !Input.GetKey(leftButton))
+                {
+                    if (xVelocity >= 0)
+                    {
+                        //accelerating right
+                        xVelToAdd = acceleration * Time.deltaTime;
+
+                    }
+                    else
+                    {
+                        //decelerating right
+                        xVelToAdd = deceleration * Time.deltaTime;
+
+                    }
 
                 }
                 else
                 {
-                    //decelerating left
-                    xVelToAdd = (-deceleration) * Time.deltaTime;
-                    
+                    //not moving left or right.  slow down through passive deceleration
+                    if (xVelocity > 0)
+                    {
+                        xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                    }
+                    else if (xVelocity < 0)
+                    {
+                        xVelToAdd = passiveDeceleration * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                    }
                 }
-            }
-            else if (Input.GetKey(rightButton) && allowPlayerInput && !Input.GetKey(leftButton))
-            {
-                if (xVelocity >= 0)
-                {
-                    //accelerating right
-                    xVelToAdd = acceleration * Time.deltaTime;
-                    
-                }
-                else
-                {
-                    //decelerating right
-                    xVelToAdd = deceleration * Time.deltaTime;
-                    
-                }
+                if (!charController.isGrounded)
+                    xVelToAdd *= airAccelerationFactor;
+                //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
 
-            }
-            else
-            {
-                //not moving left or right.  slow down through passive deceleration
-                if (xVelocity > 0)
-                {
-                    xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
-                    if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                        xVelToAdd *= highDecelerationFactor;
-                    xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
-                }
-                else if (xVelocity < 0)
-                {
-                    xVelToAdd = passiveDeceleration * Time.deltaTime;
-                    if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                        xVelToAdd *= highDecelerationFactor;
-                    xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
-                }
-            }
-            if (!charController.isGrounded)
-                xVelToAdd *= airAccelerationFactor;
-            //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
 
-            
-            xVelocity = xVelocity + xVelToAdd;      //set speeds
+                xVelocity = xVelocity + xVelToAdd;      //set speeds
 
-            //clamp to speed maximums
-            if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
-            {
-                xVelocity += -velocityRestrictionRate * Time.deltaTime;
-                xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
-            }
-            else if (xVelocity < (-maxHorizontalVelocity))
-            {
-                xVelocity += velocityRestrictionRate * Time.deltaTime;
-                xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
-            }
+                //clamp to speed maximums
+                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+                {
+                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+                }
+                else if (xVelocity < (-maxHorizontalVelocity))
+                {
+                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
+                }
+                break;
+            case (MovementState.Dash):
+                switch (facingDirection)
+                {
+                    case Direction.Right:
+                        xVelocity += dashAcceleration * Time.deltaTime;
+                        xVelocity = Mathf.Min(xVelocity, dashMaxVelocity);
+                        //cap max speed, else increase it
+                        break;
+                    case Direction.Left:
+                        xVelocity += (-dashAcceleration) * Time.deltaTime;
+                        xVelocity = Mathf.Max(xVelocity, -dashMaxVelocity);
+                        //cap max speed, else increase it
+                        break;
+                }
+                break;
+            case (MovementState.AttackDash):
+                xVelocity += forcedMoveVector.x * dashAcceleration * Time.deltaTime;
+                xVelocity = Mathf.Clamp(xVelocity, -dashMaxVelocity, dashMaxVelocity);
+                break;
+            case (MovementState.Paralyzed):
+                xVelocity *= 0.5f;
+                break;
         }
-        
+
+
     }
     private void updateVerticalVelocity()
     {
         float yVelToAdd = 0;
-        if (!charController.isGrounded)
+        switch (movementState)
         {
-            yVelToAdd = (-gravity) * Time.deltaTime;
-        } 
-
-        if (jumping)
-        {
-            if (jumpApexTimer > 0)
-            {
-                //if this is >0, then character is rising until apex.
-                jumpApexTimer -= Time.deltaTime;
-                if (!Input.GetKey(jumpButton) && jumpKeyHeld)
+            case (MovementState.Free):
+                if (!charController.isGrounded)
                 {
-                    //you release the jump key before you reach the apex
-                    jumpApexTimer = 0;
-                    yVelocity *= jumpButtonReleaseFactor;
+                    yVelToAdd = (-gravity) * Time.deltaTime;
                 }
-                jumpKeyHeld = Input.GetKey(jumpButton);
-                if (yVelocity < 0)
+                if (jumping)
                 {
-                    //you hit the ceiling or something, so the apex timer is not applicable anymore
+                    if (jumpApexTimer > 0)
+                    {
+                        //if this is >0, then character is rising until apex.
+                        jumpApexTimer -= Time.deltaTime;
+                        if (!Input.GetKey(jumpButton) && jumpKeyHeld)
+                        {
+                            //you release the jump key before you reach the apex
+                            jumpApexTimer = 0;
+                            yVelocity *= jumpButtonReleaseFactor;
+                        }
+                        jumpKeyHeld = Input.GetKey(jumpButton);
+                        if (yVelocity < 0)
+                        {
+                            //you hit the ceiling or something, so the apex timer is not applicable anymore
+                            jumpApexTimer = 0;
+                        }
+                    }
+                    else
+                    {
+                        //once you hit the apex, its back to regular falling
+                        jumpApexTimer = 0;
+                        jumping = false;
+                    }
+                }
+                if (isGrounded())
+                {
+                    yVelocity = Mathf.Max(-0.001f, yVelocity);       //reset velocity to zero (almost) when you are on the ground.  
+                }
+                else
+                {
+                    yVelocity = Mathf.Clamp(yVelocity + yVelToAdd, -maxVerticalVelocity, maxVerticalVelocity);
+                }
+                break;
+            case (MovementState.Dash):
+                if (isDashing)           //ignore gravity during dash
+                {
+                    yVelocity = -0.001f;    //ensure you stay grounded
+                    jumping = false;        //cancel jump physics
                     jumpApexTimer = 0;
                 }
-            }
-            else
-            {
-                //once you hit the apex, its back to regular falling
-                jumpApexTimer = 0;
+                break;
+            case (MovementState.AttackDash):
+                Vector3 moveVector = getAimVector(aimDirection);
+                moveVector += Vector3.down * 0.001f;
+                yVelocity += moveVector.y * dashAcceleration * Time.deltaTime;
+                yVelocity = Mathf.Clamp(yVelocity, -dashMaxVelocity, dashMaxVelocity);
                 jumping = false;
-            }
+                jumpApexTimer = 0;
+                break;
         }
-        if(isDashing)           //ignore gravity during dash
-        {
-            yVelocity = -0.001f;
-            yVelToAdd = 0f;
-            jumping = false;        //cancel jump physics
-            jumpApexTimer = 0;
-        }
-        if (isGrounded())
-        {
-            yVelocity = Mathf.Max(-0.001f, yVelocity);       //reset velocity to zero (almost) when you are on the ground.  
-        } else {
-            yVelocity = Mathf.Clamp(yVelocity + yVelToAdd, -maxVerticalVelocity, maxVerticalVelocity);
-        }
+
+
+
+
+
 
     }
     private void updateDashing()
     {
-        if (isDashing)
+
+        switch (movementState)
         {
-            if (dashTimer > 0)
-            {
-                dashTimer -= Time.deltaTime;
-                spriteRenderer.color = Color.magenta;
-            }
-            else
-            {
-                dashTimer = 0;
-                dashCooldownTimer = dashCooldown;
-                isDashing = false;
-                canAttack = true;
-                spriteRenderer.color = Color.gray;
-                
-            }
-        } else if(!isDashing && !canDash)
-        {
-            if (dashCooldownTimer > 0)
-            {
-                dashCooldownTimer -= Time.deltaTime;
-            }
-            else
-            {
-                dashCooldownTimer = 0;
-                canDash = true;
-                spriteRenderer.color = Color.yellow;
-            }
-        }
+            case (MovementState.Dash):
+                if (dashTimer > 0)
+                {
+                    dashTimer -= Time.deltaTime;
+                    spriteRenderer.color = Color.magenta;
+                }
+                else
+                {
+                    dashTimer = 0;
+                    dashCooldownTimer = dashCooldown;
+                    isDashing = false;
+                    canAttack = true;
+                    movementState = MovementState.Free;
+                }
+                break;
+            case (MovementState.AttackDash):
+                if (dashTimer > 0)
+                {
+                    dashTimer -= Time.deltaTime;
+                    spriteRenderer.color = Color.magenta;
+                }
+                else
+                {
+                    dashTimer = 0;
+                    isDashing = false;
+
+                    spriteRenderer.color = Color.yellow;
+                    movementState = MovementState.Free;
+                }
+                break;
+            case (MovementState.Free):
+                if (!canDash)
+                {
+                    if (dashCooldownTimer > 0)
+                    {
+                        dashCooldownTimer -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        dashCooldownTimer = 0;
+                        canDash = true;
+                        spriteRenderer.color = Color.yellow;
+                    }
+                }
+                break;
         
+        }
+    
     }
+
+        
+    
     private void jump()
     {
-        yVelocity = jumpForce;
-        canJump = false;
-        jumping = true;
-        jumpApexTimer = jumpForce / gravity;
-
+        if (movementState == MovementState.Free)
+        {
+            yVelocity = jumpForce;
+            canJump = false;
+            jumping = true;
+            jumpApexTimer = jumpForce / gravity;
+        }
     }
     private void attemptDropThroughPlatform()
     {
-        if (isGrounded())
+        if (movementState == MovementState.Free && isGrounded())
         {
             yVelocity = 0;
             charController.ignoreOneWayPlatformsThisFrame = true;
@@ -354,7 +425,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (!isDashing)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free)                             //you cannot change your facing direction while dashing
         {
             if (!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
             {
@@ -363,9 +434,9 @@ public class PlayerController : MonoBehaviour
                 else if (Input.GetKey(leftButton))
                     facingDirection = Direction.Left;
             }
+            aimDirection = getAimDirection();
         }
-        aimDirection = getAimDirection();
-       
+
     }
     private Direction getAimDirection()
     {
@@ -431,8 +502,12 @@ public class PlayerController : MonoBehaviour
     }
     void onHitBoxCollision(Collider2D other)
     {
-        print("Hit: " + other.name);        //currently triggers when hitbox enters gameObject in EnemyLayer.  Layer interaction can be changed in projectsettings->physics2D
-        
+        if(other.gameObject.layer == LayerMask.NameToLayer("enemyLayer"))
+        {
+            ++enemyHits;
+            if (enemyHits == 1)
+                lungeDash(getAimVector(aimDirection));
+        }
     }
     
     private void OnTriggerEnter2D(Collider2D collision)
@@ -463,12 +538,61 @@ public class PlayerController : MonoBehaviour
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
     }
-    private void dash()
+    private IEnumerator lungeAttack(Vector3 aimVector)
     {
+        movementState = MovementState.AttackDash;
+        canAttack = false;
+        canDash = false;
+        spriteRenderer.color = Color.blue;
+        yield return new WaitForSeconds(attackWindUp);
+        enemyHits = 0;
+        attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg * Mathf.Atan2(aimVector.y, aimVector.x));
+        attackHitBoxReport.enableHitBox(attackDuration);
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(attackDuration);
+        spriteRenderer.color = Color.gray;
+        
+        if(dashCooldownTimer <= 0)
+        {
+            canDash = true;
+        }
+        yield return new WaitForSeconds(timeBetweenAttacks);
+        spriteRenderer.color = Color.yellow;
+        canAttack = true;
+    }
+    private void dash(Vector3 direction)
+    {
+        forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
         canAttack = false;
+        movementState = MovementState.Dash;
+        xVelocity = 0;
+        yVelocity = 0;
+    }
+    private void dash(Direction direction)
+    {
+        forcedMoveVector = getAimVector(direction);
+        canDash = false;
+        isDashing = true;
+        dashTimer = dashDuration;
+        canAttack = false;
+        movementState = MovementState.Dash;
+        xVelocity = 0;
+        yVelocity = 0;
+    }
+    private void lungeDash(Vector3 direction)
+    {
+        forcedMoveVector = direction;
+        canDash = false;
+        isDashing = true;
+        dashTimer = dashDuration;
+        canAttack = false;
+        movementState = MovementState.AttackDash;
+        xVelocity = forcedMoveVector.x * dashMaxVelocity;
+        yVelocity = forcedMoveVector.y * dashMaxVelocity;
+      
     }
     public void damagePlayer(int dmg)
     {
@@ -485,6 +609,7 @@ public class PlayerController : MonoBehaviour
             print("Player is Dead");
             allowPlayerInput = false;
             spriteRenderer.color = Color.black;
+            movementState = MovementState.Paralyzed;
         }
     }
     public bool isDead()
