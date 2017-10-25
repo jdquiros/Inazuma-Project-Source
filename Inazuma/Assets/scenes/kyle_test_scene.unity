@@ -251,6 +251,8 @@ MonoBehaviour:
   deceleration: 250
   passiveDeceleration: 50
   airAccelerationFactor: 0.3
+  highDecelerationFactor: 1.5
+  highDecelerationThreshold: 10
   gravity: 30
   jumpForce: 13
   jumpButtonReleaseFactor: 0.3
@@ -261,7 +263,7 @@ MonoBehaviour:
   dashDuration: 0.38
   dashAcceleration: 130
   dashMaxVelocity: 17
-  dashCooldown: 0
+  dashCooldown: 2
   isDashing: 0
   velocityRestrictionRate: 500
   instantDropDistance: 0.2
@@ -2038,7 +2040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7205882, g: 0.2119377, b: 0.2119377, a: 0.384}
+  m_Color: {r: 0.7205882, g: 0.2119377, b: 0.2119377, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

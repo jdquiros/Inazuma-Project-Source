@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
     public float deceleration = 0;              //ACTIVE deceleration (when attempting to move against direction of travel)
     public float passiveDeceleration = 0;       //basically friction.  also subject to airAccelerationFactor
     public float airAccelerationFactor = 1f;    //from 0.0 to 1.0
+    public float highDecelerationFactor = 0f;    //acceleration = highDecelerationDuration if speed < highDecelerationFactor
+    public float highDecelerationThreshold = 1f; //use highDecelerationFactor wihle speed < highDecelerationThreshold.  Should be > 1 for more resisting force
     public float gravity = 0;                   //should be positive
     public float jumpForce = 0;                 //should be positive
     public float jumpButtonReleaseFactor = 1f;  //total velocity will be mulitiplied by this factor when the jump button is released
@@ -122,8 +124,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(attack(getAimVector(aimDirection)));
             }
         }
-        if(isDashing)
-            updateDashing();
+        updateDashing();
         updateHorizontalVelocity();
         updateVerticalVelocity();
         updatePosition();
@@ -177,32 +178,35 @@ public class PlayerController : MonoBehaviour
             //regular movement, not dashing
             float xVelToAdd = 0f;
 
-            if (Input.GetKey(leftButton) && allowPlayerInput)
+            if (Input.GetKey(leftButton) && allowPlayerInput && !Input.GetKey(rightButton))
             {
                 if (xVelocity <= 0)
                 {
                     //accelerating left
                     xVelToAdd = (-acceleration) * Time.deltaTime;
+                    
 
                 }
                 else
                 {
                     //decelerating left
                     xVelToAdd = (-deceleration) * Time.deltaTime;
+                    
                 }
             }
-            else if (Input.GetKey(rightButton) && allowPlayerInput)
+            else if (Input.GetKey(rightButton) && allowPlayerInput && !Input.GetKey(leftButton))
             {
                 if (xVelocity >= 0)
                 {
                     //accelerating right
                     xVelToAdd = acceleration * Time.deltaTime;
+                    
                 }
                 else
                 {
                     //decelerating right
                     xVelToAdd = deceleration * Time.deltaTime;
-
+                    
                 }
 
             }
@@ -212,11 +216,15 @@ public class PlayerController : MonoBehaviour
                 if (xVelocity > 0)
                 {
                     xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                    if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                        xVelToAdd *= highDecelerationFactor;
                     xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
                 }
                 else if (xVelocity < 0)
                 {
                     xVelToAdd = passiveDeceleration * Time.deltaTime;
+                    if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                        xVelToAdd *= highDecelerationFactor;
                     xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
                 }
             }
@@ -306,16 +314,19 @@ public class PlayerController : MonoBehaviour
                 isDashing = false;
                 canAttack = true;
                 spriteRenderer.color = Color.gray;
-                if (dashCooldownTimer > 0)
-                {
-                    dashCooldownTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    dashCooldownTimer = 0;
-                    canDash = true;
-                    spriteRenderer.color = Color.yellow;
-                }
+                
+            }
+        } else if(!isDashing && !canDash)
+        {
+            if (dashCooldownTimer > 0)
+            {
+                dashCooldownTimer -= Time.deltaTime;
+            }
+            else
+            {
+                dashCooldownTimer = 0;
+                canDash = true;
+                spriteRenderer.color = Color.yellow;
             }
         }
         
@@ -345,16 +356,27 @@ public class PlayerController : MonoBehaviour
     {
         if (!isDashing)                             //you cannot change your facing direction while dashing
         {
-            if (Input.GetKey(rightButton))          
-                facingDirection = Direction.Right;
-            else if (Input.GetKey(leftButton))
-                facingDirection = Direction.Left;
+            if (!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
+            {
+                if (Input.GetKey(rightButton))
+                    facingDirection = Direction.Right;
+                else if (Input.GetKey(leftButton))
+                    facingDirection = Direction.Left;
+            }
         }
         aimDirection = getAimDirection();
        
     }
     private Direction getAimDirection()
     {
+        if (Input.GetKey(leftButton) && Input.GetKey(upButton) && Input.GetKey(rightButton))
+            return Direction.Up;
+        if (Input.GetKey(upButton) && Input.GetKey(rightButton) && Input.GetKey(downButton))
+            return Direction.Right;
+        if (Input.GetKey(rightButton) && Input.GetKey(downButton) && Input.GetKey(leftButton))
+            return Direction.Down;
+        if (Input.GetKey(downButton) && Input.GetKey(leftButton) && Input.GetKey(upButton))
+            return Direction.Left;
         if(Input.GetKey(upButton) && Input.GetKey(rightButton))         //upright
             return Direction.UpRight;
         if (Input.GetKey(upButton) && Input.GetKey(leftButton))         //upleft
@@ -433,7 +455,10 @@ public class PlayerController : MonoBehaviour
           spriteRenderer.color = Color.red;                                                   //active frames: red
         yield return new WaitForSeconds(attackDuration);        
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
-        canDash = true;                                                                       //player can dash during attack cooldown
+        if (dashCooldownTimer <= 0)
+        {
+            canDash = true;                                                                       //player can dash during attack cooldown
+        }
         yield return new WaitForSeconds(timeBetweenAttacks);
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
