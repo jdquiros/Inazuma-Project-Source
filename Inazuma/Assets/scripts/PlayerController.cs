@@ -150,10 +150,12 @@ public class PlayerController : MonoBehaviour
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
+        if (movementState == MovementState.Free){ 
         if (wasGrounded && !isGrounded() && !jumping)
-        {
-            yVelocity = 0;
-            charController.move(new Vector2(0, 25)*Time.deltaTime);
+            {
+                yVelocity = 0;
+                charController.move(new Vector2(0, 25) * Time.deltaTime);
+            }
         }
 
 
@@ -331,7 +333,7 @@ public class PlayerController : MonoBehaviour
             case (MovementState.Dash):
                 if (isDashing)           //ignore gravity during dash
                 {
-                    yVelocity = -0.001f;    //ensure you stay grounded
+                    yVelocity = -25;    //ensure you stay grounded
                     jumping = false;        //cancel jump physics
                     jumpApexTimer = 0;
                 }
