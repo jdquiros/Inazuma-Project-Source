@@ -15,3 +15,10 @@
 - [x] Dash
 - [x] Player Death on collision with certain triggers (spikes etc)
 
+# Future To-do
+- [ ] Main Menu
+- [ ] Preserve level state when respawning
+- [ ] Attack animations
+- [ ] Credits screen
+- [ ] Pause Menu (maybe)
+- [ ] Game UI (health, tips, etc)
