@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
 
@@ -158,7 +158,11 @@ public class PlayerController : MonoBehaviour
                 charController.move(new Vector2(0, 25) * Time.deltaTime);
             }
         }
-
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+      
+            SceneManager.LoadScene("kyle_test_scene");
+        }
     }
     private void moveHorizontal(float xV)
     {

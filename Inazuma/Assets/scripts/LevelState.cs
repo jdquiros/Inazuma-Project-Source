@@ -10,7 +10,7 @@ public class LevelState : MonoBehaviour {
     public string objName;               //MUST BE UNIQUE
     public int initialState = 0;            //when game is first opened, state should be this
     private int loadState;                   //this state is read from the LevelDataDictionary and tells you what state to spawn an object in
-	void Start () {
+	void Awake () {
         LevelData.addItem(levelNumber, category, objName, initialState);
         //loads the dictionary with the inital state if it does not have an intial state yet
         loadState = LevelData.getState(levelNumber, category, objName);
@@ -19,7 +19,7 @@ public class LevelState : MonoBehaviour {
     {
         return loadState;
     }
-    public void saveLoadState(int val)
+    public void setLoadState(int val)
     {
         //saves current state to be loaded after scene reload
         LevelData.setState(levelNumber, category, objName, val);
