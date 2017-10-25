@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
+
 public class PlayerController : MonoBehaviour
 {
 
@@ -150,19 +150,13 @@ public class PlayerController : MonoBehaviour
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
-        if (movementState == MovementState.Free)
+        if (wasGrounded && !isGrounded() && !jumping)
         {
-            if (wasGrounded && !isGrounded() && !jumping)
-            {
-                yVelocity = 0;
-                charController.move(new Vector2(0, 25) * Time.deltaTime);
-            }
+            yVelocity = 0;
+            charController.move(new Vector2(0, 25)*Time.deltaTime);
         }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-      
-            SceneManager.LoadScene("kyle_test_scene");
-        }
+
+
     }
     private void moveHorizontal(float xV)
     {

@@ -38,7 +38,6 @@ public class HitBoxReport : MonoBehaviour {
                 enableTimer = 0;
                 col.enabled = false;
                 spriteRenderer.color = Color.clear;
-                moveHitBox(new Vector3(-500, -500), 0);
             }
         }
 	}
