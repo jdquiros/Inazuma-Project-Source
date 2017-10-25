@@ -14,11 +14,13 @@
 - [x] Drop through one-way platforms
 - [x] Dash
 - [x] Player Death on collision with certain triggers (spikes etc)
-
+- [ ] Checkpoints
 # Future To-do
-- [ ] Main Menu
-- [ ] Preserve level state when respawning
+- [x] Main Menu
+- [x] Preserve level state when respawning
 - [ ] Attack animations
 - [ ] Credits screen
+- [ ] Level select screen
+- [ ] Better camera system
 - [ ] Pause Menu (maybe)
 - [ ] Game UI (health, tips, etc)
