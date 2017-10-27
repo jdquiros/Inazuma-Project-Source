@@ -7,7 +7,7 @@
 - [ ] Enemy scripting
 - [ ] Player-Attack -> Enemy interaction
 - [ ] Enemy (Attack?) -> Player interaction
-- [ ] SFX first wave
+- [x] SFX first wave
 - [ ] Idle sprite
 - [ ] Tile art
 - [x] Player Sword Attacks
