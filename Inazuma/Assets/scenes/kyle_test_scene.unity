@@ -211,6 +211,10 @@ MonoBehaviour:
   dashMaxVelocity: 17
   dashCooldown: 0.5
   isDashing: 0
+  lungeDuration: 0.38
+  lungeAcceleration: 130
+  lungeMaxVelocity: 17
+  lungeCooldown: 0.5
   velocityRestrictionRate: 500
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 987941450}

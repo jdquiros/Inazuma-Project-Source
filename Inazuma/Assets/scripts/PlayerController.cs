@@ -69,6 +69,13 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
     [HideInInspector]
     public bool isDashing = false;
+
+    public float lungeDuration = 0f;             //duration of dash
+    public float lungeAcceleration = 0f;         //acceleration of dash
+    public float lungeMaxVelocity = 0f;          //maximum velocity during dash
+    public float lungeCooldown = 0f;             //cooldown between dashes
+
+
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
     public float instantDropDistance = 0.2f;    //instantly moves player down this distance when dropping through a platform.  If the character does not drop, increase this value
@@ -331,8 +338,8 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Lunge):
-                xVelocity += forcedMoveVector.x * dashAcceleration * Time.deltaTime;
-                xVelocity = Mathf.Clamp(xVelocity, -dashMaxVelocity, dashMaxVelocity);
+                xVelocity += forcedMoveVector.x * lungeAcceleration * Time.deltaTime;
+                xVelocity = Mathf.Clamp(xVelocity, -lungeMaxVelocity, lungeMaxVelocity);
                 break;
             case (MovementState.Paralyzed):
                 xVelocity *= 0.5f;
@@ -395,8 +402,8 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Lunge):
-                yVelocity += forcedMoveVector.y * dashAcceleration * Time.deltaTime;
-                yVelocity = Mathf.Clamp(yVelocity, -dashMaxVelocity, dashMaxVelocity);
+                yVelocity += forcedMoveVector.y * lungeAcceleration * Time.deltaTime;
+                yVelocity = Mathf.Clamp(yVelocity, -lungeMaxVelocity, lungeMaxVelocity);
                 jumping = false;
                 jumpApexTimer = 0;
                 break;
@@ -667,11 +674,11 @@ public class PlayerController : MonoBehaviour
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
-        dashTimer = dashDuration;
+        dashTimer = lungeDuration;
         canAttack = false;
         movementState = MovementState.Lunge;
-        xVelocity = forcedMoveVector.x * dashMaxVelocity;
-        yVelocity = forcedMoveVector.y * dashMaxVelocity;
+        xVelocity = forcedMoveVector.x * lungeMaxVelocity;
+        yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
 
     }
