@@ -14,7 +14,7 @@
 - [x] Drop through one-way platforms
 - [x] Dash
 - [x] Player Death on collision with certain triggers (spikes etc)
-- [ ] Checkpoints
+- [x] Checkpoints
 # Future To-do
 - [x] Main Menu
 - [x] Preserve level state when respawning
