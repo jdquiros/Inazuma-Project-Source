@@ -17,6 +17,13 @@ public class LevelState : MonoBehaviour
         //loads the dictionary with the inital state if it does not have an intial state yet
         loadState = LevelData.getState(levelNumber, category, objName);
     }
+    public void initialLoad()
+    {
+        //call initialLoad if you need stateData to be guaranteed to be loaded while inside an Awake()
+
+        LevelData.addItem(levelNumber, category, objName, initialState);
+        loadState = LevelData.getState(levelNumber, category, objName);
+    }
     public int getLoadState()
     {
         return loadState;

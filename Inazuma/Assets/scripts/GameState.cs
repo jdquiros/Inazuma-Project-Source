@@ -4,22 +4,31 @@ using UnityEngine;
 
 public static class GameState{
 
-	public enum State
+    // Use this for initialization
+    public enum State
     {
-        MainMenu, Gameplay, DeathScreen
+        MainMenu, InGame, PlayerDead
     }
-    public static int gameState = (int)State.MainMenu;
+    public static State gameState = State.MainMenu;
 
+    public static bool compareState(int x)
+    {
+        return gameState == (State)x;
+    }
+    public static bool compareState(State x)
+    {
+        return gameState == x;
+    }
     public static int getState()
     {
-        return gameState;
+        return (int)gameState;
     }
     public static void setState(int x)
     {
-        gameState = x;
+        gameState = (State)x;
     }
     public static void setState(State x)
     {
-        gameState = (int)x;
+        gameState = x;
     }
 }

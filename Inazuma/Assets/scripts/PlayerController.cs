@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
     // Use this for initialization
+    
     Prime31.CharacterController2D charController;
 
     public KeyCode leftButton = KeyCode.A;
@@ -15,8 +17,9 @@ public class PlayerController : MonoBehaviour
     public KeyCode downButton = KeyCode.S;
     public KeyCode jumpButton = KeyCode.Space;
     public KeyCode attackButton = KeyCode.J;
-    public KeyCode LungeButton = KeyCode.K;
+    public KeyCode lungeButton = KeyCode.K;
     public KeyCode dashButton = KeyCode.LeftShift;
+    public KeyCode restartButton = KeyCode.R;
     /*
      *                      ^ positiveY
      *                      |
@@ -103,6 +106,8 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
+        print(Checkpoint.GetCurrentCheckpointPos());
+        transform.position = Checkpoint.GetCurrentCheckpointPos();
         allowPlayerInput = true;
         //charController.warpToGrounded();
     }
@@ -110,7 +115,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameState.getState() != (int)GameState.State.Gameplay)
+        if(!GameState.compareState(GameState.State.InGame))
         {
             movementState = MovementState.Paralyzed;
         }
@@ -141,7 +146,7 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(attack(getAimVector(aimDirection)));
                     }
                 }
-                if (Input.GetKeyDown(LungeButton))
+                if (Input.GetKeyDown(lungeButton))
                 {
                     if (canAttack)
                     {
@@ -152,7 +157,7 @@ public class PlayerController : MonoBehaviour
                 }
 				break;  
 		case MovementState.Paralyzed:
-			if (playerDead && Input.GetKeyDown (jumpButton)) 
+			if (playerDead && Input.GetKeyDown (restartButton)) 
 			{
 				respawn ();
 			}
@@ -645,15 +650,18 @@ public class PlayerController : MonoBehaviour
             movementState = MovementState.Paralyzed;
         }
     }
-	private void respawn()
-	{
-		transform.position = respawnPos;
-		setHealth (1);
-		playerDead = false;
-		allowPlayerInput = true;
-		spriteRenderer.color = Color.yellow;
-		movementState = MovementState.Free;
-	}
+    private void respawn()
+    {
+        //	transform.position = respawnPos;
+        //	setHealth (1);
+        //	playerDead = false;
+        //	allowPlayerInput = true;
+        //	spriteRenderer.color = Color.yellow;
+        //	movementState = MovementState.Free;
+        Scene scene = SceneManager.GetActiveScene();
+
+        SceneManager.LoadScene(scene.name);
+    }
     public bool isDead()
     {
         return playerDead;

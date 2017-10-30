@@ -20,7 +20,13 @@ public class MainMenuController : MonoBehaviour {
 
     public GraphicColorLerp title;
 	void Start () {
-		
+        if (GameState.compareState(GameState.State.InGame))
+        {
+            skipToGame();
+        } else if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.MainMenu;
+        }
 	}
 	
 	// Update is called once per frame
@@ -72,27 +78,50 @@ public class MainMenuController : MonoBehaviour {
     }
     public void playButtonPress()
     {
-        GameState.setState(GameState.State.Gameplay);
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            GameState.setState(GameState.State.InGame);
+            menuState = MenuState.None;
+            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().setMovementState(1);
+
+            playButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            levelSelectButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            creditsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+
+            playButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
+            levelSelectButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
+            creditsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
+            quitButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
+            title.startColorChange();
+
+            eventSystem.SetSelectedGameObject(null);
+            if (!debug)
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+    }
+    private void skipToGame()
+    {
+        GameState.setState(GameState.State.InGame);
         menuState = MenuState.None;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().setMovementState(1);
-
-        playButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-        levelSelectButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-        creditsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-        quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-
-        playButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
-        levelSelectButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
-        creditsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
-        quitButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
-        title.startColorChange();
-
+        playButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
+        levelSelectButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
+        creditsButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
+        quitButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
+        title.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         eventSystem.SetSelectedGameObject(null);
+
         if (!debug)
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
+
+
     }
     public void levelSelectButtonPress()
     {
@@ -104,6 +133,9 @@ public class MainMenuController : MonoBehaviour {
     }
     public void quitButtonPress()
     {
-        Application.Quit();
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            Application.Quit();
+        }
     }
 }
