@@ -97,12 +97,20 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded;
 
 	private Vector3 respawnPos;
+    private bool isMoving = false;                                  //actually requires movement.  running into a wall will not cause this to be true;
+
+    private AudioSource source;
+    public AudioSource soundEffectPlayer;
+    public AudioClip attackSound;
+    public AudioClip dashSound;
+    public AudioClip lungeSound;
 
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        source = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -131,18 +139,35 @@ public class PlayerController : MonoBehaviour
                         jump();
                     }
                 }
+                if (isMoving && isGrounded())
+                {
+                    if (!source.isPlaying)
+                    {
+
+                        source.Play();
+                        source.loop = true;
+                    }
+                }
+                else
+                {
+                    source.Stop();
+                }
                 if (Input.GetKeyDown(downButton))
                 {
                     attemptDropThroughPlatform();
                 }
                 if (Input.GetKeyDown(dashButton) && canDash)
                 {
+                    source.Stop();
+
                     dash(facingDirection);
                 }
                 if (Input.GetKeyDown(attackButton))
                 {
                     if (canAttack)
                     {
+                        source.Stop();
+
                         StartCoroutine(attack(getAimVector(aimDirection)));
                     }
                 }
@@ -150,12 +175,16 @@ public class PlayerController : MonoBehaviour
                 {
                     if (canAttack)
                     {
+                        source.Stop();
+
                         aimDirection = getAimDirection();
                         dashDirection = aimDirection;
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
-				break;  
+                
+                
+                break;  
 		case MovementState.Paralyzed:
 			if (playerDead && Input.GetKeyDown (restartButton)) 
 			{
@@ -170,16 +199,22 @@ public class PlayerController : MonoBehaviour
         updatePosition();
         updateDirections();
         
-
+        
 
     }
     private void moveHorizontal(float xV)
     {
+        isMoving = true;
         Vector3 position = transform.position;
         charController.move(new Vector2(xV, 0));
         if (xV != 0 && Vector3.Distance(position, transform.position) < 0.0005f)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
         {
             xVelocity = 0;
+            isMoving = false;
+        }
+        if(Mathf.Abs(xV) < 0.000005f)
+        {
+            isMoving = false;
         }
     }
     private void moveVertical(float yV)
@@ -563,6 +598,7 @@ public class PlayerController : MonoBehaviour
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg*Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
           spriteRenderer.color = Color.red;                                                   //active frames: red
+        soundEffectPlayer.PlayOneShot(attackSound);
         yield return new WaitForSeconds(attackDuration);        
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
         if (dashCooldownTimer <= 0)
@@ -585,6 +621,8 @@ public class PlayerController : MonoBehaviour
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg * Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
         spriteRenderer.color = Color.red;
+        soundEffectPlayer.PlayOneShot(attackSound);
+
         yield return new WaitForSeconds(attackDuration);
         spriteRenderer.color = Color.gray;
         lungeAttacking = false;
@@ -608,6 +646,8 @@ public class PlayerController : MonoBehaviour
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
+        soundEffectPlayer.PlayOneShot(dashSound);
+
     }
     private void dash(Direction direction)
     {
@@ -619,6 +659,8 @@ public class PlayerController : MonoBehaviour
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
+        soundEffectPlayer.PlayOneShot(dashSound);
+
     }
     private void lungeDash(Vector3 direction)
     {
@@ -630,7 +672,8 @@ public class PlayerController : MonoBehaviour
         movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * dashMaxVelocity;
         yVelocity = forcedMoveVector.y * dashMaxVelocity;
-      
+        soundEffectPlayer.PlayOneShot(lungeSound);
+
     }
     public void damagePlayer(int dmg)
     {
@@ -652,12 +695,7 @@ public class PlayerController : MonoBehaviour
     }
     private void respawn()
     {
-        //	transform.position = respawnPos;
-        //	setHealth (1);
-        //	playerDead = false;
-        //	allowPlayerInput = true;
-        //	spriteRenderer.color = Color.yellow;
-        //	movementState = MovementState.Free;
+
         Scene scene = SceneManager.GetActiveScene();
 
         SceneManager.LoadScene(scene.name);
