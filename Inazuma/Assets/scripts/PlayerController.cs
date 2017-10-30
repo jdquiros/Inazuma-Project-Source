@@ -150,7 +150,13 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
-                break;
+				break;  
+		case MovementState.Paralyzed:
+			if (playerDead && Input.GetKeyDown (jumpButton)) 
+			{
+				respawn ();
+			}
+				break;
         }
         wasGrounded = isGrounded();
         updateDashing();
@@ -639,6 +645,15 @@ public class PlayerController : MonoBehaviour
             movementState = MovementState.Paralyzed;
         }
     }
+	private void respawn()
+	{
+		transform.position = respawnPos;
+		setHealth (1);
+		playerDead = false;
+		allowPlayerInput = true;
+		spriteRenderer.color = Color.yellow;
+		movementState = MovementState.Free;
+	}
     public bool isDead()
     {
         return playerDead;
