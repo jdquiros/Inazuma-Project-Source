@@ -93,6 +93,8 @@ public class PlayerController : MonoBehaviour
 
     private bool wasGrounded;
 
+	private Vector3 respawnPos;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -530,7 +532,11 @@ public class PlayerController : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("hazardLayer"))
+		if (collision.gameObject.tag == "Checkpoint")
+		{
+			respawnPos = Checkpoint.GetCurrentCheckpointPos ();
+		}
+   		else if(collision.gameObject.layer == LayerMask.NameToLayer("triggerLayer")) 
         {
             damagePlayer(1000000000);       //definitely kill the player
         }
