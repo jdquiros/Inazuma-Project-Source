@@ -2405,6 +2405,7 @@ GameObject:
   - component: {fileID: 537400975}
   - component: {fileID: 537400974}
   - component: {fileID: 537400978}
+  - component: {fileID: 537400979}
   m_Layer: 5
   m_Name: MainMenuCanvas
   m_TagString: Untagged
@@ -2509,6 +2510,86 @@ MonoBehaviour:
   creditsButton: {fileID: 2120007407}
   quitButton: {fileID: 1861213561}
   title: {fileID: 463070699}
+--- !u!82 &537400979
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 537400973}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &551660601
 GameObject:
   m_ObjectHideFlags: 0
@@ -3077,6 +3158,7 @@ GameObject:
   - component: {fileID: 988924648}
   - component: {fileID: 988924647}
   - component: {fileID: 988924649}
+  - component: {fileID: 988924650}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -3208,7 +3290,7 @@ MonoBehaviour:
   graphicRenderer: {fileID: 988924645}
   startColor: {r: 0.059, g: 0, b: 0, a: 1}
   endColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  transitionTime: 0.4
+  transitionTime: 0.25
   initialDelay: 0
   timer: 0
   stopped: 0
@@ -3228,6 +3310,37 @@ MonoBehaviour:
   endColor: {r: 0, g: 0, b: 0, a: 0}
   duration: 0.5
   initialDelay: 0
+--- !u!114 &988924650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 988924643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 537400978}
+          m_MethodName: playSoundOnNavigation
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: 060e23d498c326448bb79a4cfbf93d5b,
+              type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1280318604
 GameObject:
   m_ObjectHideFlags: 0
@@ -3241,6 +3354,7 @@ GameObject:
   - component: {fileID: 1280318608}
   - component: {fileID: 1280318609}
   - component: {fileID: 1280318610}
+  - component: {fileID: 1280318611}
   m_Layer: 5
   m_Name: LevelSelectButton
   m_TagString: Untagged
@@ -3320,7 +3434,7 @@ MonoBehaviour:
   graphicRenderer: {fileID: 1280318606}
   startColor: {r: 0.059, g: 0, b: 0, a: 1}
   endColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  transitionTime: 0.4
+  transitionTime: 0.25
   initialDelay: 0
   timer: 0
   stopped: 0
@@ -3392,6 +3506,37 @@ MonoBehaviour:
   endColor: {r: 0, g: 0, b: 0, a: 0}
   duration: 0.5
   initialDelay: 0
+--- !u!114 &1280318611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1280318604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 537400978}
+          m_MethodName: playSoundOnNavigation
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: 060e23d498c326448bb79a4cfbf93d5b,
+              type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1348955337
 GameObject:
   m_ObjectHideFlags: 0
@@ -74328,6 +74473,7 @@ GameObject:
   - component: {fileID: 1861213558}
   - component: {fileID: 1861213561}
   - component: {fileID: 1861213562}
+  - component: {fileID: 1861213563}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -74368,7 +74514,7 @@ MonoBehaviour:
   graphicRenderer: {fileID: 1861213559}
   startColor: {r: 0.059, g: 0, b: 0, a: 1}
   endColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  transitionTime: 0.4
+  transitionTime: 0.25
   initialDelay: 0
   timer: 0
   stopped: 0
@@ -74479,6 +74625,37 @@ MonoBehaviour:
   endColor: {r: 0, g: 0, b: 0, a: 0}
   duration: 0.5
   initialDelay: 0
+--- !u!114 &1861213563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1861213556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 537400978}
+          m_MethodName: playSoundOnNavigation
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: 060e23d498c326448bb79a4cfbf93d5b,
+              type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1935916243
 GameObject:
   m_ObjectHideFlags: 0
@@ -74667,6 +74844,7 @@ GameObject:
   - component: {fileID: 2120007406}
   - component: {fileID: 2120007407}
   - component: {fileID: 2120007408}
+  - component: {fileID: 2120007409}
   m_Layer: 5
   m_Name: CreditsButton
   m_TagString: Untagged
@@ -74746,7 +74924,7 @@ MonoBehaviour:
   graphicRenderer: {fileID: 2120007404}
   startColor: {r: 0.059, g: 0, b: 0, a: 1}
   endColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  transitionTime: 0.4
+  transitionTime: 0.25
   initialDelay: 0
   timer: 0
   stopped: 0
@@ -74818,6 +74996,37 @@ MonoBehaviour:
   endColor: {r: 0, g: 0, b: 0, a: 0}
   duration: 0.5
   initialDelay: 0
+--- !u!114 &2120007409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2120007402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 537400978}
+          m_MethodName: playSoundOnNavigation
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: 060e23d498c326448bb79a4cfbf93d5b,
+              type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!4 &2132462991 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4817497595355158, guid: 1d8b72e3ccb2ffe4cb2eba0d3e2e6fba,

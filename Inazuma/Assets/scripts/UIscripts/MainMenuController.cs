@@ -19,7 +19,12 @@ public class MainMenuController : MonoBehaviour {
     public Button quitButton;
 
     public GraphicColorLerp title;
-	void Start () {
+    private AudioSource source;
+    private void Awake()
+    {
+        source = GetComponent<AudioSource>();
+    }
+    void Start () {
         if (GameState.compareState(GameState.State.InGame))
         {
             skipToGame();
@@ -136,6 +141,14 @@ public class MainMenuController : MonoBehaviour {
         if (GameState.compareState(GameState.State.MainMenu))
         {
             Application.Quit();
+        }
+    }
+    public void playSoundOnNavigation(AudioClip clip)
+    {
+        if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
+        {
+            source.PlayOneShot(clip);
         }
     }
 }
