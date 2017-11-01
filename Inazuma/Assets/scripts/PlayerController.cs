@@ -112,6 +112,9 @@ public class PlayerController : MonoBehaviour
     public AudioClip dashSound;
     public AudioClip lungeSound;
 
+    private IEnumerator fadeSound;
+    public float footstepSoundFadeDuration = 0f;
+    private bool stopStepping = false;
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -124,6 +127,7 @@ public class PlayerController : MonoBehaviour
         print(Checkpoint.GetCurrentCheckpointPos());
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         allowPlayerInput = true;
+        fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
         //charController.warpToGrounded();
     }
 
@@ -150,14 +154,17 @@ public class PlayerController : MonoBehaviour
                 {
                     if (!source.isPlaying)
                     {
-
+                        source.volume = 1;
                         source.Play();
                         source.loop = true;
+                        stopStepping = false;
                     }
                 }
                 else
                 {
-                    source.Stop();
+                    fadeFootsteps();
+                    stopStepping = true;
+
                 }
                 if (Input.GetKeyDown(downButton))
                 {
@@ -714,5 +721,31 @@ public class PlayerController : MonoBehaviour
     public void setMovementState(int x)
     {
         movementState = (MovementState)x;
+    }
+    public void fadeFootsteps()
+    {
+        if (stopStepping == false)
+        {
+            StopCoroutine(fadeSound);
+            fadeSound = fadeAndStop(footstepSoundFadeDuration, source);
+            StartCoroutine(fadeSound);
+        }
+    }
+    private void startUniqueCoroutine(IEnumerator func, ref IEnumerator funcVariable)
+    {
+        StopCoroutine(funcVariable);
+        funcVariable = func;
+        StartCoroutine(funcVariable);
+    }
+    public IEnumerator fadeAndStop(float duration, AudioSource audioSource)
+    {
+        float timer = duration;
+        while(timer > 0)
+        {
+            timer -= Time.deltaTime;
+            audioSource.volume = timer / duration/2f;
+            yield return null;
+        }
+        audioSource.Stop();
     }
 }
