@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
                     {
                         source.Stop();
 
-                        aimDirection = getAimDirection();
+                        aimDirection = calculateAimDirection();
                         dashDirection = aimDirection;
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
@@ -513,11 +513,11 @@ public class PlayerController : MonoBehaviour
                 else if (Input.GetKey(leftButton))
                     facingDirection = Direction.Left;
             }
-            aimDirection = getAimDirection();
+            aimDirection = calculateAimDirection();
         }
 
     }
-    private Direction getAimDirection()
+    private Direction calculateAimDirection()
     {
         if (Input.GetKey(leftButton) && Input.GetKey(upButton) && Input.GetKey(rightButton))
             return Direction.Up;
@@ -747,5 +747,13 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         audioSource.Stop();
+    }
+    public int getFacingDirection()
+    {
+        return (int)facingDirection;
+    }
+    public int getAimDirectin()
+    {
+        return (int)aimDirection;
     }
 }
