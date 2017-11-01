@@ -214,7 +214,8 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
-                if ((Input.GetKey(upButton) || Input.GetKey(downButton)) && movementState == MovementState.Free && inLadder && ladderGrabTimer <= 0)
+                if ((((Input.GetKeyDown(upButton) || Input.GetKeyDown(downButton)) && isGrounded())
+                    ||((Input.GetKey(upButton) || Input.GetKey(downButton)) && ladderGrabTimer <= 0)) && movementState == MovementState.Free && inLadder )
                 {
                     movementState = MovementState.onLadder;
                     transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
@@ -246,6 +247,7 @@ public class PlayerController : MonoBehaviour
                 canJump = true;
                 restrictYVelocityTimer = 0;
                 preventCooldown = false;
+                source.Stop();
                 break;
 
         }
@@ -565,10 +567,10 @@ public class PlayerController : MonoBehaviour
         } else if (Input.GetKey(downButton))
         {
             //climb down
-            if (isGrounded() && ladderGrabTimer < ladderGrabCooldown-Time.deltaTime*2)
+            if (isGrounded())
             {
                 movementState = MovementState.Free;
-                ladderGrabTimer = ladderGrabCooldown;
+                ladderGrabTimer = ladderGrabCooldown/2;
                 spriteRenderer.color = Color.yellow;
                 yVelocity = 0;
             }
