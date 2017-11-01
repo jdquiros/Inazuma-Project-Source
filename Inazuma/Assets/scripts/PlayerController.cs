@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
     [HideInInspector]
     public bool isDashing = false;
+    private bool preventCooldown = false;
 
     public float lungeDuration = 0f;             //duration of dash
     public float lungeAcceleration = 0f;         //acceleration of dash
@@ -149,6 +150,7 @@ public class PlayerController : MonoBehaviour
         {
             canJump = true;
             restrictYVelocityTimer = 0;
+            preventCooldown = false;
         }
         switch (movementState) {
             case MovementState.Free:
@@ -498,7 +500,7 @@ public class PlayerController : MonoBehaviour
                     {
                         dashCooldownTimer -= Time.deltaTime;
                     }
-                    else if(isGrounded())       //do not finish cooldown until you are grounded
+                    else if(!preventCooldown)       //do not finish cooldown until you are grounded
                     {
                         dashCooldownTimer = 0;
                         canDash = true;
@@ -697,6 +699,8 @@ public class PlayerController : MonoBehaviour
         xVelocity = 0;
         yVelocity = 0;
         soundEffectPlayer.PlayOneShot(dashSound);
+        if (!isGrounded())
+            preventCooldown = true;
 
     }
     private void dash(Direction direction)
@@ -710,7 +714,8 @@ public class PlayerController : MonoBehaviour
         xVelocity = 0;
         yVelocity = 0;
         soundEffectPlayer.PlayOneShot(dashSound);
-
+        if (!isGrounded())
+            preventCooldown = true;
     }
     private void lungeDash(Vector3 direction)
     {
@@ -723,7 +728,8 @@ public class PlayerController : MonoBehaviour
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
-        
+        if (!isGrounded())
+            preventCooldown = true;
     }
     public void damagePlayer(int dmg)
     {
