@@ -567,7 +567,6 @@ public class PlayerController : MonoBehaviour
             //climb down
             if (isGrounded() && ladderGrabTimer < ladderGrabCooldown-Time.deltaTime*2)
             {
-                print("GROUNDED OFF LADDER");
                 movementState = MovementState.Free;
                 ladderGrabTimer = ladderGrabCooldown;
                 spriteRenderer.color = Color.yellow;
@@ -583,7 +582,6 @@ public class PlayerController : MonoBehaviour
         
         if (!ladderBounds.Contains(transform.position))
         {
-            print("OUT OF LADDER BOUNDS");
             //if you go off top or bottom of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
