@@ -114,6 +114,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip attackSound;
     public AudioClip dashSound;
     public AudioClip lungeSound;
+    public AudioClip jumpSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -515,6 +516,7 @@ public class PlayerController : MonoBehaviour
             canJump = false;
             jumping = true;
             jumpApexTimer = jumpForce / gravity;
+            soundEffectPlayer.PlayOneShot(jumpSound);
         }
     }
     private void attemptDropThroughPlatform()

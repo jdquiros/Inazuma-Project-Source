@@ -223,6 +223,7 @@ MonoBehaviour:
   attackSound: {fileID: 8300000, guid: 7f791dc9db11c1b4095eb2c7f5414323, type: 3}
   dashSound: {fileID: 8300000, guid: 9aa81f27973c4a84aaf901b48e633ac5, type: 3}
   lungeSound: {fileID: 8300000, guid: db9f8276817830f4e826c994ba16b6f6, type: 3}
+  jumpSound: {fileID: 8300000, guid: 16f032a57f33cad45b7789992661041c, type: 3}
   footstepSoundFadeDuration: 0.25
 --- !u!50 &158371204
 Rigidbody2D:
@@ -343,7 +344,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: bc4c9a5dd1df69945865c090c0d222d8, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 82ace1fb680bf3345a25b62cee44f1df, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
