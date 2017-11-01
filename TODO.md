@@ -6,7 +6,7 @@
 - [ ] Attack animations
 - [ ] Credits screen
 - [ ] Level select screen
-- [ ] Better camera system
+- [x] Better camera system
 - [ ] Pause Menu (maybe)
 - [ ] Game UI (health, tips, etc)
 
