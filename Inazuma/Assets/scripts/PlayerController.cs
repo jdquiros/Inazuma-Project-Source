@@ -119,7 +119,8 @@ public class PlayerController : MonoBehaviour
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
     private bool stopStepping = false;
-
+    public float jumpInAirDuration;                                 //lets player jump for VERY short time after falling off a platform.  
+    private float jumpInAirTimer;
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -154,7 +155,7 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetKeyDown(jumpButton))
                 {
                     //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
-                    if (charController.isGrounded && !jumping && canJump)
+                    if ((charController.isGrounded  || jumpInAirTimer > 0) && !jumping && canJump)
                     {
                         jump();
                     }
@@ -205,7 +206,10 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
-                
+                if (jumpInAirTimer > 0)
+                    jumpInAirTimer -= Time.deltaTime;
+                else
+                    jumpInAirTimer = 0;
                 
                 break;  
 		case MovementState.Paralyzed:
@@ -254,6 +258,7 @@ public class PlayerController : MonoBehaviour
             {
                 yVelocity = 0;
                 transform.position = position;
+                jumpInAirTimer = jumpInAirDuration;
             }
         }
     }
@@ -517,6 +522,7 @@ public class PlayerController : MonoBehaviour
             jumping = true;
             jumpApexTimer = jumpForce / gravity;
             soundEffectPlayer.PlayOneShot(jumpSound);
+            jumpInAirTimer = 0;
         }
     }
     private void attemptDropThroughPlatform()
