@@ -127,6 +127,7 @@ public class PlayerController : MonoBehaviour
     private bool ladderIgnorePlatformDrop = false;
     public float ladderGrabCooldown;
     private float ladderGrabTimer = 0;
+    private bool inLadder = false;
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -213,6 +214,21 @@ public class PlayerController : MonoBehaviour
                         StartCoroutine(lungeAttack(getAimVector(aimDirection)));
                     }
                 }
+                if ((Input.GetKey(upButton) || Input.GetKey(downButton)) && movementState == MovementState.Free && inLadder && ladderGrabTimer <= 0)
+                {
+                    movementState = MovementState.onLadder;
+                    transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
+                    
+                    charController.ignoreOneWayPlatformsThisFrame = true;
+                    if (Input.GetKey(downButton))
+                    {
+                        //transform.position += Vector3.down * .1f;
+                        attemptDropThroughPlatform();
+                    }
+                    xVelocity = 0;
+
+
+                }
                 if (jumpInAirTimer > 0)
                     jumpInAirTimer -= Time.deltaTime;
                 else
@@ -227,6 +243,9 @@ public class PlayerController : MonoBehaviour
 		        break;
             case MovementState.onLadder:
                 updateLadderMovement();
+                canJump = true;
+                restrictYVelocityTimer = 0;
+                preventCooldown = false;
                 break;
 
         }
@@ -546,8 +565,9 @@ public class PlayerController : MonoBehaviour
         } else if (Input.GetKey(downButton))
         {
             //climb down
-            if (isGrounded())
+            if (isGrounded() && ladderGrabTimer < ladderGrabCooldown-Time.deltaTime*2)
             {
+                print("GROUNDED OFF LADDER");
                 movementState = MovementState.Free;
                 ladderGrabTimer = ladderGrabCooldown;
                 spriteRenderer.color = Color.yellow;
@@ -563,6 +583,7 @@ public class PlayerController : MonoBehaviour
         
         if (!ladderBounds.Contains(transform.position))
         {
+            print("OUT OF LADDER BOUNDS");
             //if you go off top or bottom of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
@@ -695,24 +716,26 @@ public class PlayerController : MonoBehaviour
    		else if(collision.gameObject.CompareTag("Spike")) 
         {
             damagePlayer(1000000000);       //definitely kill the player
+        } 
+        else if (collision.gameObject.CompareTag("Ladder"))
+        {
+            inLadder = true;
+            ladderBounds = collision.bounds;
+            ladderBounds.center = new Vector3(ladderBounds.center.x, ladderBounds.center.y, transform.position.z);      //put bounds on same z position as player transform
         }
+        
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
         
-        if((Input.GetKey(upButton) || Input.GetKey(downButton)) && movementState == MovementState.Free && collision.gameObject.CompareTag("Ladder") && ladderGrabTimer <= 0)
+        
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ladder"))
         {
-            movementState = MovementState.onLadder;
-            transform.position = new Vector3(collision.transform.position.x,transform.position.y,transform.position.z);
-            ladderBounds = collision.bounds;
-            ladderBounds.center = new Vector3(ladderBounds.center.x, ladderBounds.center.y, transform.position.z);      //put bounds on same z position as player transform
-            charController.ignoreOneWayPlatformsThisFrame = true;
-            if (Input.GetKey(downButton))
-            {
-                transform.position += Vector3.down * .1f;
-            }
+            inLadder = false;
             
-
         }
     }
     private IEnumerator attack(Vector3 aimVector)
