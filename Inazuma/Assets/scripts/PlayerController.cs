@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge
+        Paralyzed, Free, Dash, Lunge, onLadder
     }
     public MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
@@ -122,6 +122,11 @@ public class PlayerController : MonoBehaviour
     private bool stopStepping = false;
     public float jumpInAirDuration;                                 //lets player jump for VERY short time after falling off a platform.  
     private float jumpInAirTimer;
+    public float ladderClimbSpeed;
+    private Bounds ladderBounds;
+    private bool ladderIgnorePlatformDrop = false;
+    public float ladderGrabCooldown;
+    private float ladderGrabTimer = 0;
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -214,13 +219,22 @@ public class PlayerController : MonoBehaviour
                     jumpInAirTimer = 0;
                 
                 break;  
-		case MovementState.Paralyzed:
-			if (playerDead && Input.GetKeyDown (restartButton)) 
-			{
-				respawn ();
-			}
-				break;
+		    case MovementState.Paralyzed:
+			    if (playerDead && Input.GetKeyDown (restartButton)) 
+			    {
+				    respawn ();
+			    }
+		        break;
+            case MovementState.onLadder:
+                updateLadderMovement();
+                break;
+
         }
+        if (ladderGrabTimer > 0)
+        {
+            ladderGrabTimer -= Time.deltaTime;
+        } 
+        
         wasGrounded = isGrounded();
         updateDashing();
         updateHorizontalVelocity();
@@ -512,9 +526,53 @@ public class PlayerController : MonoBehaviour
         }
     
     }
+    private void updateLadderMovement()
+    {
+        charController.ignoreOneWayPlatformsThisFrame = true;
+        xVelocity = 0;
+        spriteRenderer.color = Color.green;
+        transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
+        if (Input.GetKeyDown(jumpButton))
+        {
+            //jump off of ladder
+            movementState = MovementState.Free;
+            ladderGrabTimer = ladderGrabCooldown;
+            spriteRenderer.color = Color.yellow;
+            jump();
+        } else if (Input.GetKey(upButton))
+        {
+            //climb up
+            yVelocity = ladderClimbSpeed;
+        } else if (Input.GetKey(downButton))
+        {
+            //climb down
+            if (isGrounded())
+            {
+                movementState = MovementState.Free;
+                ladderGrabTimer = ladderGrabCooldown;
+                spriteRenderer.color = Color.yellow;
+                yVelocity = 0;
+            }
+            else
+                yVelocity = -ladderClimbSpeed;
 
+        } else
+        {
+            yVelocity = 0;
+        }
         
-    
+        if (!ladderBounds.Contains(transform.position))
+        {
+            //if you go off top or bottom of ladder
+            movementState = MovementState.Free;
+            ladderGrabTimer = ladderGrabCooldown;
+            spriteRenderer.color = Color.yellow;
+            yVelocity = 0;
+        }
+        
+    }
+
+
     private void jump()
     {
         if (movementState == MovementState.Free)
@@ -529,7 +587,7 @@ public class PlayerController : MonoBehaviour
     }
     private void attemptDropThroughPlatform()
     {
-        if (movementState == MovementState.Free && isGrounded())
+        if (movementState == MovementState.onLadder || (movementState == MovementState.Free && isGrounded()))
         {
             yVelocity = 0;
             charController.ignoreOneWayPlatformsThisFrame = true;
@@ -630,13 +688,31 @@ public class PlayerController : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-		if (collision.gameObject.tag == "Checkpoint")
+		if (collision.gameObject.CompareTag("Checkpoint"))
 		{
 			respawnPos = Checkpoint.GetCurrentCheckpointPos ();
 		}
-   		else if(collision.gameObject.layer == LayerMask.NameToLayer("triggerLayer")) 
+   		else if(collision.gameObject.CompareTag("Spike")) 
         {
             damagePlayer(1000000000);       //definitely kill the player
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        
+        if((Input.GetKey(upButton) || Input.GetKey(downButton)) && movementState == MovementState.Free && collision.gameObject.CompareTag("Ladder") && ladderGrabTimer <= 0)
+        {
+            movementState = MovementState.onLadder;
+            transform.position = new Vector3(collision.transform.position.x,transform.position.y,transform.position.z);
+            ladderBounds = collision.bounds;
+            ladderBounds.center = new Vector3(ladderBounds.center.x, ladderBounds.center.y, transform.position.z);      //put bounds on same z position as player transform
+            charController.ignoreOneWayPlatformsThisFrame = true;
+            if (Input.GetKey(downButton))
+            {
+                transform.position += Vector3.down * .1f;
+            }
+            
+
         }
     }
     private IEnumerator attack(Vector3 aimVector)

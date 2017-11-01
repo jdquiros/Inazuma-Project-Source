@@ -400,6 +400,8 @@ MonoBehaviour:
   jumpSound: {fileID: 8300000, guid: 16f032a57f33cad45b7789992661041c, type: 3}
   footstepSoundFadeDuration: 0.25
   jumpInAirDuration: 0.04
+  ladderClimbSpeed: 6
+  ladderGrabCooldown: 0.5
 --- !u!114 &114890125803006234
 MonoBehaviour:
   m_ObjectHideFlags: 1
