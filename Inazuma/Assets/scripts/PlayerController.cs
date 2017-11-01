@@ -74,7 +74,9 @@ public class PlayerController : MonoBehaviour
     public float lungeAcceleration = 0f;         //acceleration of dash
     public float lungeMaxVelocity = 0f;          //maximum velocity during dash
     public float lungeCooldown = 0f;             //cooldown between dashes
-
+    public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
+    public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
+    private bool lungeRestrictYVel = false;
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -115,6 +117,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
     private bool stopStepping = false;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -139,7 +142,10 @@ public class PlayerController : MonoBehaviour
             movementState = MovementState.Paralyzed;
         }
         if (charController.isGrounded)
+        {
             canJump = true;
+            lungeRestrictYVel = true;
+        }
         switch (movementState) {
             case MovementState.Free:
                 if (Input.GetKeyDown(jumpButton))
@@ -687,6 +693,7 @@ public class PlayerController : MonoBehaviour
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
+        lungeRestrictYVel = true;
 
     }
     public void damagePlayer(int dmg)
@@ -755,5 +762,9 @@ public class PlayerController : MonoBehaviour
     public int getAimDirectin()
     {
         return (int)aimDirection;
+    }
+    public Vector2 getVelocity()
+    {
+        return new Vector2(xVelocity, yVelocity);
     }
 }
