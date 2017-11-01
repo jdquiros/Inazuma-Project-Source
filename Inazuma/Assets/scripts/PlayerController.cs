@@ -76,7 +76,8 @@ public class PlayerController : MonoBehaviour
     public float lungeCooldown = 0f;             //cooldown between dashes
     public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
     public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
-    private bool lungeRestrictYVel = false;
+    private float restrictYVelocityTimer = 0;
+    private float defaultMaxVerticalVelocity;
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -131,6 +132,7 @@ public class PlayerController : MonoBehaviour
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
+        defaultMaxVerticalVelocity = maxVerticalVelocity;
         //charController.warpToGrounded();
     }
 
@@ -144,7 +146,7 @@ public class PlayerController : MonoBehaviour
         if (charController.isGrounded)
         {
             canJump = true;
-            lungeRestrictYVel = true;
+            restrictYVelocityTimer = 0;
         }
         switch (movementState) {
             case MovementState.Free:
@@ -403,7 +405,25 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    yVelocity = Mathf.Clamp(yVelocity + yVelToAdd, -maxVerticalVelocity, maxVerticalVelocity);
+                    if(restrictYVelocityTimer > 0)
+                    {
+                        restrictYVelocityTimer -= Time.deltaTime;
+
+                    } else
+                    {
+                        maxVerticalVelocity = defaultMaxVerticalVelocity;
+                    }
+                    yVelocity += yVelToAdd;
+                    if (yVelocity > maxVerticalVelocity)           //gradually decrease speed to max speed
+                    {
+                        yVelocity += -velocityRestrictionRate * Time.deltaTime;
+                        yVelocity = Mathf.Max(yVelocity, maxVerticalVelocity);
+                    }
+                    else if (yVelocity < (-maxVerticalVelocity))
+                    {
+                        yVelocity += velocityRestrictionRate * Time.deltaTime;
+                        yVelocity = Mathf.Min(yVelocity, -maxVerticalVelocity);
+                    }
                 }
                 break;
             case (MovementState.Dash):
@@ -461,6 +481,8 @@ public class PlayerController : MonoBehaviour
                     isDashing = false;
                     spriteRenderer.color = Color.yellow;
                     movementState = MovementState.Free;
+                    restrictYVelocityTimer = restrictYVelocityDuration;
+                    maxVerticalVelocity = lungeYVelocityRestriction;
                 }
                 break;
             case (MovementState.Free):
@@ -693,8 +715,7 @@ public class PlayerController : MonoBehaviour
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
-        lungeRestrictYVel = true;
-
+        
     }
     public void damagePlayer(int dmg)
     {

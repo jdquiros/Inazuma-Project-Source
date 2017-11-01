@@ -215,6 +215,8 @@ MonoBehaviour:
   lungeAcceleration: 130
   lungeMaxVelocity: 17
   lungeCooldown: 0.5
+  lungeYVelocityRestriction: 8
+  restrictYVelocityDuration: 0.2
   velocityRestrictionRate: 500
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 987941450}
