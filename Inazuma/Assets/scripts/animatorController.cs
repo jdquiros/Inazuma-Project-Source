@@ -16,12 +16,14 @@ public class animatorController : MonoBehaviour {
 	void Start () {
 		theScale = transform.localScale;
 	}
-	
+
 	void FixedUpdate () {
-		float speed = playerController.getVelocity ().x;
+		float xVel = playerController.getVelocity ().x;
+		float yVel = playerController.getVelocity ().y;
 		int facing = playerController.getFacingDirection ();
 
-		anim.SetFloat ("Speed", Mathf.Abs (speed));
+		anim.SetFloat ("xVel", Mathf.Abs (xVel));
+		anim.SetFloat ("yVel", yVel);
 	
 		//int facing -> 4 == left, 0 == right
 		if (facing == 0) {
