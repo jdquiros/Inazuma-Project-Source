@@ -385,9 +385,9 @@ MonoBehaviour:
   dashMaxVelocity: 17
   dashCooldown: 0.5
   isDashing: 0
-  lungeDuration: 0.38
-  lungeAcceleration: 130
-  lungeMaxVelocity: 17
+  lungeDuration: 0.08
+  lungeAcceleration: 5
+  lungeMaxVelocity: 50
   lungeCooldown: 0.5
   lungeYVelocityRestriction: 8
   restrictYVelocityDuration: 0.2
@@ -402,6 +402,7 @@ MonoBehaviour:
   jumpInAirDuration: 0.04
   ladderClimbSpeed: 6
   ladderGrabCooldown: 0.5
+  attacksEndDashes: 1
 --- !u!114 &114890125803006234
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -128,6 +128,8 @@ public class PlayerController : MonoBehaviour
     public float ladderGrabCooldown;
     private float ladderGrabTimer = 0;
     private bool inLadder = false;
+
+    public bool attacksEndDashes = false;
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -194,26 +196,7 @@ public class PlayerController : MonoBehaviour
 
                     dash(facingDirection);
                 }
-                if (Input.GetKeyDown(attackButton))
-                {
-                    if (canAttack)
-                    {
-                        source.Stop();
-
-                        StartCoroutine(attack(getAimVector(aimDirection)));
-                    }
-                }
-                if (Input.GetKeyDown(lungeButton))
-                {
-                    if (canAttack)
-                    {
-                        source.Stop();
-
-                        aimDirection = calculateAimDirection();
-                        dashDirection = aimDirection;
-                        StartCoroutine(lungeAttack(getAimVector(aimDirection)));
-                    }
-                }
+                checkForAttackInput();
                 if ((((Input.GetKeyDown(upButton) || Input.GetKeyDown(downButton)) && isGrounded())
                     ||((Input.GetKey(upButton) || Input.GetKey(downButton)) && ladderGrabTimer <= 0)) && movementState == MovementState.Free && inLadder )
                 {
@@ -223,7 +206,6 @@ public class PlayerController : MonoBehaviour
                     charController.ignoreOneWayPlatformsThisFrame = true;
                     if (Input.GetKey(downButton))
                     {
-                        //transform.position += Vector3.down * .1f;
                         attemptDropThroughPlatform();
                     }
                     xVelocity = 0;
@@ -249,7 +231,12 @@ public class PlayerController : MonoBehaviour
                 preventCooldown = false;
                 source.Stop();
                 break;
-
+            case MovementState.Dash:
+                checkForAttackInput();
+                break;
+            case MovementState.Lunge:
+                checkForAttackInput();
+                break;
         }
         if (ladderGrabTimer > 0)
         {
@@ -265,6 +252,40 @@ public class PlayerController : MonoBehaviour
         
         
 
+    }
+    private void checkForAttackInput()
+    {
+        
+        if (Input.GetKeyDown(attackButton))
+        {
+            if (canAttack)
+            {
+                source.Stop();
+
+                StartCoroutine(attack(getAimVector(aimDirection)));
+                if (attacksEndDashes)
+                {
+                    dashTimer = 0;
+                }
+            }
+            print(dashTimer);
+
+        }
+        if (Input.GetKeyDown(lungeButton))
+        {
+            if (canAttack)
+            {
+                source.Stop();
+
+                aimDirection = calculateAimDirection();
+                dashDirection = aimDirection;
+                StartCoroutine(lungeAttack(getAimVector(aimDirection)));
+                if (attacksEndDashes)
+                {
+                    dashTimer = 0;
+                }
+            }
+        }
     }
     private void moveHorizontal(float xV)
     {
@@ -621,7 +642,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (movementState == MovementState.Free)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free || movementState == MovementState.onLadder)                             //you cannot change your facing direction while dashing
         {
             if (!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
             {
@@ -630,8 +651,9 @@ public class PlayerController : MonoBehaviour
                 else if (Input.GetKey(leftButton))
                     facingDirection = Direction.Left;
             }
-            aimDirection = calculateAimDirection();
         }
+        aimDirection = calculateAimDirection();
+        
 
     }
     private Direction calculateAimDirection()
@@ -793,7 +815,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -808,7 +830,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -822,7 +844,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = lungeDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
