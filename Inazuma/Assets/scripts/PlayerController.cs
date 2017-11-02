@@ -112,10 +112,13 @@ public class PlayerController : MonoBehaviour
 
     private AudioSource source;
     public AudioSource soundEffectPlayer;
+
     public AudioClip attackSound;
     public AudioClip dashSound;
     public AudioClip lungeSound;
     public AudioClip jumpSound;
+    public AudioClip footstepSound;
+    public AudioClip climbSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -172,6 +175,7 @@ public class PlayerController : MonoBehaviour
                 }
                 if (isMoving && isGrounded())
                 {
+                    source.clip = footstepSound;
                     if (!source.isPlaying)
                     {
                         source.volume = 1;
@@ -229,7 +233,6 @@ public class PlayerController : MonoBehaviour
                 canJump = true;
                 restrictYVelocityTimer = 0;
                 preventCooldown = false;
-                source.Stop();
                 break;
             case MovementState.Dash:
                 checkForAttackInput();
@@ -268,7 +271,6 @@ public class PlayerController : MonoBehaviour
                     dashTimer = 0;
                 }
             }
-            print(dashTimer);
 
         }
         if (Input.GetKeyDown(lungeButton))
@@ -574,6 +576,7 @@ public class PlayerController : MonoBehaviour
         xVelocity = 0;
         spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
+        source.clip = climbSound;
         if (Input.GetKeyDown(jumpButton))
         {
             //jump off of ladder
@@ -584,6 +587,14 @@ public class PlayerController : MonoBehaviour
         } else if (Input.GetKey(upButton))
         {
             //climb up
+            if (!source.isPlaying)
+            {
+                source.clip = climbSound;
+                source.volume = 1;
+                source.Play();
+                source.loop = true;
+                stopStepping = false;
+            }
             yVelocity = ladderClimbSpeed;
         } else if (Input.GetKey(downButton))
         {
@@ -591,16 +602,28 @@ public class PlayerController : MonoBehaviour
             if (isGrounded())
             {
                 movementState = MovementState.Free;
-                ladderGrabTimer = ladderGrabCooldown/2;
+                ladderGrabTimer = ladderGrabCooldown / 2;
                 spriteRenderer.color = Color.yellow;
                 yVelocity = 0;
             }
             else
+            {
                 yVelocity = -ladderClimbSpeed;
+                if (!source.isPlaying)
+                {
+                    source.clip = climbSound;
+                    source.volume = 1;
+                    source.Play();
+                    source.loop = true;
+                    stopStepping = false;
+                }
+            }
 
         } else
         {
             yVelocity = 0;
+            fadeFootsteps();
+            stopStepping = true;
         }
         
         if (!ladderBounds.Contains(transform.position))
