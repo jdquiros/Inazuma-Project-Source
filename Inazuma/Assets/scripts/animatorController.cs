@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class animatorController : MonoBehaviour {
 
-	PlayerController playerController;
-	Animator anim;
-	Vector3 theScale;
+	private PlayerController playerController;
+	private Animator anim;
+	private Vector3 theScale;
 
 	private void Awake() {
 		playerController = GetComponentInParent<PlayerController> ();
