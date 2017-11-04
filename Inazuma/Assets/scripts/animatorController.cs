@@ -25,7 +25,11 @@ public class animatorController : MonoBehaviour {
 		anim.SetFloat ("xVel", Mathf.Abs (xVel));
 		anim.SetFloat ("yVel", yVel);
 	
-		//int facing -> 4 == left, 0 == right
+		//if (playerController....attacking())
+		//anim.SetBool("attacking", true);
+		//...
+
+		//int facing: 4 == left, 0 == right
 		if (facing == 0) {
 			transform.localScale = new Vector3 (theScale.x, transform.localScale.y, transform.localScale.z);
 		} else {
