@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge, OnLadder, HitStun
+        Paralyzed, Free, Dash, Lunge, OnLadder, Hover
     }
     public MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
@@ -75,10 +75,13 @@ public class PlayerController : MonoBehaviour
     public float lungeAcceleration = 0f;         //acceleration of dash
     public float lungeMaxVelocity = 0f;          //maximum velocity during dash
     public float lungeCooldown = 0f;             //cooldown between dashes
-    public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
-    public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
-    private float restrictYVelocityTimer = 0;
-    private float defaultMaxVerticalVelocity;
+    //public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
+    //public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
+    //private float restrictYVelocityTimer = 0;
+    //private float defaultMaxVerticalVelocity;
+    public float lungeHoverDuration;
+    public float lungeHoverXAccelFactor;
+
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -143,6 +146,9 @@ public class PlayerController : MonoBehaviour
     public float hitInvincibilityDuration;
     private bool invulnerable = false;
 
+    private IEnumerator hoverCoroutine;
+    
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -156,7 +162,7 @@ public class PlayerController : MonoBehaviour
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
-        defaultMaxVerticalVelocity = maxVerticalVelocity;
+        hoverCoroutine = hoverForDuration(lungeHoverDuration);
         //charController.warpToGrounded();
     }
 
@@ -170,7 +176,6 @@ public class PlayerController : MonoBehaviour
         if (charController.isGrounded)
         {
             canJump = true;
-            restrictYVelocityTimer = 0;
             preventCooldown = false;
         }
         switch (movementState) {
@@ -246,7 +251,6 @@ public class PlayerController : MonoBehaviour
             case MovementState.OnLadder:
                 updateLadderMovement();
                 canJump = true;
-                restrictYVelocityTimer = 0;
                 preventCooldown = false;
                 break;
             case MovementState.Dash:
@@ -254,6 +258,13 @@ public class PlayerController : MonoBehaviour
                 break;
             case MovementState.Lunge:
                 checkForAttackInput();
+                break;
+            case MovementState.Hover:
+                if (isGrounded())
+                {
+                    movementState = MovementState.Free;
+                    StopCoroutine(hoverCoroutine);
+                }
                 break;
         }
         if (ladderGrabTimer > 0)
@@ -455,6 +466,28 @@ public class PlayerController : MonoBehaviour
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
                 break;
+            case (MovementState.Hover):
+                if(!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
+                {
+                    if (Input.GetKey(rightButton))
+                    {
+                        xVelocity += acceleration * lungeHoverXAccelFactor * Time.deltaTime;
+                    } else if (Input.GetKey(leftButton))
+                    {
+                        xVelocity += -acceleration * lungeHoverXAccelFactor * Time.deltaTime;
+                    }
+                }
+                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+                {
+                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+                }
+                else if (xVelocity < (-maxHorizontalVelocity))
+                {
+                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
+                }
+                break;
         }
 
 
@@ -501,14 +534,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    if(restrictYVelocityTimer > 0)
-                    {
-                        restrictYVelocityTimer -= Time.deltaTime;
-
-                    } else
-                    {
-                        maxVerticalVelocity = defaultMaxVerticalVelocity;
-                    }
+                    
                     yVelocity += yVelToAdd;
                     if (yVelocity > maxVerticalVelocity)           //gradually decrease speed to max speed
                     {
@@ -545,6 +571,18 @@ public class PlayerController : MonoBehaviour
                 if (isGrounded() && !jumping)
                 {
                     yVelocity = -25f;       //downward force so you stick to slopes
+                }
+                break;
+            case (MovementState.Hover):
+                if (yVelocity > 0)           //gradually decrease speed to 0
+                {
+                    yVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    yVelocity = Mathf.Max(yVelocity, 0);
+                }
+                else if (yVelocity < 0)
+                {
+                    yVelocity += velocityRestrictionRate * Time.deltaTime;
+                    yVelocity = Mathf.Min(yVelocity, 0);
                 }
                 break;
         }
@@ -614,7 +652,10 @@ public class PlayerController : MonoBehaviour
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
             spriteRenderer.color = Color.yellow;
-            jump();
+            if (!Input.GetKey(downButton))
+            {
+                jump();
+            }
         } else if (Input.GetKey(upButton))
         {
             //climb up
@@ -786,9 +827,18 @@ public class PlayerController : MonoBehaviour
         dashTimer = 0;
         isDashing = false;
         spriteRenderer.color = Color.yellow;
+        StopCoroutine(hoverCoroutine);
+        xVelocity *= 0.2f;
+
+        hoverCoroutine = hoverForDuration(lungeHoverDuration);
+        StartCoroutine(hoverCoroutine);
+        
+    }
+    private IEnumerator hoverForDuration(float time)
+    {
+        movementState = MovementState.Hover;
+        yield return new WaitForSeconds(time);
         movementState = MovementState.Free;
-        restrictYVelocityTimer = restrictYVelocityDuration;
-        maxVerticalVelocity = lungeYVelocityRestriction;
     }
     void onHitBoxCollision(Collider2D other)
     {
@@ -834,9 +884,14 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator attack(Vector3 aimVector)
     {
+        xVelocity *= 0.2f;
+
         canAttack = false;
         canDash = false;
-                     //for debug
+        //for debug
+        StopCoroutine(hoverCoroutine);
+        hoverCoroutine = hoverForDuration(attackWindUp + attackDuration);
+        StartCoroutine(hoverCoroutine);
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
@@ -856,6 +911,11 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
     {
+        xVelocity *= 0.2f;
+
+        StopCoroutine(hoverCoroutine);
+        hoverCoroutine = hoverForDuration(attackWindUp + attackDuration);
+        StartCoroutine(hoverCoroutine);
         lungeAttacking = true;
         movementState = MovementState.Lunge;
         canAttack = false;
@@ -940,8 +1000,7 @@ public class PlayerController : MonoBehaviour
             {
                 xVelocity = knockbackBackVelocity;
             }
-            endDash();
-            endLunge();
+            isDashing = false;
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
             soundEffectPlayer.PlayOneShot(hitTakenSound);
         }
