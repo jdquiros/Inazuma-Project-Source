@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge, onLadder
+        Paralyzed, Free, Dash, Lunge, OnLadder, HitStun
     }
     public MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 forcedMoveVector;
     int enemyHits = 0;                          //# of enemies hit in a single attack
+
     private enum Direction
     {
         Right, DownRight, Down, DownLeft, Left, UpLeft, Up, UpRight
@@ -119,6 +120,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip jumpSound;
     public AudioClip footstepSound;
     public AudioClip climbSound;
+    public AudioClip hitTakenSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -133,6 +135,13 @@ public class PlayerController : MonoBehaviour
     private bool inLadder = false;
 
     public bool attacksEndDashes = false;
+
+    public float knockbackBackVelocity;
+    public float knockbackUpVelocity;
+    public float hitStunDuration;
+    public float hitInvincibilityDuration;
+    private bool invulnerable = false;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -173,6 +182,10 @@ public class PlayerController : MonoBehaviour
                         jump();
                     }
                 }
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    knockBackPlayer(new Vector3(0, 0, 0));
+                }
                 if (isMoving && isGrounded())
                 {
                     source.clip = footstepSound;
@@ -204,7 +217,7 @@ public class PlayerController : MonoBehaviour
                 if ((((Input.GetKeyDown(upButton) || Input.GetKeyDown(downButton)) && isGrounded())
                     ||((Input.GetKey(upButton) || Input.GetKey(downButton)) && ladderGrabTimer <= 0)) && movementState == MovementState.Free && inLadder )
                 {
-                    movementState = MovementState.onLadder;
+                    movementState = MovementState.OnLadder;
                     transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
                     
                     charController.ignoreOneWayPlatformsThisFrame = true;
@@ -227,8 +240,9 @@ public class PlayerController : MonoBehaviour
 			    {
 				    respawn ();
 			    }
+                spriteRenderer.color = Color.black;
 		        break;
-            case MovementState.onLadder:
+            case MovementState.OnLadder:
                 updateLadderMovement();
                 canJump = true;
                 restrictYVelocityTimer = 0;
@@ -423,7 +437,18 @@ public class PlayerController : MonoBehaviour
                 xVelocity = Mathf.Clamp(xVelocity, -lungeMaxVelocity, lungeMaxVelocity);
                 break;
             case (MovementState.Paralyzed):
-                xVelocity *= 0.5f;
+                if(isGrounded())
+                    xVelocity *= 0.5f;
+                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+                {
+                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+                }
+                else if (xVelocity < (-maxHorizontalVelocity))
+                {
+                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
+                }
                 break;
         }
 
@@ -435,7 +460,7 @@ public class PlayerController : MonoBehaviour
         switch (movementState)
         {
             case (MovementState.Free):
-                if (!charController.isGrounded)
+                if (!isGrounded())
                 {
                     yVelToAdd = (-gravity) * Time.deltaTime;
                 }
@@ -506,6 +531,17 @@ public class PlayerController : MonoBehaviour
                 jumping = false;
                 jumpApexTimer = 0;
                 break;
+            case (MovementState.Paralyzed):
+                if (!isGrounded())
+                {
+                    yVelToAdd = (-gravity) * Time.deltaTime;
+                }
+                yVelocity += yVelToAdd;
+                if (isGrounded() && !jumping)
+                {
+                    yVelocity = -25f;       //downward force so you stick to slopes
+                }
+                break;
         }
 
 
@@ -527,12 +563,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    dashTimer = 0;
-                    dashCooldownTimer = dashCooldown;
-                    isDashing = false;
-                    canAttack = true;
-                    movementState = MovementState.Free;
-                    spriteRenderer.color = Color.gray;
+                    endDash();
                 }
                 break;
             case (MovementState.Lunge):
@@ -543,12 +574,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    dashTimer = 0;
-                    isDashing = false;
-                    spriteRenderer.color = Color.yellow;
-                    movementState = MovementState.Free;
-                    restrictYVelocityTimer = restrictYVelocityDuration;
-                    maxVerticalVelocity = lungeYVelocityRestriction;
+                    endLunge();
                 }
                 break;
             case (MovementState.Free):
@@ -652,7 +678,7 @@ public class PlayerController : MonoBehaviour
     }
     private void attemptDropThroughPlatform()
     {
-        if (movementState == MovementState.onLadder || (movementState == MovementState.Free && isGrounded()))
+        if (movementState == MovementState.OnLadder || (movementState == MovementState.Free && isGrounded()))
         {
             yVelocity = 0;
             charController.ignoreOneWayPlatformsThisFrame = true;
@@ -665,7 +691,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (movementState == MovementState.Free || movementState == MovementState.onLadder)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free || movementState == MovementState.OnLadder)                             //you cannot change your facing direction while dashing
         {
             if (!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
             {
@@ -740,6 +766,24 @@ public class PlayerController : MonoBehaviour
                 break;
         }
         return result;
+    }
+    private void endDash()
+    {
+        dashTimer = 0;
+        dashCooldownTimer = dashCooldown;
+        isDashing = false;
+        canAttack = true;
+        movementState = MovementState.Free;
+        spriteRenderer.color = Color.gray;
+    }
+    private void endLunge()
+    {
+        dashTimer = 0;
+        isDashing = false;
+        spriteRenderer.color = Color.yellow;
+        movementState = MovementState.Free;
+        restrictYVelocityTimer = restrictYVelocityDuration;
+        maxVerticalVelocity = lungeYVelocityRestriction;
     }
     void onHitBoxCollision(Collider2D other)
     {
@@ -874,6 +918,42 @@ public class PlayerController : MonoBehaviour
         soundEffectPlayer.PlayOneShot(lungeSound);
         if (!isGrounded())
             preventCooldown = true;
+    }
+    public void knockBackPlayer(Vector3 enemyPos)
+    {
+        //enemy MUST supply its own location
+        
+        if (movementState != MovementState.Paralyzed && !invulnerable)
+        {
+            yVelocity = knockbackUpVelocity;
+            charController.move(new Vector2(0, .2f));
+            if (transform.position.x < enemyPos.x)
+            {
+                xVelocity = -knockbackBackVelocity;
+            }
+            else
+            {
+                xVelocity = knockbackBackVelocity;
+            }
+            endDash();
+            endLunge();
+            StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
+            soundEffectPlayer.PlayOneShot(hitTakenSound);
+        }
+    }
+    public IEnumerator stunPlayer(float duration, float invincibilityDuration)
+    {
+        movementState = MovementState.Paralyzed;
+        invulnerable = true;
+        spriteRenderer.color = Color.grey;
+        yield return new WaitForSeconds(duration);
+        spriteRenderer.color = Color.white;
+        movementState = MovementState.Free;
+
+        yield return new WaitForSeconds(invincibilityDuration-duration);
+        invulnerable = false;
+        spriteRenderer.color = Color.yellow;
+
     }
     public void damagePlayer(int dmg)
     {
