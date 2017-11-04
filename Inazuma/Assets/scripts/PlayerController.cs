@@ -121,6 +121,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip footstepSound;
     public AudioClip climbSound;
     public AudioClip hitTakenSound;
+    public AudioClip landingSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -334,6 +335,10 @@ public class PlayerController : MonoBehaviour
                 transform.position = position;
                 jumpInAirTimer = jumpInAirDuration;
             }
+        }
+        if (!wasGrounded && isGrounded())                     //runs code when landing
+        {
+            soundEffectPlayer.PlayOneShot(landingSound);
         }
     }
     private void updatePosition()

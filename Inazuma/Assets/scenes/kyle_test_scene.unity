@@ -3450,41 +3450,6 @@ Prefab:
       propertyPath: soundEffectPlayer
       value: 
       objectReference: {fileID: 987941450}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: footstepSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 82ace1fb680bf3345a25b62cee44f1df, type: 3}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: climbSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 8ad5ed75884f3f347857449493f7fc5a, type: 3}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: knockbackBackVelocity
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: knockbackUpVelocity
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: hitStunDuration
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: hitInvincibilityDuration
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: hitTakenSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d567727fe81913f49ad12765029df287, type: 2}
   m_IsPrefabParent: 0
