@@ -3,18 +3,42 @@ using System.Collections;
 using UnityEngine.UI;
 public class UIScroller : MonoBehaviour
 {
-
+    public enum Direction
+    {
+        Up,
+        Right,
+        Down,
+        Left
+    }
+    public Direction anchorDirection;
+    public enum SpeedType
+    {
+        linear,
+        multiplicative
+    }
+    public SpeedType speedType;
     public bool revealed;
-    public string revealFrom;
-    public string hideTo;
-    public float speedFactor;
-    private Vector3 hiddenPositionBefore;
-    private Vector3 hiddenPositionAfter;
-    private Vector3 revealedPosition;
+    public float speed;
     public bool revealOnLoad;
     public bool hideOnLoad;
     bool reversed;
     bool moving;
+    private Vector2 moveVector;
+    private RectTransform myTransform;
+    private float[] hiddenAnchorsBefore;
+    private float[] hiddenAnchorsAfter;
+    private float[] revealedAnchors;
+    public float snapTolerance = 0.05f;
+
+
+    /*
+     *   --------[2,3]
+     *   |         |
+     *   |         |
+     * [0,1]--------
+     */
+
+
     void Start()
     {
 
@@ -22,43 +46,67 @@ public class UIScroller : MonoBehaviour
         {
             GetComponent<Image>().enabled = true;
         }
-        if (speedFactor == 0)
-        {
-            speedFactor = 1;
-        }
+        myTransform = GetComponent<RectTransform>();
+        hiddenAnchorsBefore = new float[4];
+        hiddenAnchorsAfter = new float[4];
+        revealedAnchors = new float[4];
+        
+        revealedAnchors[0] = myTransform.anchorMin.x;  //saves current location for when the UI is revealed later
+        revealedAnchors[1] = myTransform.anchorMin.y;
+        revealedAnchors[2] = myTransform.anchorMax.x;
+        revealedAnchors[3] = myTransform.anchorMax.y;
 
-        speedFactor = speedFactor / 100;
-        if (speedFactor > 1)
+        switch (anchorDirection)
         {
-            speedFactor = 1;
+            case (Direction.Up):
+                hiddenAnchorsBefore[0] = revealedAnchors[0];
+                hiddenAnchorsBefore[1] = revealedAnchors[1] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsBefore[2] = revealedAnchors[2];
+                hiddenAnchorsBefore[3] = revealedAnchors[3] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsAfter[0] = revealedAnchors[0];
+                hiddenAnchorsAfter[1] = revealedAnchors[1] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsAfter[2] = revealedAnchors[2];
+                hiddenAnchorsAfter[3] = revealedAnchors[3] - (revealedAnchors[3] + 0.1f);
+                moveVector = new Vector2(0, 1);
+                break;
+            case (Direction.Down):
+                hiddenAnchorsBefore[0] = revealedAnchors[0];
+                hiddenAnchorsBefore[1] = revealedAnchors[1] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsBefore[2] = revealedAnchors[2];
+                hiddenAnchorsBefore[3] = revealedAnchors[3] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsAfter[0] = revealedAnchors[0];
+                hiddenAnchorsAfter[1] = revealedAnchors[1] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsAfter[2] = revealedAnchors[2];
+                hiddenAnchorsAfter[3] = revealedAnchors[3] + (1 - revealedAnchors[1]) + 0.1f;
+                moveVector = new Vector2(0, -1);
+                break;
+            case (Direction.Right):
+                hiddenAnchorsBefore[0] = revealedAnchors[0] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsBefore[1] = revealedAnchors[1];
+                hiddenAnchorsBefore[2] = revealedAnchors[2] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsBefore[3] = revealedAnchors[3];
+                hiddenAnchorsAfter[0] = revealedAnchors[0] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsAfter[1] = revealedAnchors[1];
+                hiddenAnchorsAfter[2] = revealedAnchors[2] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsAfter[3] = revealedAnchors[3];
+                moveVector = new Vector2(1, 0);
+                break;
+            case (Direction.Left):
+                hiddenAnchorsBefore[0] = revealedAnchors[0] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsBefore[1] = revealedAnchors[1];
+                hiddenAnchorsBefore[2] = revealedAnchors[2] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsBefore[3] = revealedAnchors[3];
+                hiddenAnchorsAfter[0] = revealedAnchors[0] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsAfter[1] = revealedAnchors[1];
+                hiddenAnchorsAfter[2] = revealedAnchors[2] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsAfter[3] = revealedAnchors[3];
+                moveVector = new Vector2(-1, 0);
+                break;
         }
-        revealedPosition = transform.localPosition;
-        hiddenPositionBefore = getHiddenPositionBefore();
-        hiddenPositionAfter = getHiddenPositionAfter();
         if (!revealed)
         {
-            if (revealFrom == "Up")
-            {
-                transform.position += Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-            }
-            else if (revealFrom == "Down")
-            {
-                transform.position += Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-            }
-            else if (revealFrom == "Left")
-            {
-                transform.position += Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-            }
-            else if (revealFrom == "Right")
-            {
-                transform.position += Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-            }
-            else
-            {
-                print("UNKNOWN WALL ANCHOR");
-            }
+            setRectTransform(hiddenAnchorsBefore);
         }
-        reversed = false;
     }
 
     // Update is called once per frame
@@ -66,28 +114,63 @@ public class UIScroller : MonoBehaviour
     {
         if (revealed && moving)
         {
-            moveToLocation(revealedPosition);
+            moveToLocation(revealedAnchors,moveVector);
         }
         else if (!revealed && moving)
         {
             if (!reversed)
             {
-                moveToLocation(hiddenPositionAfter);
+                moveToLocation(hiddenAnchorsAfter,moveVector);
             }
             else
             {
-                moveToLocation(hiddenPositionBefore);
+                moveToLocation(hiddenAnchorsBefore,moveVector);
             }
         }
 
     }
-    public void moveToLocation(Vector3 target)
+    public void moveToLocation(float[] targetAnchors, Vector3 move)
     {
-        transform.localPosition += (target - transform.localPosition) * (speedFactor);
-        if (Vector3.Distance(transform.localPosition, target) < 1)
+        //moves towards location, snaps to location once close enough
+        float[] newAnchors = new float[4];
+        newAnchors[0] = myTransform.anchorMin.x;
+        newAnchors[1] = myTransform.anchorMin.y;
+        newAnchors[2] = myTransform.anchorMax.x;
+        newAnchors[3] = myTransform.anchorMax.y;
+        if (!reversed)
+            move *= -1;
+        switch (speedType)
         {
-            moving = false;
-            transform.localPosition = target;
+            case (SpeedType.linear):
+                newAnchors[0] += move.x * speed * Time.deltaTime;
+                newAnchors[1] += move.y * speed * Time.deltaTime;
+                newAnchors[2] += move.x * speed * Time.deltaTime;
+                newAnchors[3] += move.y * speed * Time.deltaTime;
+                if (Vector2.Distance(new Vector2(newAnchors[0], newAnchors[1]), new Vector2(targetAnchors[0], targetAnchors[1])) < speed * Time.deltaTime)
+                {
+                    setRectTransform(targetAnchors);
+                    moving = false;
+                }
+                else
+                {
+                    setRectTransform(newAnchors);
+                }
+                break;
+            case (SpeedType.multiplicative):
+                newAnchors[0] += Mathf.Abs(moveVector.x) * (targetAnchors[0] - newAnchors[0]) * speed * Time.deltaTime;
+                newAnchors[1] += Mathf.Abs(moveVector.y) * (targetAnchors[1] - newAnchors[1]) * speed * Time.deltaTime;
+                newAnchors[2] += Mathf.Abs(moveVector.x) * (targetAnchors[2] - newAnchors[2]) * speed * Time.deltaTime;
+                newAnchors[3] += Mathf.Abs(moveVector.y) * (targetAnchors[3] - newAnchors[3]) * speed * Time.deltaTime;
+                if (Vector2.Distance(new Vector2(newAnchors[0], newAnchors[1]), new Vector2(targetAnchors[0], targetAnchors[1])) < snapTolerance)
+                {
+                    setRectTransform(targetAnchors);
+                    moving = false;
+                }
+                else
+                {
+                    setRectTransform(newAnchors);
+                }
+                break;
         }
     }
     public void revealUI(int direction)
@@ -97,12 +180,12 @@ public class UIScroller : MonoBehaviour
         moving = true;
         if (direction == 1)
         {
-            transform.localPosition = hiddenPositionBefore;
+            setRectTransform(hiddenAnchorsBefore);
             reversed = false;
         }
         else
         {
-            transform.localPosition = hiddenPositionAfter;
+            setRectTransform(hiddenAnchorsAfter);
             reversed = true;
         }
     }
@@ -136,71 +219,20 @@ public class UIScroller : MonoBehaviour
     {
         if (!revealed)
         {
-            transform.localPosition = hiddenPositionBefore;
+            setRectTransform(hiddenAnchorsBefore);
         }
         moving = false;
     }
     public void hideImmediately()
     {
         moving = false;
-        transform.localPosition = hiddenPositionBefore;
+        setRectTransform(hiddenAnchorsBefore);
     }
-
-
-    public Vector3 getHiddenPositionBefore()
+    private void setRectTransform(float[] anchors)
     {
-        if (revealFrom == "Up")
-        {
-
-            return transform.localPosition + Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-
-        }
-        else if (revealFrom == "Down")
-        {
-            return transform.localPosition + Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-        }
-        else if (revealFrom == "Left")
-        {
-            return transform.localPosition + Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-
-        }
-        else if (revealFrom == "Right")
-        {
-            return transform.localPosition + Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-
-        }
-        else
-        {
-            print("UNKNOWN WALL ANCHOR");
-            return transform.localPosition;
-        }
+        myTransform.anchorMin = new Vector2(anchors[0], anchors[1]);
+        myTransform.anchorMax = new Vector2(anchors[2], anchors[3]);
     }
-    public Vector3 getHiddenPositionAfter()
-    {
-        if (hideTo == "Up")
-        {
 
-            return transform.localPosition + Vector3.up * (1 - gameObject.GetComponent<RectTransform>().anchorMin.y) * Screen.height;
-
-        }
-        else if (hideTo == "Down")
-        {
-            return transform.localPosition + Vector3.down * gameObject.GetComponent<RectTransform>().anchorMax.y * Screen.height;
-        }
-        else if (hideTo == "Left")
-        {
-            return transform.localPosition + Vector3.left * gameObject.GetComponent<RectTransform>().anchorMax.x * Screen.width;
-
-        }
-        else if (hideTo == "Right")
-        {
-            return transform.localPosition + Vector3.right * (1 - gameObject.GetComponent<RectTransform>().anchorMin.x) * Screen.width;
-
-        }
-        else
-        {
-            print("UNKNOWN WALL ANCHOR");
-            return transform.localPosition;
-        }
-    }
+    
 }

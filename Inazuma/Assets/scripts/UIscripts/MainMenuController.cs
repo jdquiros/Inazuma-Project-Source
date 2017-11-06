@@ -6,11 +6,12 @@ using UnityEngine.EventSystems;
 public class MainMenuController : MonoBehaviour {
 
     // Use this for initialization
-    private enum MenuState
+    public enum MenuState
     {
         MainMenu, LevelSelect, Credits, None
     }
-    private MenuState menuState = MenuState.MainMenu;
+    public static MenuState menuState;
+    public Canvas levelSelectCanvas;
     public bool debug = false;
     public EventSystem eventSystem;
     public Button playButton;
@@ -20,9 +21,15 @@ public class MainMenuController : MonoBehaviour {
 
     public GraphicColorLerp title;
     private AudioSource source;
+
+    public UIScroller[] levelList;
+    private int levelIndex = 0;
+
     private void Awake()
     {
         source = GetComponent<AudioSource>();
+        menuState = MenuState.MainMenu;
+        levelSelectCanvas.enabled = false;
     }
     void Start () {
         if (GameState.compareState(GameState.State.InGame))
@@ -40,6 +47,9 @@ public class MainMenuController : MonoBehaviour {
         {
             case (MenuState.MainMenu):
                 updateMainMenu();
+                break;
+            case (MenuState.LevelSelect):
+                updateLevelSelect();
                 break;
         }
 	}
@@ -79,6 +89,34 @@ public class MainMenuController : MonoBehaviour {
         {
             quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
 
+        }
+    }
+    private void updateLevelSelect()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            incrementLevel();
+        } else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            decrementLevel();
+        }
+    }
+    private void incrementLevel()
+    {
+        if(levelIndex < levelList.Length - 1)
+        {
+            levelList[levelIndex].hideUI(1);
+            levelList[levelIndex+1].revealUI(1);
+            ++levelIndex;
+        }
+    }
+    private void decrementLevel()
+    {
+        if(levelIndex > 0)
+        {
+            levelList[levelIndex].hideUI(-1);
+            levelList[levelIndex - 1].revealUI(-1);
+            --levelIndex;
         }
     }
     public void playButtonPress()
@@ -130,7 +168,9 @@ public class MainMenuController : MonoBehaviour {
     }
     public void levelSelectButtonPress()
     {
-
+        menuState = MenuState.LevelSelect;
+        levelSelectCanvas.enabled = true;
+        eventSystem.SetSelectedGameObject(null);
     }
     public void creditsButtonPress()
     {
