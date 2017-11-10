@@ -4028,7 +4028,7 @@ Prefab:
     - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
         type: 2}
       propertyPath: lungeHoverDuration
-      value: 0.35
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
         type: 2}
@@ -4055,6 +4055,11 @@ Prefab:
       propertyPath: lungeSound
       value: 
       objectReference: {fileID: 8300000, guid: c93f31c1e141a914490ffa9985847188, type: 3}
+    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
+        type: 2}
+      propertyPath: lungeHoverYRestrictionRate
+      value: 500
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d567727fe81913f49ad12765029df287, type: 2}
   m_IsPrefabParent: 0
