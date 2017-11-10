@@ -75,12 +75,8 @@ public class PlayerController : MonoBehaviour
     public float lungeAcceleration = 0f;         //acceleration of dash
     public float lungeMaxVelocity = 0f;          //maximum velocity during dash
     public float lungeCooldown = 0f;             //cooldown between dashes
-    //public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
-    //public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
-    //private float restrictYVelocityTimer = 0;
-    //private float defaultMaxVerticalVelocity;
+
     public float lungeHoverDuration;
-    public float lungeHoverXAccelFactor;
 
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
@@ -158,7 +154,6 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        print(Checkpoint.GetCurrentCheckpointPos());
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
@@ -359,25 +354,23 @@ public class PlayerController : MonoBehaviour
     }
     private void updateHorizontalVelocity()
     {
+        float xVelToAdd = 0f;
+
         switch (movementState)
         {
             case (MovementState.Free):
                 //regular movement, not dashing
-                float xVelToAdd = 0f;
                 if (Input.GetKey(leftButton) && !Input.GetKey(rightButton))
                 {
                     if (xVelocity <= 0)
                     {
                         //accelerating left
                         xVelToAdd = (-acceleration) * Time.deltaTime;
-
-
                     }
                     else
                     {
                         //decelerating left
                         xVelToAdd = (-deceleration) * Time.deltaTime;
-
                     }
                 }
                 else if (Input.GetKey(rightButton) && !Input.GetKey(leftButton))
@@ -386,15 +379,12 @@ public class PlayerController : MonoBehaviour
                     {
                         //accelerating right
                         xVelToAdd = acceleration * Time.deltaTime;
-
                     }
                     else
                     {
                         //decelerating right
                         xVelToAdd = deceleration * Time.deltaTime;
-
                     }
-
                 }
                 else
                 {
@@ -467,16 +457,58 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-                if(!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
+                if (Input.GetKey(leftButton) && !Input.GetKey(rightButton))
                 {
-                    if (Input.GetKey(rightButton))
+                    if (xVelocity <= 0)
                     {
-                        xVelocity += acceleration * lungeHoverXAccelFactor * Time.deltaTime;
-                    } else if (Input.GetKey(leftButton))
+                        //accelerating left
+                        xVelToAdd = (-acceleration) * Time.deltaTime;
+                    }
+                    else
                     {
-                        xVelocity += -acceleration * lungeHoverXAccelFactor * Time.deltaTime;
+                        //decelerating left
+                        xVelToAdd = (-deceleration) * Time.deltaTime;
                     }
                 }
+                else if (Input.GetKey(rightButton) && !Input.GetKey(leftButton))
+                {
+                    if (xVelocity >= 0)
+                    {
+                        //accelerating right
+                        xVelToAdd = acceleration * Time.deltaTime;
+                    }
+                    else
+                    {
+                        //decelerating right
+                        xVelToAdd = deceleration * Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    //not moving left or right.  slow down through passive deceleration
+                    if (xVelocity > 0)
+                    {
+                        xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                    }
+                    else if (xVelocity < 0)
+                    {
+                        xVelToAdd = passiveDeceleration * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                    }
+                }
+                if (!charController.isGrounded)
+                    xVelToAdd *= airAccelerationFactor;
+                //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
+
+
+                xVelocity = xVelocity + xVelToAdd;      //set speeds
+
+                //clamp to speed maximums
                 if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
                 {
                     xVelocity += -velocityRestrictionRate * Time.deltaTime;
@@ -827,8 +859,8 @@ public class PlayerController : MonoBehaviour
         dashTimer = 0;
         isDashing = false;
         spriteRenderer.color = Color.yellow;
+        
         StopCoroutine(hoverCoroutine);
-        xVelocity *= 0.2f;
 
         hoverCoroutine = hoverForDuration(lungeHoverDuration);
         StartCoroutine(hoverCoroutine);
@@ -884,14 +916,11 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator attack(Vector3 aimVector)
     {
-        xVelocity *= 0.2f;
 
         canAttack = false;
         canDash = false;
         //for debug
-        StopCoroutine(hoverCoroutine);
-        hoverCoroutine = hoverForDuration(attackWindUp + attackDuration);
-        StartCoroutine(hoverCoroutine);
+        
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
@@ -911,11 +940,8 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
     {
-        xVelocity *= 0.2f;
 
-        StopCoroutine(hoverCoroutine);
-        hoverCoroutine = hoverForDuration(attackWindUp + attackDuration);
-        StartCoroutine(hoverCoroutine);
+       
         lungeAttacking = true;
         movementState = MovementState.Lunge;
         canAttack = false;
