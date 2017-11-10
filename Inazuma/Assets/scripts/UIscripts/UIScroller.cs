@@ -60,45 +60,45 @@ public class UIScroller : MonoBehaviour
         {
             case (Direction.Up):
                 hiddenAnchorsBefore[0] = revealedAnchors[0];
-                hiddenAnchorsBefore[1] = revealedAnchors[1] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsBefore[1] = revealedAnchors[1] + (1 - revealedAnchors[1]);
                 hiddenAnchorsBefore[2] = revealedAnchors[2];
-                hiddenAnchorsBefore[3] = revealedAnchors[3] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsBefore[3] = revealedAnchors[3] + (1 - revealedAnchors[1]);
                 hiddenAnchorsAfter[0] = revealedAnchors[0];
-                hiddenAnchorsAfter[1] = revealedAnchors[1] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsAfter[1] = revealedAnchors[1] - (revealedAnchors[3]);
                 hiddenAnchorsAfter[2] = revealedAnchors[2];
-                hiddenAnchorsAfter[3] = revealedAnchors[3] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsAfter[3] = revealedAnchors[3] - (revealedAnchors[3]);
                 moveVector = new Vector2(0, 1);
                 break;
             case (Direction.Down):
                 hiddenAnchorsBefore[0] = revealedAnchors[0];
-                hiddenAnchorsBefore[1] = revealedAnchors[1] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsBefore[1] = revealedAnchors[1] - (revealedAnchors[3]);
                 hiddenAnchorsBefore[2] = revealedAnchors[2];
-                hiddenAnchorsBefore[3] = revealedAnchors[3] - (revealedAnchors[3] + 0.1f);
+                hiddenAnchorsBefore[3] = revealedAnchors[3] - (revealedAnchors[3]);
                 hiddenAnchorsAfter[0] = revealedAnchors[0];
-                hiddenAnchorsAfter[1] = revealedAnchors[1] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsAfter[1] = revealedAnchors[1] + (1 - revealedAnchors[1]);
                 hiddenAnchorsAfter[2] = revealedAnchors[2];
-                hiddenAnchorsAfter[3] = revealedAnchors[3] + (1 - revealedAnchors[1]) + 0.1f;
+                hiddenAnchorsAfter[3] = revealedAnchors[3] + (1 - revealedAnchors[1]);
                 moveVector = new Vector2(0, -1);
                 break;
             case (Direction.Right):
-                hiddenAnchorsBefore[0] = revealedAnchors[0] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsBefore[0] = revealedAnchors[0] + (1 - revealedAnchors[0]);
                 hiddenAnchorsBefore[1] = revealedAnchors[1];
-                hiddenAnchorsBefore[2] = revealedAnchors[2] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsBefore[2] = revealedAnchors[2] + (1 - revealedAnchors[0]);
                 hiddenAnchorsBefore[3] = revealedAnchors[3];
-                hiddenAnchorsAfter[0] = revealedAnchors[0] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsAfter[0] = revealedAnchors[0] - (revealedAnchors[2]);
                 hiddenAnchorsAfter[1] = revealedAnchors[1];
-                hiddenAnchorsAfter[2] = revealedAnchors[2] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsAfter[2] = revealedAnchors[2] - (revealedAnchors[2]);
                 hiddenAnchorsAfter[3] = revealedAnchors[3];
                 moveVector = new Vector2(1, 0);
                 break;
             case (Direction.Left):
-                hiddenAnchorsBefore[0] = revealedAnchors[0] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsBefore[0] = revealedAnchors[0] - (revealedAnchors[2]);
                 hiddenAnchorsBefore[1] = revealedAnchors[1];
-                hiddenAnchorsBefore[2] = revealedAnchors[2] - (revealedAnchors[2] + 0.1f);
+                hiddenAnchorsBefore[2] = revealedAnchors[2] - (revealedAnchors[2]);
                 hiddenAnchorsBefore[3] = revealedAnchors[3];
-                hiddenAnchorsAfter[0] = revealedAnchors[0] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsAfter[0] = revealedAnchors[0] + (1 - revealedAnchors[0]);
                 hiddenAnchorsAfter[1] = revealedAnchors[1];
-                hiddenAnchorsAfter[2] = revealedAnchors[2] + (1 - revealedAnchors[0]) + 0.1f;
+                hiddenAnchorsAfter[2] = revealedAnchors[2] + (1 - revealedAnchors[0]);
                 hiddenAnchorsAfter[3] = revealedAnchors[3];
                 moveVector = new Vector2(-1, 0);
                 break;
