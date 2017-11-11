@@ -875,8 +875,9 @@ public class PlayerController : MonoBehaviour
     void onHitBoxCollision(Collider2D other)
     {
 
-        if (other.gameObject.layer == LayerMask.NameToLayer("enemyLayer"))
+        if (other.gameObject.CompareTag("Enemy"))
         {
+            //other.gameObject.GetComponent<Enemy>().
             ++enemyHits;
             if (enemyHits == 1 && lungeAttacking)
                 lungeDash(getAimVector(dashDirection));
@@ -943,7 +944,6 @@ public class PlayerController : MonoBehaviour
 
        
         lungeAttacking = true;
-        movementState = MovementState.Lunge;
         canAttack = false;
         canDash = false;
         spriteRenderer.color = Color.blue;

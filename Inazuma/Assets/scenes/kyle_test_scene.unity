@@ -2661,6 +2661,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1589625230325468, guid: adf820571c545364aa22a74aeb045323, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: adf820571c545364aa22a74aeb045323, type: 2}
   m_IsPrefabParent: 0
@@ -4518,7 +4522,7 @@ GameObject:
   - component: {fileID: 1348955338}
   m_Layer: 11
   m_Name: EnemyThing
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
