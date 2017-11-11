@@ -877,7 +877,7 @@ public class PlayerController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Enemy"))
         {
-            //other.gameObject.GetComponent<Enemy>().
+            other.gameObject.GetComponent<Enemy>().damageEnemy(1);
             ++enemyHits;
             if (enemyHits == 1 && lungeAttacking)
                 lungeDash(getAimVector(dashDirection));
@@ -940,9 +940,7 @@ public class PlayerController : MonoBehaviour
         canAttack = true;
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
-    {
-
-       
+    {       
         lungeAttacking = true;
         canAttack = false;
         canDash = false;
