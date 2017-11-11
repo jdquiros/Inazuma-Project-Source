@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4699138084020002}
   - component: {fileID: 212680561889511688}
   - component: {fileID: 114235647474683664}
-  - component: {fileID: 114449216432673530}
+  - component: {fileID: 58251171825619554}
+  - component: {fileID: 114478784489159908}
   m_Layer: 10
   m_Name: Patrolling Enemy
   m_TagString: Enemy
@@ -36,12 +37,27 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1551179700178214}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -33.22, y: -0.82, z: 0}
+  m_LocalPosition: {x: -17.66, y: 1.71, z: 0.09480323}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &58251171825619554
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1551179700178214}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1
 --- !u!114 &114235647474683664
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -55,9 +71,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   waitDuration: 5
-  WayPointA: {fileID: 0}
+  WayPointA: {fileID: 4699138084020002}
   WayPointB: {fileID: 0}
---- !u!114 &114449216432673530
+--- !u!114 &114478784489159908
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

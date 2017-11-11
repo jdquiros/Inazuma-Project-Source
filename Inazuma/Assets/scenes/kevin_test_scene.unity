@@ -175,7 +175,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -957245665
-  m_SortingLayer: -1
+  m_SortingLayer: -2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: dac51df3707a1b7468828a01a0b7f58d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -549,15 +549,9 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1551179700178214, guid: af73cd5371767544f9bad9e6c40c66a5, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114235647474683664, guid: af73cd5371767544f9bad9e6c40c66a5,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114449216432673530, guid: af73cd5371767544f9bad9e6c40c66a5, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: af73cd5371767544f9bad9e6c40c66a5, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &191412700
@@ -3347,7 +3341,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -957245665
-  m_SortingLayer: -1
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f93d1b61171a5fc43801db74b80d394c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3359,24 +3353,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!1 &832602964 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1551179700178214, guid: af73cd5371767544f9bad9e6c40c66a5,
-    type: 2}
-  m_PrefabInternal: {fileID: 174767035}
---- !u!114 &832602965
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 832602964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20cce8dfd55f1b24887a53763337487c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 1
-  damage: 0
 --- !u!1 &915048668
 GameObject:
   m_ObjectHideFlags: 0
@@ -3475,24 +3451,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &960873641 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1556043893304998, guid: 2c3b775a081c78943b1b498c984e85c3,
-    type: 2}
-  m_PrefabInternal: {fileID: 2110039328}
---- !u!114 &960873642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 960873641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20cce8dfd55f1b24887a53763337487c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 1
-  damage: 0
 --- !u!1 &977783750
 GameObject:
   m_ObjectHideFlags: 0
@@ -4535,7 +4493,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -957245665
-  m_SortingLayer: -1
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f93d1b61171a5fc43801db74b80d394c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -75857,7 +75815,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -957245665
-  m_SortingLayer: -1
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f93d1b61171a5fc43801db74b80d394c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -76336,7 +76294,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -957245665
-  m_SortingLayer: -1
+  m_SortingLayer: -2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: dac51df3707a1b7468828a01a0b7f58d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -76417,8 +76375,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114592259058035600, guid: 2c3b775a081c78943b1b498c984e85c3, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2c3b775a081c78943b1b498c984e85c3, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &2120007402
