@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+
 public class MainMenuController : MonoBehaviour {
 
     // Use this for initialization
@@ -11,6 +13,7 @@ public class MainMenuController : MonoBehaviour {
         MainMenu, LevelSelect, Credits, None
     }
     public static MenuState menuState;
+    private Canvas mainMenuCanvas;
     public Canvas levelSelectCanvas;
     public bool debug = false;
     public EventSystem eventSystem;
@@ -19,14 +22,19 @@ public class MainMenuController : MonoBehaviour {
     public Button creditsButton;
     public Button quitButton;
 
+    public Button LSPlayButton;
+    public Button LSBackButton;
+
     public GraphicColorLerp title;
     private AudioSource source;
 
     public UIScroller[] levelList;
+    public string[] levelNames;
     private int levelIndex = 0;
 
     private void Awake()
     {
+        mainMenuCanvas = GetComponent<Canvas>();
         source = GetComponent<AudioSource>();
         menuState = MenuState.MainMenu;
         levelSelectCanvas.enabled = false;
@@ -108,6 +116,7 @@ public class MainMenuController : MonoBehaviour {
             levelList[levelIndex].hideUI(1);
             levelList[levelIndex+1].revealUI(1);
             ++levelIndex;
+            source.PlayOneShot(source.clip);
         }
     }
     private void decrementLevel()
@@ -117,6 +126,8 @@ public class MainMenuController : MonoBehaviour {
             levelList[levelIndex].hideUI(-1);
             levelList[levelIndex - 1].revealUI(-1);
             --levelIndex;
+            source.PlayOneShot(source.clip);
+
         }
     }
     public void playButtonPress()
@@ -168,9 +179,13 @@ public class MainMenuController : MonoBehaviour {
     }
     public void levelSelectButtonPress()
     {
-        menuState = MenuState.LevelSelect;
-        levelSelectCanvas.enabled = true;
-        eventSystem.SetSelectedGameObject(null);
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.LevelSelect;
+            levelSelectCanvas.enabled = true;
+            mainMenuCanvas.enabled = false;
+            eventSystem.SetSelectedGameObject(LSPlayButton.gameObject);
+        }
     }
     public void creditsButtonPress()
     {
@@ -185,10 +200,33 @@ public class MainMenuController : MonoBehaviour {
     }
     public void playSoundOnNavigation(AudioClip clip)
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
-            || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
+        if (GameState.compareState(GameState.State.MainMenu))
         {
-            source.PlayOneShot(clip);
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
+            {
+                source.PlayOneShot(clip);
+            }
+        }
+    }
+    public void LSPlayButtonPress()
+    {
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            GameState.setState(GameState.State.InGame);
+            menuState = MenuState.None;
+            eventSystem.SetSelectedGameObject(null);
+            SceneManager.LoadScene(levelNames[levelIndex]);
+        }
+    }
+    public void LSBackButtonPress()
+    {
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.MainMenu;
+            levelSelectCanvas.enabled = false;
+            mainMenuCanvas.enabled = true;
+            eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
     }
 }

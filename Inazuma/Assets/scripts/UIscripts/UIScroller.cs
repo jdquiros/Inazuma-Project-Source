@@ -64,9 +64,9 @@ public class UIScroller : MonoBehaviour
                 hiddenAnchorsBefore[2] = revealedAnchors[2];
                 hiddenAnchorsBefore[3] = revealedAnchors[3] + (1 - revealedAnchors[1]);
                 hiddenAnchorsAfter[0] = revealedAnchors[0];
-                hiddenAnchorsAfter[1] = revealedAnchors[1] - (revealedAnchors[3]);
+                hiddenAnchorsAfter[1] = revealedAnchors[1] - (revealedAnchors[3]) - .05f;
                 hiddenAnchorsAfter[2] = revealedAnchors[2];
-                hiddenAnchorsAfter[3] = revealedAnchors[3] - (revealedAnchors[3]);
+                hiddenAnchorsAfter[3] = revealedAnchors[3] - (revealedAnchors[3])- .05f;
                 moveVector = new Vector2(0, 1);
                 break;
             case (Direction.Down):
@@ -75,9 +75,9 @@ public class UIScroller : MonoBehaviour
                 hiddenAnchorsBefore[2] = revealedAnchors[2];
                 hiddenAnchorsBefore[3] = revealedAnchors[3] - (revealedAnchors[3]);
                 hiddenAnchorsAfter[0] = revealedAnchors[0];
-                hiddenAnchorsAfter[1] = revealedAnchors[1] + (1 - revealedAnchors[1]);
+                hiddenAnchorsAfter[1] = revealedAnchors[1] + (1 - revealedAnchors[1])+ .05f;
                 hiddenAnchorsAfter[2] = revealedAnchors[2];
-                hiddenAnchorsAfter[3] = revealedAnchors[3] + (1 - revealedAnchors[1]);
+                hiddenAnchorsAfter[3] = revealedAnchors[3] + (1 - revealedAnchors[1])+ .05f;
                 moveVector = new Vector2(0, -1);
                 break;
             case (Direction.Right):
@@ -85,9 +85,9 @@ public class UIScroller : MonoBehaviour
                 hiddenAnchorsBefore[1] = revealedAnchors[1];
                 hiddenAnchorsBefore[2] = revealedAnchors[2] + (1 - revealedAnchors[0]);
                 hiddenAnchorsBefore[3] = revealedAnchors[3];
-                hiddenAnchorsAfter[0] = revealedAnchors[0] - (revealedAnchors[2]);
+                hiddenAnchorsAfter[0] = revealedAnchors[0] - (revealedAnchors[2])- .05f;
                 hiddenAnchorsAfter[1] = revealedAnchors[1];
-                hiddenAnchorsAfter[2] = revealedAnchors[2] - (revealedAnchors[2]);
+                hiddenAnchorsAfter[2] = revealedAnchors[2] - (revealedAnchors[2])- .05f;
                 hiddenAnchorsAfter[3] = revealedAnchors[3];
                 moveVector = new Vector2(1, 0);
                 break;
@@ -96,9 +96,9 @@ public class UIScroller : MonoBehaviour
                 hiddenAnchorsBefore[1] = revealedAnchors[1];
                 hiddenAnchorsBefore[2] = revealedAnchors[2] - (revealedAnchors[2]);
                 hiddenAnchorsBefore[3] = revealedAnchors[3];
-                hiddenAnchorsAfter[0] = revealedAnchors[0] + (1 - revealedAnchors[0]);
+                hiddenAnchorsAfter[0] = revealedAnchors[0] + (1 - revealedAnchors[0])+ .05f;
                 hiddenAnchorsAfter[1] = revealedAnchors[1];
-                hiddenAnchorsAfter[2] = revealedAnchors[2] + (1 - revealedAnchors[0]);
+                hiddenAnchorsAfter[2] = revealedAnchors[2] + (1 - revealedAnchors[0])+ .05f;
                 hiddenAnchorsAfter[3] = revealedAnchors[3];
                 moveVector = new Vector2(-1, 0);
                 break;
