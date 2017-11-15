@@ -1,5 +1,6 @@
 # Week 7
-- [ ] Credits screen
+- [x] Credits screen
+- [ ] Health Bars
 - [ ] Game UI (health, tips, etc)
 - [ ] Update idle animation 
 - [ ] First draft forest background 
