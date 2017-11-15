@@ -1,13 +1,21 @@
-# Week 6
-- [ ] Player-Attack -> Enemy/Object interaction
-- [ ] Tile art/Background art
-- [ ] Attack animations
+# Week 7
 - [ ] Credits screen
-- [ ] Level select screen
-- [ ] Pause Menu (maybe)
 - [ ] Game UI (health, tips, etc)
-- [ ] Implement first level draft for play-testing
-- [ ] 2 enemy types (stationary air and patrolling ground) 
+- [ ] Update idle animation 
+- [ ] First draft forest background 
+- [ ] Finished first level design
+- [ ] Test new tiles types (rounded, uneven, etc) 
+- [ ] Ask people to play-test 
+
+# Week 6
+- [x] Player-Attack -> Enemy/Object interaction
+- [x] Tile art/Background art
+- [x] Idle animation draft
+- [x] Level select screen
+- [x] Pause Menu (maybe)
+- [x] Implement first level draft for play-testing
+- [x] 2 enemy types (stationary air and patrolling ground) 
+- [x] New attack/walk (wood) sfx
 
 # Week 5
 - [x] Begin enemy scripting
