@@ -13,12 +13,13 @@ public class RotateInAir : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!playerController.isGrounded() && !playerController.isDashing && (int)playerController.movementState != 0 && (int)playerController.movementState != 4)
+        if (!playerController.isGrounded() && !playerController.isDashing && (int)playerController.movementState != 0 && (int)playerController.movementState != 4 && !PauseMenuController.paused)
         {
             transform.Rotate(new Vector3(0, 0, rotationSpeed));
         } else
         {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
+            if(!PauseMenuController.paused)
+                transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 	}
 }

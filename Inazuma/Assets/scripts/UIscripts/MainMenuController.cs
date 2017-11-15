@@ -227,19 +227,21 @@ public class MainMenuController : MonoBehaviour {
     }
     public void creditsButtonPress()
     {
-        menuState = MenuState.Credits;
-        mainMenuCanvas.enabled = false;
-        creditsCanvas.enabled = true;
-        eventSystem.SetSelectedGameObject(creditsBackButton.gameObject);
-        for(int i = 0; i < nameList.Length; ++i)
+        if (GameState.compareState(GameState.State.MainMenu))
         {
-            nameList[i].hideImmediately();
-            roleList[i].hideImmediately();
+            menuState = MenuState.Credits;
+            mainMenuCanvas.enabled = false;
+            creditsCanvas.enabled = true;
+            eventSystem.SetSelectedGameObject(creditsBackButton.gameObject);
+            for (int i = 0; i < nameList.Length; ++i)
+            {
+                nameList[i].hideImmediately();
+                roleList[i].hideImmediately();
+            }
+            StopCoroutine(creditsFunc);
+            creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
+            StartCoroutine(creditsFunc);
         }
-        StopCoroutine(creditsFunc);
-        creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
-        StartCoroutine(creditsFunc);
-       
     }
     public void quitButtonPress()
     {

@@ -174,6 +174,10 @@ public class PlayerController : MonoBehaviour
             canJump = true;
             preventCooldown = false;
         }
+        if (PauseMenuController.paused)
+        {
+            source.Stop();
+        }
         switch (movementState) {
             case MovementState.Free:
                 if (Input.GetKeyDown(jumpButton))
@@ -1032,6 +1036,7 @@ public class PlayerController : MonoBehaviour
             }
             isDashing = false;
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
+            source.Stop();
             soundEffectPlayer.PlayOneShot(hitTakenSound);
         }
     }
