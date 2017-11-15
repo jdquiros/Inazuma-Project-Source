@@ -15,6 +15,8 @@ public class MainMenuController : MonoBehaviour {
     public static MenuState menuState;
     private Canvas mainMenuCanvas;
     public Canvas levelSelectCanvas;
+    public Canvas creditsCanvas;
+
     public bool debug = false;
     public EventSystem eventSystem;
     public Button playButton;
@@ -25,6 +27,8 @@ public class MainMenuController : MonoBehaviour {
     public Button LSPlayButton;
     public Button LSBackButton;
 
+    public Button creditsBackButton;
+
     public GraphicColorLerp title;
     private AudioSource source;
 
@@ -32,6 +36,11 @@ public class MainMenuController : MonoBehaviour {
     public string[] levelNames;
     private int levelIndex = 0;
 
+    public float creditsInitialDelay;
+    public float creditsRepeatDelay;
+    public UIRevealer[] nameList;
+    public UIRevealer[] roleList;
+    private IEnumerator creditsFunc;
     public float afterPressDelay;
     private bool allowInputs = true;
     private void Awake()
@@ -40,7 +49,8 @@ public class MainMenuController : MonoBehaviour {
         source = GetComponent<AudioSource>();
         menuState = MenuState.MainMenu;
         levelSelectCanvas.enabled = false;
-        
+        creditsCanvas.enabled = false;
+        creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
     }
     void Start () {
         if (GameState.compareState(GameState.State.InGame))
@@ -148,6 +158,16 @@ public class MainMenuController : MonoBehaviour {
         yield return new WaitForSeconds(duration);
         allowInputs = true;
     }
+    private IEnumerator revealCredits(float initialDelay, float repeatDelay)
+    {
+        yield return new WaitForSeconds(initialDelay);
+        for(int i = 0; i < nameList.Length; ++i)
+        {
+            nameList[i].revealUI();
+            roleList[i].revealUI();
+            yield return new WaitForSeconds(repeatDelay);
+        }
+    }
     public void playButtonPress()
     {
         if (GameState.compareState(GameState.State.MainMenu))
@@ -207,7 +227,19 @@ public class MainMenuController : MonoBehaviour {
     }
     public void creditsButtonPress()
     {
-
+        menuState = MenuState.Credits;
+        mainMenuCanvas.enabled = false;
+        creditsCanvas.enabled = true;
+        eventSystem.SetSelectedGameObject(creditsBackButton.gameObject);
+        for(int i = 0; i < nameList.Length; ++i)
+        {
+            nameList[i].hideImmediately();
+            roleList[i].hideImmediately();
+        }
+        StopCoroutine(creditsFunc);
+        creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
+        StartCoroutine(creditsFunc);
+       
     }
     public void quitButtonPress()
     {
@@ -249,6 +281,16 @@ public class MainMenuController : MonoBehaviour {
         {
             menuState = MenuState.MainMenu;
             levelSelectCanvas.enabled = false;
+            mainMenuCanvas.enabled = true;
+            eventSystem.SetSelectedGameObject(playButton.gameObject);
+        }
+    }
+    public void creditsBackButtonPress()
+    {
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.MainMenu;
+            creditsCanvas.enabled = false;
             mainMenuCanvas.enabled = true;
             eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
