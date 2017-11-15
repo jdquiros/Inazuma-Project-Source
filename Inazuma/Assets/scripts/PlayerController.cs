@@ -251,6 +251,11 @@ public class PlayerController : MonoBehaviour
                 break;
             case MovementState.Dash:
                 checkForAttackInput();
+                if(Input.GetKeyDown(jumpButton) && (charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
+                {
+                    jump();
+                    endDash();
+                }
                 break;
             case MovementState.Lunge:
                 checkForAttackInput();
@@ -745,7 +750,7 @@ public class PlayerController : MonoBehaviour
 
     private void jump()
     {
-        if (movementState == MovementState.Free)
+        if (movementState == MovementState.Free || movementState == MovementState.Dash)
         {
             yVelocity = jumpForce;
             canJump = false;
