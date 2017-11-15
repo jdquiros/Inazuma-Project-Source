@@ -32,12 +32,15 @@ public class MainMenuController : MonoBehaviour {
     public string[] levelNames;
     private int levelIndex = 0;
 
+    public float afterPressDelay;
+    private bool allowInputs = true;
     private void Awake()
     {
         mainMenuCanvas = GetComponent<Canvas>();
         source = GetComponent<AudioSource>();
         menuState = MenuState.MainMenu;
         levelSelectCanvas.enabled = false;
+        
     }
     void Start () {
         if (GameState.compareState(GameState.State.InGame))
@@ -46,6 +49,7 @@ public class MainMenuController : MonoBehaviour {
         } else if (GameState.compareState(GameState.State.MainMenu))
         {
             menuState = MenuState.MainMenu;
+            mainMenuCanvas.enabled = true;
         }
 	}
 	
@@ -101,12 +105,20 @@ public class MainMenuController : MonoBehaviour {
     }
     private void updateLevelSelect()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-            incrementLevel();
-        } else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (allowInputs)
+            {
+                incrementLevel();
+                StartCoroutine(preventInputAfterPress(afterPressDelay));
+            }
+        } else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            decrementLevel();
+            if (allowInputs)
+            {
+                decrementLevel();
+                StartCoroutine(preventInputAfterPress(afterPressDelay));
+            }
         }
     }
     private void incrementLevel()
@@ -129,6 +141,12 @@ public class MainMenuController : MonoBehaviour {
             source.PlayOneShot(source.clip);
 
         }
+    }
+    private IEnumerator preventInputAfterPress(float duration)
+    {
+        allowInputs = false;
+        yield return new WaitForSeconds(duration);
+        allowInputs = true;
     }
     public void playButtonPress()
     {
@@ -209,6 +227,12 @@ public class MainMenuController : MonoBehaviour {
             }
         }
     }
+    //private IEnumerator playThenDropVolume(AudioClip clip, float initialDelay)
+    //{
+    //    source.volume
+    //    source.PlayOneShot(clip);
+
+    //}
     public void LSPlayButtonPress()
     {
         if (GameState.compareState(GameState.State.MainMenu))

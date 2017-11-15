@@ -155,6 +155,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         transform.position = Checkpoint.GetCurrentCheckpointPos();
+        charController.warpToGrounded();
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
         hoverCoroutine = hoverForDuration(lungeHoverDuration);

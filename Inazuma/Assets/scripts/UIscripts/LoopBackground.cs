@@ -11,7 +11,7 @@ public class LoopBackground : MonoBehaviour {
     public float Z;
     private CameraSystem parentCamera;
 	void Start () {
-        spriteWidth = transform.GetChild(0).GetComponent<SpriteRenderer>().bounds.size.x;
+        spriteWidth = transform.GetChild(0).GetComponent<SpriteRenderer>().bounds.size.x * transform.lossyScale.x;
         transform.localPosition = new Vector3(0,0,Z);
         parentCamera = GetComponentInParent<CameraSystem>();
     }
