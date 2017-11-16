@@ -1,5 +1,6 @@
 # Week 7
 - [x] Credits screen
+- [ ] Fix jumping not cancelling dashes up slopes
 - [ ] Health Bars
 - [ ] Game UI (health, tips, etc)
 - [ ] Update idle animation 
