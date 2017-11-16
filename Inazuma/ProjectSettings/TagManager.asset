@@ -8,6 +8,7 @@ TagManager:
   - Ladder
   - Spike
   - Enemy
+  - HealthBarParent
   layers:
   - Default
   - TransparentFX
