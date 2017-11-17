@@ -7,6 +7,8 @@ TagManager:
   - Checkpoint
   - Ladder
   - Spike
+  - Enemy
+  - HealthBarParent
   layers:
   - Default
   - TransparentFX
@@ -44,6 +46,15 @@ TagManager:
   - name: Background
     uniqueID: 3337721631
     locked: 0
+  - name: Behind
+    uniqueID: 56408781
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 3574483463
+    locked: 0
+  - name: Front
+    uniqueID: 495656493
     locked: 0

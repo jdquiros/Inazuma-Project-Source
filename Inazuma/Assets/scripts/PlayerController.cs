@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge, onLadder
+        Paralyzed, Free, Dash, Lunge, OnLadder, Hover
     }
     public MovementState movementState = MovementState.Free;
     private bool allowPlayerInput;
@@ -75,10 +75,9 @@ public class PlayerController : MonoBehaviour
     public float lungeAcceleration = 0f;         //acceleration of dash
     public float lungeMaxVelocity = 0f;          //maximum velocity during dash
     public float lungeCooldown = 0f;             //cooldown between dashes
-    public float lungeYVelocityRestriction = 0f; //Vertical velocity after a lunge is limited to this value
-    public float restrictYVelocityDuration = 0f; //time that this special y velocity restriction is active;
-    private float restrictYVelocityTimer = 0;
-    private float defaultMaxVerticalVelocity;
+
+    public float lungeHoverDuration;
+
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -94,6 +93,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 forcedMoveVector;
     int enemyHits = 0;                          //# of enemies hit in a single attack
+
     private enum Direction
     {
         Right, DownRight, Down, DownLeft, Left, UpLeft, Up, UpRight
@@ -112,10 +112,15 @@ public class PlayerController : MonoBehaviour
 
     private AudioSource source;
     public AudioSource soundEffectPlayer;
+
     public AudioClip attackSound;
     public AudioClip dashSound;
     public AudioClip lungeSound;
     public AudioClip jumpSound;
+    public AudioClip footstepSound;
+    public AudioClip climbSound;
+    public AudioClip hitTakenSound;
+    public AudioClip landingSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -128,6 +133,18 @@ public class PlayerController : MonoBehaviour
     public float ladderGrabCooldown;
     private float ladderGrabTimer = 0;
     private bool inLadder = false;
+
+    public bool attacksEndDashes = false;
+
+    public float knockbackBackVelocity;
+    public float knockbackUpVelocity;
+    public float hitStunDuration;
+    public float hitInvincibilityDuration;
+    private bool invulnerable = false;
+
+    private IEnumerator hoverCoroutine;
+    
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -137,11 +154,11 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        print(Checkpoint.GetCurrentCheckpointPos());
         transform.position = Checkpoint.GetCurrentCheckpointPos();
+        charController.warpToGrounded();
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
-        defaultMaxVerticalVelocity = maxVerticalVelocity;
+        hoverCoroutine = hoverForDuration(lungeHoverDuration);
         //charController.warpToGrounded();
     }
 
@@ -155,8 +172,11 @@ public class PlayerController : MonoBehaviour
         if (charController.isGrounded)
         {
             canJump = true;
-            restrictYVelocityTimer = 0;
             preventCooldown = false;
+        }
+        if (PauseMenuController.paused)
+        {
+            source.Stop();
         }
         switch (movementState) {
             case MovementState.Free:
@@ -168,8 +188,13 @@ public class PlayerController : MonoBehaviour
                         jump();
                     }
                 }
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    knockBackPlayer(new Vector3(0, 0, 0));
+                }
                 if (isMoving && isGrounded())
                 {
+                    source.clip = footstepSound;
                     if (!source.isPlaying)
                     {
                         source.volume = 1;
@@ -194,36 +219,16 @@ public class PlayerController : MonoBehaviour
 
                     dash(facingDirection);
                 }
-                if (Input.GetKeyDown(attackButton))
-                {
-                    if (canAttack)
-                    {
-                        source.Stop();
-
-                        StartCoroutine(attack(getAimVector(aimDirection)));
-                    }
-                }
-                if (Input.GetKeyDown(lungeButton))
-                {
-                    if (canAttack)
-                    {
-                        source.Stop();
-
-                        aimDirection = calculateAimDirection();
-                        dashDirection = aimDirection;
-                        StartCoroutine(lungeAttack(getAimVector(aimDirection)));
-                    }
-                }
+                checkForAttackInput();
                 if ((((Input.GetKeyDown(upButton) || Input.GetKeyDown(downButton)) && isGrounded())
                     ||((Input.GetKey(upButton) || Input.GetKey(downButton)) && ladderGrabTimer <= 0)) && movementState == MovementState.Free && inLadder )
                 {
-                    movementState = MovementState.onLadder;
+                    movementState = MovementState.OnLadder;
                     transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
                     
                     charController.ignoreOneWayPlatformsThisFrame = true;
                     if (Input.GetKey(downButton))
                     {
-                        //transform.position += Vector3.down * .1f;
                         attemptDropThroughPlatform();
                     }
                     xVelocity = 0;
@@ -241,15 +246,31 @@ public class PlayerController : MonoBehaviour
 			    {
 				    respawn ();
 			    }
+                spriteRenderer.color = Color.black;
 		        break;
-            case MovementState.onLadder:
+            case MovementState.OnLadder:
                 updateLadderMovement();
                 canJump = true;
-                restrictYVelocityTimer = 0;
                 preventCooldown = false;
-                source.Stop();
                 break;
-
+            case MovementState.Dash:
+                checkForAttackInput();
+                if(Input.GetKeyDown(jumpButton) && (charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
+                {
+                    jump();
+                    endDash();
+                }
+                break;
+            case MovementState.Lunge:
+                checkForAttackInput();
+                break;
+            case MovementState.Hover:
+                if (isGrounded())
+                {
+                    movementState = MovementState.Free;
+                    StopCoroutine(hoverCoroutine);
+                }
+                break;
         }
         if (ladderGrabTimer > 0)
         {
@@ -265,6 +286,39 @@ public class PlayerController : MonoBehaviour
         
         
 
+    }
+    private void checkForAttackInput()
+    {
+        
+        if (Input.GetKeyDown(attackButton))
+        {
+            if (canAttack)
+            {
+                source.Stop();
+
+                StartCoroutine(attack(getAimVector(aimDirection)));
+                if (attacksEndDashes)
+                {
+                    dashTimer = 0;
+                }
+            }
+
+        }
+        if (Input.GetKeyDown(lungeButton))
+        {
+            if (canAttack)
+            {
+                source.Stop();
+
+                aimDirection = calculateAimDirection();
+                dashDirection = aimDirection;
+                StartCoroutine(lungeAttack(getAimVector(aimDirection)));
+                if (attacksEndDashes)
+                {
+                    dashTimer = 0;
+                }
+            }
+        }
     }
     private void moveHorizontal(float xV)
     {
@@ -298,6 +352,10 @@ public class PlayerController : MonoBehaviour
                 jumpInAirTimer = jumpInAirDuration;
             }
         }
+        if (!wasGrounded && isGrounded())                     //runs code when landing
+        {
+            soundEffectPlayer.PlayOneShot(landingSound);
+        }
     }
     private void updatePosition()
     {
@@ -306,25 +364,23 @@ public class PlayerController : MonoBehaviour
     }
     private void updateHorizontalVelocity()
     {
+        float xVelToAdd = 0f;
+
         switch (movementState)
         {
             case (MovementState.Free):
                 //regular movement, not dashing
-                float xVelToAdd = 0f;
                 if (Input.GetKey(leftButton) && !Input.GetKey(rightButton))
                 {
                     if (xVelocity <= 0)
                     {
                         //accelerating left
                         xVelToAdd = (-acceleration) * Time.deltaTime;
-
-
                     }
                     else
                     {
                         //decelerating left
                         xVelToAdd = (-deceleration) * Time.deltaTime;
-
                     }
                 }
                 else if (Input.GetKey(rightButton) && !Input.GetKey(leftButton))
@@ -333,15 +389,12 @@ public class PlayerController : MonoBehaviour
                     {
                         //accelerating right
                         xVelToAdd = acceleration * Time.deltaTime;
-
                     }
                     else
                     {
                         //decelerating right
                         xVelToAdd = deceleration * Time.deltaTime;
-
                     }
-
                 }
                 else
                 {
@@ -400,7 +453,82 @@ public class PlayerController : MonoBehaviour
                 xVelocity = Mathf.Clamp(xVelocity, -lungeMaxVelocity, lungeMaxVelocity);
                 break;
             case (MovementState.Paralyzed):
-                xVelocity *= 0.5f;
+                if(isGrounded())
+                    xVelocity *= 0.5f;
+                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+                {
+                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+                }
+                else if (xVelocity < (-maxHorizontalVelocity))
+                {
+                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
+                }
+                break;
+            case (MovementState.Hover):
+                if (Input.GetKey(leftButton) && !Input.GetKey(rightButton))
+                {
+                    if (xVelocity <= 0)
+                    {
+                        //accelerating left
+                        xVelToAdd = (-acceleration) * Time.deltaTime;
+                    }
+                    else
+                    {
+                        //decelerating left
+                        xVelToAdd = (-deceleration) * Time.deltaTime;
+                    }
+                }
+                else if (Input.GetKey(rightButton) && !Input.GetKey(leftButton))
+                {
+                    if (xVelocity >= 0)
+                    {
+                        //accelerating right
+                        xVelToAdd = acceleration * Time.deltaTime;
+                    }
+                    else
+                    {
+                        //decelerating right
+                        xVelToAdd = deceleration * Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    //not moving left or right.  slow down through passive deceleration
+                    if (xVelocity > 0)
+                    {
+                        xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                    }
+                    else if (xVelocity < 0)
+                    {
+                        xVelToAdd = passiveDeceleration * Time.deltaTime;
+                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                            xVelToAdd *= highDecelerationFactor;
+                        xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                    }
+                }
+                if (!charController.isGrounded)
+                    xVelToAdd *= airAccelerationFactor;
+                //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
+
+
+                xVelocity = xVelocity + xVelToAdd;      //set speeds
+
+                //clamp to speed maximums
+                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
+                {
+                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
+                }
+                else if (xVelocity < (-maxHorizontalVelocity))
+                {
+                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
+                }
                 break;
         }
 
@@ -412,7 +540,7 @@ public class PlayerController : MonoBehaviour
         switch (movementState)
         {
             case (MovementState.Free):
-                if (!charController.isGrounded)
+                if (!isGrounded())
                 {
                     yVelToAdd = (-gravity) * Time.deltaTime;
                 }
@@ -448,14 +576,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    if(restrictYVelocityTimer > 0)
-                    {
-                        restrictYVelocityTimer -= Time.deltaTime;
-
-                    } else
-                    {
-                        maxVerticalVelocity = defaultMaxVerticalVelocity;
-                    }
+                    
                     yVelocity += yVelToAdd;
                     if (yVelocity > maxVerticalVelocity)           //gradually decrease speed to max speed
                     {
@@ -483,6 +604,29 @@ public class PlayerController : MonoBehaviour
                 jumping = false;
                 jumpApexTimer = 0;
                 break;
+            case (MovementState.Paralyzed):
+                if (!isGrounded())
+                {
+                    yVelToAdd = (-gravity) * Time.deltaTime;
+                }
+                yVelocity += yVelToAdd;
+                if (isGrounded() && !jumping)
+                {
+                    yVelocity = -25f;       //downward force so you stick to slopes
+                }
+                break;
+            case (MovementState.Hover):
+                if (yVelocity > 0)           //gradually decrease speed to 0
+                {
+                    yVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    yVelocity = Mathf.Max(yVelocity, 0);
+                }
+                else if (yVelocity < 0)
+                {
+                    yVelocity += velocityRestrictionRate * Time.deltaTime;
+                    yVelocity = Mathf.Min(yVelocity, 0);
+                }
+                break;
         }
 
 
@@ -504,12 +648,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    dashTimer = 0;
-                    dashCooldownTimer = dashCooldown;
-                    isDashing = false;
-                    canAttack = true;
-                    movementState = MovementState.Free;
-                    spriteRenderer.color = Color.gray;
+                    endDash();
                 }
                 break;
             case (MovementState.Lunge):
@@ -520,12 +659,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    dashTimer = 0;
-                    isDashing = false;
-                    spriteRenderer.color = Color.yellow;
-                    movementState = MovementState.Free;
-                    restrictYVelocityTimer = restrictYVelocityDuration;
-                    maxVerticalVelocity = lungeYVelocityRestriction;
+                    endLunge();
                 }
                 break;
             case (MovementState.Free):
@@ -553,16 +687,28 @@ public class PlayerController : MonoBehaviour
         xVelocity = 0;
         spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
+        source.clip = climbSound;
         if (Input.GetKeyDown(jumpButton))
         {
             //jump off of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
             spriteRenderer.color = Color.yellow;
-            jump();
+            if (!Input.GetKey(downButton))
+            {
+                jump();
+            }
         } else if (Input.GetKey(upButton))
         {
             //climb up
+            if (!source.isPlaying)
+            {
+                source.clip = climbSound;
+                source.volume = 1;
+                source.Play();
+                source.loop = true;
+                stopStepping = false;
+            }
             yVelocity = ladderClimbSpeed;
         } else if (Input.GetKey(downButton))
         {
@@ -570,16 +716,28 @@ public class PlayerController : MonoBehaviour
             if (isGrounded())
             {
                 movementState = MovementState.Free;
-                ladderGrabTimer = ladderGrabCooldown/2;
+                ladderGrabTimer = ladderGrabCooldown / 2;
                 spriteRenderer.color = Color.yellow;
                 yVelocity = 0;
             }
             else
+            {
                 yVelocity = -ladderClimbSpeed;
+                if (!source.isPlaying)
+                {
+                    source.clip = climbSound;
+                    source.volume = 1;
+                    source.Play();
+                    source.loop = true;
+                    stopStepping = false;
+                }
+            }
 
         } else
         {
             yVelocity = 0;
+            fadeFootsteps();
+            stopStepping = true;
         }
         
         if (!ladderBounds.Contains(transform.position))
@@ -596,7 +754,7 @@ public class PlayerController : MonoBehaviour
 
     private void jump()
     {
-        if (movementState == MovementState.Free)
+        if (movementState == MovementState.Free || movementState == MovementState.Dash)
         {
             yVelocity = jumpForce;
             canJump = false;
@@ -608,7 +766,7 @@ public class PlayerController : MonoBehaviour
     }
     private void attemptDropThroughPlatform()
     {
-        if (movementState == MovementState.onLadder || (movementState == MovementState.Free && isGrounded()))
+        if (movementState == MovementState.OnLadder || (movementState == MovementState.Free && isGrounded()))
         {
             yVelocity = 0;
             charController.ignoreOneWayPlatformsThisFrame = true;
@@ -621,7 +779,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (movementState == MovementState.Free)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free || movementState == MovementState.OnLadder)                             //you cannot change your facing direction while dashing
         {
             if (!(Input.GetKey(leftButton) && Input.GetKey(rightButton)))
             {
@@ -630,8 +788,9 @@ public class PlayerController : MonoBehaviour
                 else if (Input.GetKey(leftButton))
                     facingDirection = Direction.Left;
             }
-            aimDirection = calculateAimDirection();
         }
+        aimDirection = calculateAimDirection();
+        
 
     }
     private Direction calculateAimDirection()
@@ -696,11 +855,39 @@ public class PlayerController : MonoBehaviour
         }
         return result;
     }
+    private void endDash()
+    {
+        dashTimer = 0;
+        dashCooldownTimer = dashCooldown;
+        isDashing = false;
+        canAttack = true;
+        movementState = MovementState.Free;
+        spriteRenderer.color = Color.gray;
+    }
+    private void endLunge()
+    {
+        dashTimer = 0;
+        isDashing = false;
+        spriteRenderer.color = Color.yellow;
+        
+        StopCoroutine(hoverCoroutine);
+
+        hoverCoroutine = hoverForDuration(lungeHoverDuration);
+        StartCoroutine(hoverCoroutine);
+        
+    }
+    private IEnumerator hoverForDuration(float time)
+    {
+        movementState = MovementState.Hover;
+        yield return new WaitForSeconds(time);
+        movementState = MovementState.Free;
+    }
     void onHitBoxCollision(Collider2D other)
     {
 
-        if (other.gameObject.layer == LayerMask.NameToLayer("enemyLayer"))
+        if (other.gameObject.CompareTag("Enemy"))
         {
+            other.gameObject.GetComponent<Enemy>().damageEnemy(1);
             ++enemyHits;
             if (enemyHits == 1 && lungeAttacking)
                 lungeDash(getAimVector(dashDirection));
@@ -740,9 +927,11 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator attack(Vector3 aimVector)
     {
+
         canAttack = false;
         canDash = false;
-                     //for debug
+        //for debug
+        
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
@@ -761,9 +950,8 @@ public class PlayerController : MonoBehaviour
         canAttack = true;
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
-    {
+    {       
         lungeAttacking = true;
-        movementState = MovementState.Lunge;
         canAttack = false;
         canDash = false;
         spriteRenderer.color = Color.blue;
@@ -793,7 +981,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -808,7 +996,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -822,13 +1010,49 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = lungeDuration;
-        canAttack = false;
+        canAttack = true;
         movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
         if (!isGrounded())
             preventCooldown = true;
+    }
+    public void knockBackPlayer(Vector3 enemyPos)
+    {
+        //enemy MUST supply its own location
+        
+        if (movementState != MovementState.Paralyzed && !invulnerable)
+        {
+            yVelocity = knockbackUpVelocity;
+            charController.move(new Vector2(0, .2f));
+            if (transform.position.x < enemyPos.x)
+            {
+                xVelocity = -knockbackBackVelocity;
+            }
+            else
+            {
+                xVelocity = knockbackBackVelocity;
+            }
+            isDashing = false;
+            StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
+            source.Stop();
+            soundEffectPlayer.PlayOneShot(hitTakenSound);
+        }
+    }
+    public IEnumerator stunPlayer(float duration, float invincibilityDuration)
+    {
+        movementState = MovementState.Paralyzed;
+        invulnerable = true;
+        spriteRenderer.color = Color.grey;
+        yield return new WaitForSeconds(duration);
+        spriteRenderer.color = Color.white;
+        movementState = MovementState.Free;
+
+        yield return new WaitForSeconds(invincibilityDuration-duration);
+        invulnerable = false;
+        spriteRenderer.color = Color.yellow;
+
     }
     public void damagePlayer(int dmg)
     {

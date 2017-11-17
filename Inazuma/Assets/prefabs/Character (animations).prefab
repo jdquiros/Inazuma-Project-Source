@@ -74,8 +74,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1037193870499160}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.032, y: 2.8, z: 0.171875}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.064, y: 5.6, z: 0.34375}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4373040553401072}
@@ -90,7 +90,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1718656323125386}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4157732615975522}
@@ -353,21 +353,32 @@ MonoBehaviour:
   dashMaxVelocity: 17
   dashCooldown: 0.5
   isDashing: 0
-  lungeDuration: 0.38
-  lungeAcceleration: 130
-  lungeMaxVelocity: 17
+  lungeDuration: 0.08
+  lungeAcceleration: 5
+  lungeMaxVelocity: 50
   lungeCooldown: 0.5
-  lungeYVelocityRestriction: 8
-  restrictYVelocityDuration: 0.2
+  lungeHoverDuration: 0.35
+  lungeHoverXAccelFactor: 0.25
   velocityRestrictionRate: 500
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 7f791dc9db11c1b4095eb2c7f5414323, type: 3}
-  dashSound: {fileID: 8300000, guid: 9aa81f27973c4a84aaf901b48e633ac5, type: 3}
-  lungeSound: {fileID: 8300000, guid: db9f8276817830f4e826c994ba16b6f6, type: 3}
+  dashSound: {fileID: 8300000, guid: 4baf555c3b7b55647b35f78eec9c1b1a, type: 3}
+  lungeSound: {fileID: 8300000, guid: c93f31c1e141a914490ffa9985847188, type: 3}
   jumpSound: {fileID: 8300000, guid: 16f032a57f33cad45b7789992661041c, type: 3}
+  footstepSound: {fileID: 8300000, guid: f32b6ba00a00d3b4ba6706c7f82a58c5, type: 3}
+  climbSound: {fileID: 8300000, guid: 8ad5ed75884f3f347857449493f7fc5a, type: 3}
+  hitTakenSound: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
+  landingSound: {fileID: 8300000, guid: fb88975bfa4bece44ae332cbc0cc2f8f, type: 3}
   footstepSoundFadeDuration: 0.25
   jumpInAirDuration: 0.04
+  ladderClimbSpeed: 6
+  ladderGrabCooldown: 0.5
+  attacksEndDashes: 1
+  knockbackBackVelocity: 8
+  knockbackUpVelocity: 10
+  hitStunDuration: 0.5
+  hitInvincibilityDuration: 1
 --- !u!114 &114529580279281732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -504,8 +515,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -720483833
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1222aa5434e240c4a8aa37442332ff30, type: 3}
   m_Color: {r: 1, g: 0.97241366, b: 0, a: 1}

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class animatorController : MonoBehaviour {
 
-	PlayerController playerController;
-	Animator anim;
-	Vector3 theScale;
+	private PlayerController playerController;
+	private Animator anim;
+	private Vector3 theScale;
 
 	private void Awake() {
 		playerController = GetComponentInParent<PlayerController> ();
@@ -16,14 +16,20 @@ public class animatorController : MonoBehaviour {
 	void Start () {
 		theScale = transform.localScale;
 	}
-	
+
 	void FixedUpdate () {
-		float speed = playerController.getVelocity ().x;
+		float xVel = playerController.getVelocity ().x;
+		float yVel = playerController.getVelocity ().y;
 		int facing = playerController.getFacingDirection ();
 
-		anim.SetFloat ("Speed", Mathf.Abs (speed));
+		anim.SetFloat ("xVel", Mathf.Abs (xVel));
+		anim.SetFloat ("yVel", yVel);
 	
-		//int facing -> 4 == left, 0 == right
+		//if (playerController....attacking())
+		//anim.SetBool("attacking", true);
+		//...
+
+		//int facing: 4 == left, 0 == right
 		if (facing == 0) {
 			transform.localScale = new Vector3 (theScale.x, transform.localScale.y, transform.localScale.z);
 		} else {
