@@ -896,7 +896,6 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1);
-            //enemy.makeInvincible();       //needed to ensure enemies can't be hit twice in the same attack
             ++enemyHits;
             if (enemyHits == 1 && isLungeAttacking)
             {
@@ -989,6 +988,7 @@ public class PlayerController : MonoBehaviour
     }
     private void dash(Vector3 direction)
     {
+        spawnTrail();
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
@@ -1004,6 +1004,8 @@ public class PlayerController : MonoBehaviour
     }
     private void dash(Direction direction)
     {
+        spawnTrail();
+
         forcedMoveVector = getAimVector(direction);
         canDash = false;
         isDashing = true;
@@ -1018,6 +1020,7 @@ public class PlayerController : MonoBehaviour
     }
     private void lungeDash(Vector3 direction)
     {
+        spawnTrail();
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
@@ -1030,6 +1033,18 @@ public class PlayerController : MonoBehaviour
         invulnerable = true;
         if (!isGrounded())
             preventCooldown = true;
+    }
+    private void spawnTrail()
+    {
+        GameObject trailObject = (GameObject)Instantiate(Resources.Load("DashTrail"));
+        trailObject.transform.parent = transform;
+        trailObject.transform.position = transform.position;
+        trailObject.GetComponent<DashTrailScript>().direction = (facingDirection == Direction.Right) ? -1 : 1;
+        foreach(TrailRenderer tr in trailObject.GetComponentsInChildren<TrailRenderer>())
+        {
+            tr.Clear();
+        }
+
     }
     public void knockBackPlayer(Vector3 enemyPos)
     {
@@ -1146,5 +1161,9 @@ public class PlayerController : MonoBehaviour
     public bool lungeAttacking()
     {
         return isLungeAttacking;
+    }
+    public bool moving()
+    {
+        return isMoving;
     }
 }
