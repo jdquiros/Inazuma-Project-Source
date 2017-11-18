@@ -110,7 +110,8 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded;
 
 	private Vector3 respawnPos;
-    private bool isMoving = false;                                  //actually requires movement.  running into a wall will not cause this to be true;
+    private bool isMovingHorizontal = false;                                  //actually requires movement.  running into a wall will not cause this to be true;
+    private bool isMovingVertical = false;
 
     private AudioSource source;
     public AudioSource soundEffectPlayer;
@@ -198,7 +199,7 @@ public class PlayerController : MonoBehaviour
                 {
                     knockBackPlayer(new Vector3(0, 0, 0));
                 }
-                if (isMoving && isGrounded())
+                if (isMovingHorizontal && isGrounded())
                 {
                     source.clip = footstepSound;
                     if (!source.isPlaying)
@@ -328,26 +329,35 @@ public class PlayerController : MonoBehaviour
     }
     private void moveHorizontal(float xV)
     {
-        isMoving = true;
+        isMovingHorizontal = true;
         Vector3 position = transform.position;
         charController.move(new Vector2(xV, 0));
         if (xV != 0 && Vector3.Distance(position, transform.position) < 0.0005f)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
         {
             xVelocity = 0;
-            isMoving = false;
+            isMovingHorizontal = false;
         }
         if(Mathf.Abs(xV) < 0.000005f)
         {
-            isMoving = false;
+            isMovingHorizontal = false;
         }
     }
     private void moveVertical(float yV)
     {
+        isMovingVertical = true;
         Vector3 position = transform.position;
         charController.move(new Vector2(0, yV));
         if (yV > 0 && transform.position.y <= position.y)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
         {
             yVelocity = 0;
+        }
+        if (yV != 0 && Vector3.Distance(position, transform.position) < 0.0005f)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
+        {
+            isMovingVertical = false;
+        }
+        if (Mathf.Abs(yV) < 0.000005f)
+        {
+            isMovingVertical = false;
         }
         if (movementState == MovementState.Free)
         {
@@ -988,6 +998,7 @@ public class PlayerController : MonoBehaviour
     }
     private void dash(Vector3 direction)
     {
+
         spawnTrail();
         forcedMoveVector = direction;
         canDash = false;
@@ -1164,6 +1175,6 @@ public class PlayerController : MonoBehaviour
     }
     public bool moving()
     {
-        return isMoving;
+        return isMovingVertical || isMovingHorizontal;
     }
 }

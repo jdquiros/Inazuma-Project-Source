@@ -12,11 +12,11 @@ public class DashTrailScript : MonoBehaviour {
     void Start () {
         playerController = transform.parent.GetComponent<PlayerController>();
         destroyDelay = GetComponentInChildren<TrailRenderer>().time;
+
     }
-	
-	// Update is called once per frame
-	void Update () {
-       
+
+    // Update is called once per frame
+    void Update () {
         if (playerController.movementState != PlayerController.MovementState.Dash && playerController.movementState != PlayerController.MovementState.Lunge || !playerController.moving())
         {
             if (transform.parent != null)
@@ -35,5 +35,6 @@ public class DashTrailScript : MonoBehaviour {
                     transform.Rotate(new Vector3(0, 0, rotationSpeed * direction) * Time.deltaTime);
             }
         }
+
     }
 }
