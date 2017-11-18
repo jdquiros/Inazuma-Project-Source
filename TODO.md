@@ -4,9 +4,9 @@
 - [x] Lunging should make player invincible
 - [x] Add more public get methods for animator (attacks and jumps)
 - [ ] Controller support
-- [ ] Health Bars
+- [x] Health Bars
 - [ ] Game UI (health, tips, etc)
-- [ ] Update idle animation 
+- [x] Update idle animation 
 - [ ] First draft forest background 
 - [ ] Finished first level design
 - [ ] Test new tiles types (rounded, uneven, etc) 
