@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
         Paralyzed, Free, Dash, Lunge, OnLadder, Hover
     }
     public MovementState movementState = MovementState.Free;
+    
     private bool allowPlayerInput;
     public int health = 1;
     private bool playerDead = false;
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour
     public float timeBetweenAttacks = 0f;       //delay between the end of one attack and the windup of another
     public float attackHitBoxDist = 0f;         //distance between center of player's gameObject and center of Hitbox.  Does not affect hitBox size or shape
     private bool canAttack = true;              //can the player attack this frame.  you cannot attack while dashing
+    private bool isAttacking = false;
 
     public float dashDuration = 0f;             //duration of dash
     private float dashTimer = 0f;
@@ -77,6 +79,7 @@ public class PlayerController : MonoBehaviour
     public float lungeCooldown = 0f;             //cooldown between dashes
 
     public float lungeHoverDuration;
+    private bool isLungeAttacking = false;
 
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
@@ -89,7 +92,6 @@ public class PlayerController : MonoBehaviour
     private bool jumping = false;               //is the player current jumping (jumping has different physics than general gravity)
     private bool jumpKeyHeld = false;           //tracks if the player was holding the jump key last frame, to run code when the player releases it
     private float jumpApexTimer = 0;            //time until char reaches apex of jump.  value based on jumpForce
-    private bool lungeAttacking = false;
 
     private Vector3 forcedMoveVector;
     int enemyHits = 0;                          //# of enemies hit in a single attack
@@ -141,6 +143,8 @@ public class PlayerController : MonoBehaviour
     public float hitStunDuration;
     public float hitInvincibilityDuration;
     private bool invulnerable = false;
+    private bool landedThisFrame = false;
+    private bool playerHitThisFrame = false;
 
     private IEnumerator hoverCoroutine;
     
@@ -165,6 +169,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        playerHitThisFrame = false;
+        landedThisFrame = false;
         if(!GameState.compareState(GameState.State.InGame))
         {
             movementState = MovementState.Paralyzed;
@@ -355,6 +361,7 @@ public class PlayerController : MonoBehaviour
         if (!wasGrounded && isGrounded())                     //runs code when landing
         {
             soundEffectPlayer.PlayOneShot(landingSound);
+            landedThisFrame = true;
         }
     }
     private void updatePosition()
@@ -866,6 +873,7 @@ public class PlayerController : MonoBehaviour
     }
     private void endLunge()
     {
+        invulnerable = false;
         dashTimer = 0;
         isDashing = false;
         spriteRenderer.color = Color.yellow;
@@ -888,9 +896,13 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1);
+            //enemy.makeInvincible();       //needed to ensure enemies can't be hit twice in the same attack
             ++enemyHits;
-            if (enemyHits == 1 && lungeAttacking)
+            if (enemyHits == 1 && isLungeAttacking)
+            {
                 lungeDash(getAimVector(dashDirection));
+                isLungeAttacking = false;
+            }
         }
     }
     
@@ -927,7 +939,7 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator attack(Vector3 aimVector)
     {
-
+        isAttacking = true;
         canAttack = false;
         canDash = false;
         //for debug
@@ -945,13 +957,14 @@ public class PlayerController : MonoBehaviour
         {
             canDash = true;                                                                       //player can dash during attack cooldown
         }
+        isAttacking = false;
         yield return new WaitForSeconds(timeBetweenAttacks);
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
     }
     private IEnumerator lungeAttack(Vector3 aimVector)
-    {       
-        lungeAttacking = true;
+    {
+        isLungeAttacking = true;
         canAttack = false;
         canDash = false;
         spriteRenderer.color = Color.blue;
@@ -964,13 +977,12 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(attackDuration);
         spriteRenderer.color = Color.gray;
-        lungeAttacking = false;
+        isLungeAttacking = false;
 
         if (dashCooldownTimer <= 0)
         {
             canDash = true;
         }
-       
         yield return new WaitForSeconds(timeBetweenAttacks);
         spriteRenderer.color = Color.yellow;
         canAttack = true;
@@ -1015,6 +1027,7 @@ public class PlayerController : MonoBehaviour
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
+        invulnerable = true;
         if (!isGrounded())
             preventCooldown = true;
     }
@@ -1038,6 +1051,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
             source.Stop();
             soundEffectPlayer.PlayOneShot(hitTakenSound);
+            playerHitThisFrame = true;
         }
     }
     public IEnumerator stunPlayer(float duration, float invincibilityDuration)
@@ -1124,5 +1138,13 @@ public class PlayerController : MonoBehaviour
     public Vector2 getVelocity()
     {
         return new Vector2(xVelocity, yVelocity);
+    }
+    public bool attacking()
+    {
+        return isAttacking;
+    }
+    public bool lungeAttacking()
+    {
+        return isLungeAttacking;
     }
 }
