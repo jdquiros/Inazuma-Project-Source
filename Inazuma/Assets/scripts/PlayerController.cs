@@ -230,7 +230,7 @@ public class PlayerController : MonoBehaviour
                 }
                 checkForAttackInput();
                 if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())
-                    ||((Mathf.Abs(Input.GetAxis("Vertical")) >= 0.05f && ladderGrabTimer <= 0))) 
+                    ||((yAxisMaxed && ladderGrabTimer <= 0))) 
                     && movementState == MovementState.Free 
                     && inLadder)
                 {
@@ -266,11 +266,20 @@ public class PlayerController : MonoBehaviour
                 break;
             case MovementState.Dash:
                 checkForAttackInput();
-                if(Input.GetButtonDown("Jump") && (charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
+                if(Input.GetButtonDown("Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
                 {
                     jump();
                     endDash();
                 }
+                if (wasGrounded && !isGrounded() && !jumping)
+                {
+                    jumpInAirTimer = jumpInAirDuration;
+                }
+                if (jumpInAirTimer > 0)
+                    jumpInAirTimer -= Time.deltaTime;
+                else
+                    jumpInAirTimer = 0;
+
                 break;
             case MovementState.Lunge:
                 checkForAttackInput();
