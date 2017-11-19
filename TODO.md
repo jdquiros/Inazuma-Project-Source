@@ -1,9 +1,9 @@
 # Week 7
 - [x] Credits screen
-- [ ] Fix jumping not cancelling dashes up slopes
+- [x] Fix jumping not cancelling dashes up slopes
 - [x] Lunging should make player invincible
 - [x] Add more public get methods for animator (attacks and jumps)
-- [ ] Controller support
+- [x] Controller support
 - [x] Health Bars
 - [ ] Game UI (health, tips, etc)
 - [x] Update idle animation 
