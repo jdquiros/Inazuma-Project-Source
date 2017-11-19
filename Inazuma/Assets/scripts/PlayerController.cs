@@ -316,7 +316,7 @@ public class PlayerController : MonoBehaviour
             {
                 source.Stop();
 
-                StartCoroutine(attack(getAimVector(aimDirection)));
+                StartCoroutine(attack(getAimVector(aimDirection).normalized));
                 if (attacksEndDashes)
                 {
                     dashTimer = 0;
@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour
 
                 aimDirection = calculateAimDirection();
                 dashDirection = aimDirection;
-                StartCoroutine(lungeAttack(getAimVector(aimDirection)));
+                StartCoroutine(lungeAttack(getAimVector(aimDirection).normalized));
                 if (attacksEndDashes)
                 {
                     dashTimer = 0;
@@ -882,25 +882,25 @@ public class PlayerController : MonoBehaviour
                 result = new Vector3(0, 1, 0);
                 break;
             case Direction.UpRight:
-                result = new Vector3(0.707f, 0.707f, 0);    //distance is approximately 1f, but diagonal.  we shouldn't need this but why not
+                result = new Vector3(1, 1, 0);    
                 break;
             case Direction.Right:
                 result = new Vector3(1, 0, 0);
                 break;
             case Direction.DownRight:
-                result = new Vector3(0.707f, -0.707f, 0);
+                result = new Vector3(1, -1, 0);
                 break;
             case Direction.Down:
                 result = new Vector3(0, -1, 0);
                 break;
             case Direction.DownLeft:
-                result = new Vector3(-0.707f, -0.707f, 0);
+                result = new Vector3(-1, -1, 0);
                 break;
             case Direction.Left:
                 result = new Vector3(-1, 0, 0);
                 break;
             case Direction.UpLeft:
-                result = new Vector3(-0.707f, 0.707f, 0);
+                result = new Vector3(-1, 1, 0);
                 break;
         }
         return result;
@@ -1032,7 +1032,7 @@ public class PlayerController : MonoBehaviour
     private void dash(Vector3 direction)
     {
 
-        spawnTrail();
+        spawnTrail(1000);
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
@@ -1048,7 +1048,7 @@ public class PlayerController : MonoBehaviour
     }
     private void dash(Direction direction)
     {
-        spawnTrail();
+        spawnTrail(1000);
 
         forcedMoveVector = getAimVector(direction);
         canDash = false;
@@ -1064,7 +1064,7 @@ public class PlayerController : MonoBehaviour
     }
     private void lungeDash(Vector3 direction)
     {
-        spawnTrail();
+        spawnTrail(2000);
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
@@ -1078,13 +1078,14 @@ public class PlayerController : MonoBehaviour
         if (!isGrounded())
             preventCooldown = true;
     }
-    private void spawnTrail()
+    private void spawnTrail(float rotationSpeed)
     {
         GameObject trailObject = (GameObject)Instantiate(Resources.Load("DashTrail"));
         trailObject.transform.parent = transform;
         trailObject.transform.position = transform.position;
         trailObject.GetComponent<DashTrailScript>().direction = (facingDirection == Direction.Right) ? -1 : 1;
-        foreach(TrailRenderer tr in trailObject.GetComponentsInChildren<TrailRenderer>())
+        trailObject.GetComponent<DashTrailScript>().rotationSpeed = rotationSpeed;
+        foreach (TrailRenderer tr in trailObject.GetComponentsInChildren<TrailRenderer>())
         {
             tr.Clear();
         }
