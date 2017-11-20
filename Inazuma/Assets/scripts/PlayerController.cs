@@ -174,7 +174,15 @@ public class PlayerController : MonoBehaviour
     {
         playerHitThisFrame = false;
         landedThisFrame = false;
-        
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            GameObject pExplosion = (GameObject)Instantiate(Resources.Load("ZigZagParticleExplosion"));
+            pExplosion.transform.position = transform.position;
+            foreach(TrailRenderer tr in pExplosion.GetComponentsInChildren<TrailRenderer>())
+            {
+                tr.Clear();
+            }
+        }
 
         if(!GameState.compareState(GameState.State.InGame))
         {
