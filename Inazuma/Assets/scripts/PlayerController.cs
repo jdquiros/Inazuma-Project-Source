@@ -80,7 +80,11 @@ public class PlayerController : MonoBehaviour
 
     public float lungeHoverDuration;
     private bool isLungeAttacking = false;
-
+    [Range(0.707f, 1f)]
+    public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) speed (which is the distance of a (1,1) vector)
+                                                //this value changes that speed to the distance of a (lungeDiagonalScale,lungeDiagonalScale) vector
+                                                //distance of (0.707,0.707) is 1
+                                                //distance of (1,1) is 1.414
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -890,25 +894,25 @@ public class PlayerController : MonoBehaviour
                 result = new Vector3(0, 1, 0);
                 break;
             case Direction.UpRight:
-                result = new Vector3(1, 1, 0);    
+                result = new Vector3(lungeDiagonalScale, lungeDiagonalScale, 0);    
                 break;
             case Direction.Right:
                 result = new Vector3(1, 0, 0);
                 break;
             case Direction.DownRight:
-                result = new Vector3(1, -1, 0);
+                result = new Vector3(lungeDiagonalScale, -lungeDiagonalScale, 0);
                 break;
             case Direction.Down:
                 result = new Vector3(0, -1, 0);
                 break;
             case Direction.DownLeft:
-                result = new Vector3(-1, -1, 0);
+                result = new Vector3(-lungeDiagonalScale, -lungeDiagonalScale, 0);
                 break;
             case Direction.Left:
                 result = new Vector3(-1, 0, 0);
                 break;
             case Direction.UpLeft:
-                result = new Vector3(-1, 1, 0);
+                result = new Vector3(-lungeDiagonalScale, lungeDiagonalScale, 0);
                 break;
         }
         return result;
