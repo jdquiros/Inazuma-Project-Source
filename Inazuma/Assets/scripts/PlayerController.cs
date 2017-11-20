@@ -950,9 +950,9 @@ public class PlayerController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Enemy"))
         {
-            other.gameObject.GetComponent<Enemy>().damageEnemy(1);
+            other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
             ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking)
+                 if (enemyHits == 1 && isLungeAttacking)
             {
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
@@ -968,7 +968,7 @@ public class PlayerController : MonoBehaviour
 		}
    		else if(collision.gameObject.CompareTag("Spike")) 
         {
-            damagePlayer(1000000000);       //definitely kill the player
+            forceDamagePlayer(1000000000);       //definitely kill the player
         } 
         else if (collision.gameObject.CompareTag("Ladder"))
         {
@@ -980,8 +980,10 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        
-        
+        if (collision.gameObject.CompareTag("Spike"))
+        {
+            forceDamagePlayer(1000000000);       //definitely kill the player
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -1099,6 +1101,7 @@ public class PlayerController : MonoBehaviour
         trailObject.GetComponent<DashTrailScript>().rotationSpeed = rotationSpeed;
         foreach (TrailRenderer tr in trailObject.GetComponentsInChildren<TrailRenderer>())
         {
+            //removes the trail that appears when displacing the dashTrail from default position to transform.position
             tr.Clear();
         }
 
@@ -1140,10 +1143,15 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.yellow;
 
     }
-    public void damagePlayer(int dmg)
+    public void attemptDamagePlayer(int dmg)
+    {
+        if(!invulnerable)
+            setHealth(health - dmg);
+        
+    }
+    public void forceDamagePlayer(int dmg)
     {
         setHealth(health - dmg);
-        
     }
     private void setHealth(int hp)
     {
