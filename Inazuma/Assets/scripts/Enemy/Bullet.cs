@@ -31,17 +31,23 @@ public class Bullet : MonoBehaviour {
         {
             collision.gameObject.GetComponent<PlayerController>().attemptDamagePlayer(damage);
             collision.gameObject.GetComponent<PlayerController>().knockBackPlayer(transform.position);
-            kill();          
+            hitObject();          
         } else if (collision.gameObject.layer == LayerMask.NameToLayer("groundLayer"))
         {
-            kill();
+            hitObject();
         }
 
     }
-   
-    public void kill()
+    
+    public void hitObject()
     {
         GameObject explosion = (GameObject)Instantiate(Resources.Load("RadialExplosionRed"));
+        explosion.transform.position = transform.position;
+        Destroy(gameObject);
+    }
+    public void hitByPlayer()
+    {
+        GameObject explosion = (GameObject)Instantiate(Resources.Load("RadialExplosionCyan"));
         explosion.transform.position = transform.position;
         Destroy(gameObject);
     }

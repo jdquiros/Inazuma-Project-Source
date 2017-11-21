@@ -957,6 +957,15 @@ public class PlayerController : MonoBehaviour
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
             }
+        } else if (other.gameObject.CompareTag("EnemyProjectile"))
+        {
+            other.gameObject.GetComponent<Bullet>().hitByPlayer();
+            ++enemyHits;
+            if (enemyHits == 1 && isLungeAttacking)
+            {
+                lungeDash(getAimVector(dashDirection));
+                isLungeAttacking = false;
+            }
         }
     }
     
@@ -1125,7 +1134,7 @@ public class PlayerController : MonoBehaviour
     {
         //enemy MUST supply its own location
         
-        if (movementState != MovementState.Paralyzed && !invulnerable)
+        if ((movementState != MovementState.Paralyzed) && !invulnerable)
         {
             yVelocity = knockbackUpVelocity;
             charController.move(new Vector2(0, .2f));
@@ -1143,6 +1152,19 @@ public class PlayerController : MonoBehaviour
             soundEffectPlayer.PlayOneShot(hitTakenSound);
             playerHitThisFrame = true;
         }
+        else if (playerDead)
+        {
+            yVelocity = knockbackUpVelocity;
+            charController.move(new Vector2(0, .2f));
+            if (transform.position.x < enemyPos.x)
+            {
+                xVelocity = -knockbackBackVelocity;
+            }
+            else
+            {
+                xVelocity = knockbackBackVelocity;
+            }
+        }
     }
     public IEnumerator stunPlayer(float duration, float invincibilityDuration)
     {
@@ -1151,7 +1173,8 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.grey;
         yield return new WaitForSeconds(duration);
         spriteRenderer.color = Color.white;
-        movementState = MovementState.Free;
+        if(!playerDead)
+            movementState = MovementState.Free;
 
         yield return new WaitForSeconds(invincibilityDuration-duration);
         invulnerable = false;
