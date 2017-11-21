@@ -9,6 +9,7 @@ TagManager:
   - Spike
   - Enemy
   - HealthBarParent
+  - EnemyProjectile
   layers:
   - Default
   - TransparentFX

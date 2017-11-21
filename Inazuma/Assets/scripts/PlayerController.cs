@@ -11,15 +11,15 @@ public class PlayerController : MonoBehaviour
     
     Prime31.CharacterController2D charController;
 
-    public KeyCode leftButton = KeyCode.A;
-    public KeyCode rightButton = KeyCode.D;
-    public KeyCode upButton = KeyCode.W;
-    public KeyCode downButton = KeyCode.S;
-    public KeyCode jumpButton = KeyCode.Space;
-    public KeyCode attackButton = KeyCode.J;
-    public KeyCode lungeButton = KeyCode.K;
-    public KeyCode dashButton = KeyCode.LeftShift;
-    public KeyCode restartButton = KeyCode.R;
+    public KeyCode leftButton = KeyCode.A;                      //deprecated.  go to unity editor -> project settings -> Input
+    public KeyCode rightButton = KeyCode.D;                     //deprecated
+    public KeyCode upButton = KeyCode.W;                        //deprecated
+    public KeyCode downButton = KeyCode.S;                      //deprecated
+    public KeyCode jumpButton = KeyCode.Space;                  //deprecated
+    public KeyCode attackButton = KeyCode.J;                    //deprecated
+    public KeyCode lungeButton = KeyCode.K;                     //deprecated
+    public KeyCode dashButton = KeyCode.LeftShift;              //deprecated
+    public KeyCode restartButton = KeyCode.R;                   //deprecated
     /*
      *                      ^ positiveY
      *                      |
@@ -38,8 +38,8 @@ public class PlayerController : MonoBehaviour
     }
     public MovementState movementState = MovementState.Free;
     
-    private bool allowPlayerInput;
-    public int health = 1;
+    private bool allowPlayerInput;              //can the character be controlled?
+    public int health = 1;                      
     private bool playerDead = false;
     public float maxHorizontalVelocity = 0;     //should be positive
     public float maxVerticalVelocity = 0;       //should be positive
@@ -71,7 +71,8 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
     [HideInInspector]
     public bool isDashing = false;
-    private bool preventCooldown = false;
+    private bool preventCooldown = false;           //if true, player must touch the ground before a dash can be fully reset.
+                                                   
 
     public float lungeDuration = 0f;             //duration of dash
     public float lungeAcceleration = 0f;         //acceleration of dash
@@ -97,7 +98,7 @@ public class PlayerController : MonoBehaviour
     private bool jumpKeyHeld = false;           //tracks if the player was holding the jump key last frame, to run code when the player releases it
     private float jumpApexTimer = 0;            //time until char reaches apex of jump.  value based on jumpForce
 
-    private Vector3 forcedMoveVector;
+    private Vector3 forcedMoveVector;           //this vector is the direction of a dash/lungedash
     int enemyHits = 0;                          //# of enemies hit in a single attack
 
     private enum Direction
@@ -113,9 +114,9 @@ public class PlayerController : MonoBehaviour
 
     private bool wasGrounded;
 
-	private Vector3 respawnPos;
+	private Vector3 respawnPos;                                     //move player to this position when spawning
     private bool isMovingHorizontal = false;                                  //actually requires movement.  running into a wall will not cause this to be true;
-    private bool isMovingVertical = false;
+    private bool isMovingVertical = false;                          //actually requires movement
 
     private AudioSource source;
     public AudioSource soundEffectPlayer;
@@ -134,27 +135,27 @@ public class PlayerController : MonoBehaviour
     private bool stopStepping = false;
     public float jumpInAirDuration;                                 //lets player jump for VERY short time after falling off a platform.  
     private float jumpInAirTimer;
-    public float ladderClimbSpeed;
-    private Bounds ladderBounds;
-    private bool ladderIgnorePlatformDrop = false;
-    public float ladderGrabCooldown;
-    private float ladderGrabTimer = 0;
-    private bool inLadder = false;
+    public float ladderClimbSpeed;                                  //speed that the player goes up and down ladders
+    private Bounds ladderBounds;                                    //has the rectangular bounds of the last ladder touched
+    public float ladderGrabCooldown;                                //after you get off a ladder, prevent you from getting on another for duration
+                                                                    //this is so you don't get on the ladder a frame after you got off
+    private float ladderGrabTimer = 0;      
+    private bool inLadder = false;                                  //are you touching a ladder
 
-    public bool attacksEndDashes = false;
+    public bool attacksEndDashes = false;                           //should attacks end dashes?
 
-    public float knockbackBackVelocity;
-    public float knockbackUpVelocity;
-    public float hitStunDuration;
-    public float hitInvincibilityDuration;
-    private bool invulnerable = false;
+    public float knockbackBackVelocity;                             //player's x velocity is set to this when knocked back
+    public float knockbackUpVelocity;                               //player's y velocity is set to this when knocked back
+    public float hitStunDuration;                                   //player does not accept input for this duration (after being hit)
+    public float hitInvincibilityDuration;                          //duration for the hitstun period
+    private bool invulnerable = false;                              //can the player be damaged (forceDamagePlayer(int x) will bypass this (eg spikes))
     private bool landedThisFrame = false;
     private bool playerHitThisFrame = false;
-    private bool xAxisMaxed = false;
-    private bool yAxisMaxed = false;
-    public float axisDeadZone = 0.05f;
+    private bool xAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
+    private bool yAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
+    public float axisDeadZone = 0.05f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
     private IEnumerator hoverCoroutine;
-    
+    private bool flipSwing = false; 
 
     private void Awake()
     {
@@ -922,7 +923,6 @@ public class PlayerController : MonoBehaviour
         dashTimer = 0;
         dashCooldownTimer = dashCooldown;
         isDashing = false;
-        canAttack = true;
         movementState = MovementState.Free;
         spriteRenderer.color = Color.gray;
     }
@@ -952,7 +952,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
             ++enemyHits;
-                 if (enemyHits == 1 && isLungeAttacking)
+            if (enemyHits == 1 && isLungeAttacking)
             {
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
@@ -998,21 +998,22 @@ public class PlayerController : MonoBehaviour
         isAttacking = true;
         canAttack = false;
         canDash = false;
+       
+        dashCooldownTimer = attackWindUp + attackDuration;
         //for debug
         
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
+        spawnAttackTrail(aimDirection);
+
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg*Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
           spriteRenderer.color = Color.red;                                                   //active frames: red
         soundEffectPlayer.PlayOneShot(attackSound);
         yield return new WaitForSeconds(attackDuration);        
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
-        if (dashCooldownTimer <= 0)
-        {
-            canDash = true;                                                                       //player can dash during attack cooldown
-        }
+        
         isAttacking = false;
         yield return new WaitForSeconds(timeBetweenAttacks);
           spriteRenderer.color = Color.yellow;                                                //default: yellow
@@ -1023,8 +1024,10 @@ public class PlayerController : MonoBehaviour
         isLungeAttacking = true;
         canAttack = false;
         canDash = false;
+        dashCooldownTimer = attackWindUp + attackDuration;
         spriteRenderer.color = Color.blue;
         yield return new WaitForSeconds(attackWindUp);
+        spawnAttackTrail(aimDirection);
         enemyHits = 0;
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg * Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
@@ -1035,10 +1038,6 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.gray;
         isLungeAttacking = false;
 
-        if (dashCooldownTimer <= 0)
-        {
-            canDash = true;
-        }
         yield return new WaitForSeconds(timeBetweenAttacks);
         spriteRenderer.color = Color.yellow;
         canAttack = true;
@@ -1089,8 +1088,7 @@ public class PlayerController : MonoBehaviour
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
         soundEffectPlayer.PlayOneShot(lungeSound);
         invulnerable = true;
-        if (!isGrounded())
-            preventCooldown = true;
+        preventCooldown = false;
     }
     private void spawnTrail(float rotationSpeed)
     {
@@ -1105,6 +1103,23 @@ public class PlayerController : MonoBehaviour
             tr.Clear();
         }
 
+    }
+    private void spawnAttackTrail(Direction dir)
+    {
+        GameObject trailObject = (GameObject)Instantiate(Resources.Load("SwordSwing"));
+        float startAngle = ((int)(dir)) * 45 - 45;
+        Vector3 offset;
+        if(!isGrounded())
+            offset = new Vector3(xVelocity*.075f, yVelocity*0.05f) ;
+        else
+            offset = new Vector3(xVelocity*.075f, 0,0);
+        if (!isGrounded())
+        {
+            flipSwing = yVelocity < 0;
+            flipSwing = xVelocity < 0 ? !flipSwing : flipSwing;
+        }
+        trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform,offset,flipSwing);
+        flipSwing = !flipSwing;
     }
     public void knockBackPlayer(Vector3 enemyPos)
     {
