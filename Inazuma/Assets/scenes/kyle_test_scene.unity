@@ -7432,6 +7432,48 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!1001 &1363462873
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 15.05878
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.7536635
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.1328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156687988281270, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+      propertyPath: m_RootOrder
+      value: 15
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: ce09ecb018b27084f9135d2f1b6bc2e6, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1389465748
 GameObject:
   m_ObjectHideFlags: 0
@@ -80331,6 +80373,58 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
+--- !u!1001 &1714523329
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.234375
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218156957063290, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+      propertyPath: m_RootOrder
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 96093809371693502, guid: 069ba52e385d8b34bacea607aeb71373,
+        type: 2}
+      propertyPath: m_SortingLayerID
+      value: 495656493
+      objectReference: {fileID: 0}
+    - target: {fileID: 96093809371693502, guid: 069ba52e385d8b34bacea607aeb71373,
+        type: 2}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 069ba52e385d8b34bacea607aeb71373, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1765851436
 GameObject:
   m_ObjectHideFlags: 0
@@ -80942,7 +81036,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1892389573}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -309.91113, y: -174.325, z: 0}
+  m_LocalPosition: {x: -376.2, y: -211.6125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2077692187}
@@ -81439,7 +81533,7 @@ RectTransform:
   m_GameObject: {fileID: 2077692183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.075367846, y: 0.075367846, z: 0.075367846}
+  m_LocalScale: {x: 0.062087543, y: 0.062087543, z: 0.062087543}
   m_Children:
   - {fileID: 1892389574}
   m_Father: {fileID: 0}
