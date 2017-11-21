@@ -5,12 +5,14 @@
 - [x] Add more public get methods for animator (attacks and jumps)
 - [x] Controller support
 - [x] Health Bars
+- [ ] End of Level Screen
 - [ ] Game UI (health, tips, etc)
 - [x] Update idle animation 
 - [ ] First draft forest background 
 - [ ] Finished first level design
 - [ ] Test new tiles types (rounded, uneven, etc) 
 - [ ] Ask people to play-test 
+
 
 # Week 6
 - [x] Player-Attack -> Enemy/Object interaction
