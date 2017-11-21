@@ -153,6 +153,7 @@ public class PlayerController : MonoBehaviour
     private bool playerHitThisFrame = false;
     private bool xAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
     private bool yAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
+    private bool rightStickMaxed = false;                            //is the right analog stick maxed out (any direction)
     public float axisDeadZone = 0.05f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
     private IEnumerator hoverCoroutine;
     private bool flipSwing = false; 
@@ -177,6 +178,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerDead)
+            movementState = MovementState.Paralyzed;
         playerHitThisFrame = false;
         landedThisFrame = false;
         if (Input.GetKeyDown(KeyCode.T))
@@ -319,6 +322,7 @@ public class PlayerController : MonoBehaviour
 
         xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
         yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
+        rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis("RStickHorizontal"), Input.GetAxis("RStickVertical"))) >= (1 - axisDeadZone);
     }
     private void checkForAttackInput()
     {
@@ -337,7 +341,7 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        if (Input.GetButtonDown("Lunge"))
+        if (Input.GetButtonDown("Lunge") || maxedRightStickThisFrame())
         {
             if (canAttack)
             {
@@ -1127,7 +1131,7 @@ public class PlayerController : MonoBehaviour
             flipSwing = yVelocity < 0;
             flipSwing = xVelocity < 0 ? !flipSwing : flipSwing;
         }
-        trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform,offset,flipSwing);
+        trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform.position,offset,flipSwing);
         flipSwing = !flipSwing;
     }
     public void knockBackPlayer(Vector3 enemyPos)
@@ -1268,6 +1272,15 @@ public class PlayerController : MonoBehaviour
         }
         print("maxedXAxisThisFrame: Invalid Direction->" + dir);
         return false;
+    }
+
+    private bool maxedRightStickThisFrame()
+    {
+        return Vector2.Distance(Vector2.zero,new Vector2(Input.GetAxis("RStickHorizontal"),Input.GetAxis("RStickVertical"))) >= (1 - axisDeadZone) && !rightStickMaxed;
+    }
+    private bool unMaxedRightStickThisFrame()
+    {
+        return Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis("RStickHorizontal"), Input.GetAxis("RStickVertical"))) <= (1 - axisDeadZone) && rightStickMaxed;
     }
     private bool holdingDirection(Direction dir)
     {

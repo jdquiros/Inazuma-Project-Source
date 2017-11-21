@@ -10,6 +10,7 @@ public class SwordTrail : MonoBehaviour {
     public float rotationSpeed;
     public Vector2 attackAngleRange;            //attackAngleRange.x is starting angle, attackAngleRange.y is end angle
     private IEnumerator swingFunc;
+    private bool isRotating;
 	void Start () {
 	}
 	
@@ -21,19 +22,17 @@ public class SwordTrail : MonoBehaviour {
         //          transform.position = parentTransform.position;
         //          tr.enabled = true;
         //      }
-        if (transform.parent != null)
+        if (isRotating)
         {
             transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
-            if (player.movementState == PlayerController.MovementState.Lunge)
-                transform.parent = null;
+            
         }
 	}
-    public void startSwing(float rotSpeed, Vector2 range, Transform pTransform, Vector3 offset, bool flipY)
+    public void startSwing(float rotSpeed, Vector2 range, Vector3 pos, Vector3 offset, bool flipY)
     {
         attackAngleRange = range;
-        transform.parent = pTransform;
         player = GetComponentInParent<PlayerController>();
-        transform.localPosition = offset;
+        transform.localPosition = pos+offset;
         rotationSpeed = rotSpeed;
         if (!flipY)
         {
@@ -52,8 +51,9 @@ public class SwordTrail : MonoBehaviour {
     }
     private IEnumerator unParentAfterDelay(float delay)
     {
+        isRotating = true;
         yield return new WaitForSeconds(delay);
-        transform.parent = null;
+        isRotating = false;
         Destroy(gameObject, tr.time);
     }
 }
