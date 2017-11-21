@@ -6613,56 +6613,6 @@ Prefab:
       propertyPath: soundEffectPlayer
       value: 
       objectReference: {fileID: 987941450}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: lungeHoverDuration
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: lungeHoverXAccelFactor
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: velocityRestrictionRate
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: dashSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 4baf555c3b7b55647b35f78eec9c1b1a, type: 3}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: footstepSound
-      value: 
-      objectReference: {fileID: 8300000, guid: f32b6ba00a00d3b4ba6706c7f82a58c5, type: 3}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: lungeSound
-      value: 
-      objectReference: {fileID: 8300000, guid: c93f31c1e141a914490ffa9985847188, type: 3}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: lungeHoverYRestrictionRate
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 212074312977034256, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: m_SortingLayerID
-      value: -720483833
-      objectReference: {fileID: 0}
-    - target: {fileID: 212074312977034256, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: m_SortingLayer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
-        type: 2}
-      propertyPath: lungeDiagonalScale
-      value: 0.8
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d567727fe81913f49ad12765029df287, type: 2}
   m_IsPrefabParent: 0
@@ -80992,7 +80942,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1892389573}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -209.95, y: -118.09688, z: 0}
+  m_LocalPosition: {x: -309.91113, y: -174.325, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2077692187}
@@ -81489,7 +81439,7 @@ RectTransform:
   m_GameObject: {fileID: 2077692183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.11125188, y: 0.11125188, z: 0.11125188}
+  m_LocalScale: {x: 0.075367846, y: 0.075367846, z: 0.075367846}
   m_Children:
   - {fileID: 1892389574}
   m_Father: {fileID: 0}
