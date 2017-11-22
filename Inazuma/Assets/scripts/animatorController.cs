@@ -25,6 +25,11 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("moving", playerController.moving ());
 		anim.SetBool ("spawning", playerController.isSpawning ());
 		anim.SetBool ("grounded", playerController.isGrounded ());
+		anim.SetInteger ("movementState", (int)playerController.movementState);
+
+
+// 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover
+//		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5
 
 		//int getfacingdir: 4 == left, 0 == right
 		if (playerController.getFacingDirection () == 0) {
