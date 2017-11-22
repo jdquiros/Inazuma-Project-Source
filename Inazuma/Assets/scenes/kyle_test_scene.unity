@@ -419,6 +419,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 18
       objectReference: {fileID: 0}
+    - target: {fileID: 212652346028937774, guid: ef010a6dda923e442b640e5606249a42,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ef010a6dda923e442b640e5606249a42, type: 2}
   m_IsPrefabParent: 0
@@ -6737,6 +6742,11 @@ Prefab:
       propertyPath: soundEffectPlayer
       value: 
       objectReference: {fileID: 987941450}
+    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
+        type: 2}
+      propertyPath: spawnAnimDuration
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d567727fe81913f49ad12765029df287, type: 2}
   m_IsPrefabParent: 0
@@ -81156,7 +81166,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1892389573}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -365.275, y: -205.4672, z: 0}
+  m_LocalPosition: {x: -451.77777, y: -254.125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2077692187}
@@ -81653,7 +81663,7 @@ RectTransform:
   m_GameObject: {fileID: 2077692183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.06394452, y: 0.06394452, z: 0.06394452}
+  m_LocalScale: {x: 0.051700935, y: 0.051700935, z: 0.051700935}
   m_Children:
   - {fileID: 1892389574}
   m_Father: {fileID: 0}

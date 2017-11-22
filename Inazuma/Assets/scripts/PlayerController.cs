@@ -156,7 +156,8 @@ public class PlayerController : MonoBehaviour
     private bool rightStickMaxed = false;                            //is the right analog stick maxed out (any direction)
     public float axisDeadZone = 0.05f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
     private IEnumerator hoverCoroutine;
-    private bool flipSwing = false; 
+    private bool flipSwing = false;
+    public float spawnAnimDuration = .2f;
 
     private void Awake()
     {
@@ -164,11 +165,16 @@ public class PlayerController : MonoBehaviour
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         source = GetComponent<AudioSource>();
+        
     }
     void Start()
     {
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         charController.warpToGrounded();
+        if (GameState.compareState(GameState.State.InGame))
+        {
+            StartCoroutine(spawnPlayer(spawnAnimDuration));
+        }
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
         hoverCoroutine = hoverForDuration(lungeHoverDuration);
@@ -179,7 +185,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (playerDead)
+        {
             movementState = MovementState.Paralyzed;
+            source.volume = 0;
+        }
         playerHitThisFrame = false;
         landedThisFrame = false;
         if (Input.GetKeyDown(KeyCode.T))
@@ -191,7 +200,11 @@ public class PlayerController : MonoBehaviour
                 tr.Clear();
             }
         }
-
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            GameObject beam = (GameObject)Instantiate(Resources.Load("GrowingBeam"));
+            beam.transform.position = transform.position;
+        }
         if(!GameState.compareState(GameState.State.InGame))
         {
             movementState = MovementState.Paralyzed;
@@ -305,6 +318,11 @@ public class PlayerController : MonoBehaviour
                 {
                     movementState = MovementState.Free;
                     StopCoroutine(hoverCoroutine);
+                }
+                if (Input.GetButtonDown("Dash") && canDash)
+                {
+                    StopCoroutine(hoverCoroutine);
+                    dash(facingDirection);
                 }
                 break;
         }
@@ -724,6 +742,21 @@ public class PlayerController : MonoBehaviour
                     }
                 }
                 break;
+            case (MovementState.Hover):
+                if (!canDash)
+                {
+                    if (dashCooldownTimer > 0)
+                    {
+                        dashCooldownTimer -= Time.deltaTime;
+                    }
+                    else if (!preventCooldown)       //do not finish cooldown until you are grounded
+                    {
+                        dashCooldownTimer = 0;
+                        canDash = true;
+                        spriteRenderer.color = Color.yellow;
+                    }
+                }
+                break;
         
         }
     
@@ -826,7 +859,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (movementState == MovementState.Free || movementState == MovementState.OnLadder)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free || movementState == MovementState.OnLadder || movementState == MovementState.Hover)                             //you cannot change your facing direction while dashing
         {
             
                 if (holdingDirection(Direction.Right))
@@ -1248,6 +1281,16 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         audioSource.Stop();
+    }
+    public IEnumerator spawnPlayer(float duration)
+    {
+        GameObject beam = (GameObject)Instantiate(Resources.Load("GrowingBeam"));
+        beam.transform.position = transform.position;
+        movementState = MovementState.Paralyzed;
+        spriteRenderer.enabled = false;
+        yield return new WaitForSeconds(duration);
+        spriteRenderer.enabled = true;
+        movementState = MovementState.Free;
     }
     private bool maxedYAxisThisFrame(Direction dir)
     {
