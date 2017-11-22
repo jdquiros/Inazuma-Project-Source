@@ -68,6 +68,8 @@ public class PlayerController : MonoBehaviour
     public float dashMaxVelocity = 0f;          //maximum velocity during dash
     public float dashCooldown = 0f;             //cooldown between dashes
     private float dashCooldownTimer = 0f;
+    public float minDashTime = 0;               //minimum time before player can cancel dash
+    private float minDashTimer;
     private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
     [HideInInspector]
     public bool isDashing = false;
@@ -355,7 +357,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(attack(getAimVector(aimDirection).normalized));
                 if (attacksEndDashes)
                 {
-                    dashTimer = 0;
+                    endDash();
                 }
             }
 
@@ -371,7 +373,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(lungeAttack(getAimVector(aimDirection).normalized));
                 if (attacksEndDashes)
                 {
-                    dashTimer = 0;
+                    endDash();
                 }
             }
         }
@@ -716,6 +718,13 @@ public class PlayerController : MonoBehaviour
                 {
                     endDash();
                 }
+                if(minDashTimer > 0)
+                {
+                    minDashTimer -= Time.deltaTime;
+                } else
+                {
+                    canAttack = true;
+                }
                 break;
             case (MovementState.Lunge):
                 if (dashTimer > 0)
@@ -959,6 +968,7 @@ public class PlayerController : MonoBehaviour
     private void endDash()
     {
         dashTimer = 0;
+        minDashTimer = 0;
         dashCooldownTimer = dashCooldown;
         isDashing = false;
         movementState = MovementState.Free;
@@ -970,7 +980,7 @@ public class PlayerController : MonoBehaviour
         dashTimer = 0;
         isDashing = false;
         spriteRenderer.color = Color.yellow;
-        
+        canAttack = true;
         StopCoroutine(hoverCoroutine);
 
         hoverCoroutine = hoverForDuration(lungeHoverDuration);
@@ -1088,6 +1098,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(timeBetweenAttacks);
         spriteRenderer.color = Color.yellow;
         canAttack = true;
+
     }
     private void dash(Vector3 direction)
     {
@@ -1096,8 +1107,9 @@ public class PlayerController : MonoBehaviour
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
+        canAttack = false;
         dashTimer = dashDuration;
-        canAttack = true;
+        minDashTimer = minDashTime;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -1109,12 +1121,12 @@ public class PlayerController : MonoBehaviour
     private void dash(Direction direction)
     {
         spawnTrail(1000);
-
+        minDashTimer = minDashTime;
         forcedMoveVector = getAimVector(direction);
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = true;
+        canAttack = false;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
@@ -1129,7 +1141,6 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = lungeDuration;
-        canAttack = true;
         movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;
