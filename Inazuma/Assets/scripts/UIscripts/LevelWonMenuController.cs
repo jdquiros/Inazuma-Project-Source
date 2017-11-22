@@ -58,6 +58,7 @@ public class LevelWonMenuController : MonoBehaviour {
     {
         GameState.setState(GameState.State.MainMenu);
         GameState.setLevel(1);
+        LevelData.resetAll();
         SceneManager.LoadScene("menu_and_level_1");
     }
 }

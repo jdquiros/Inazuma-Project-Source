@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerDead)
+        if (playerDead || GameState.compareState(GameState.State.LevelWon))
         {
             movementState = MovementState.Paralyzed;
             source.volume = 0;

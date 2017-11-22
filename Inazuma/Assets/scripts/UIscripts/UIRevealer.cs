@@ -37,7 +37,7 @@ public class UIRevealer : MonoBehaviour
     public bool revealOnLoad;
     public bool hideOnLoad;
 
-    private bool debug = true;
+    private bool debug = false;
     void Start()
     {
 
