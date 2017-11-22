@@ -158,6 +158,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator hoverCoroutine;
     private bool flipSwing = false;
     public float spawnAnimDuration = .2f;
+    private bool inSpawnAnimation = false;
 
     private void Awake()
     {
@@ -1288,7 +1289,9 @@ public class PlayerController : MonoBehaviour
         beam.transform.position = transform.position;
         movementState = MovementState.Paralyzed;
         spriteRenderer.enabled = false;
+        inSpawnAnimation = true;
         yield return new WaitForSeconds(duration);
+        inSpawnAnimation = false;
         spriteRenderer.enabled = true;
         movementState = MovementState.Free;
     }
@@ -1374,5 +1377,8 @@ public class PlayerController : MonoBehaviour
     {
         return isMovingVertical || isMovingHorizontal;
     }
-
+    public bool isSpawning()
+    {
+        return inSpawnAnimation;
+    }
 }
