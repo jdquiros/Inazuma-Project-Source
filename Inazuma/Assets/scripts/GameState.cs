@@ -7,8 +7,9 @@ public static class GameState{
     // Use this for initialization
     public enum State
     {
-        MainMenu, InGame, PlayerDead
+        MainMenu, InGame, PlayerDead, LevelWon
     }
+    public static int levelNumber = 1;
     public static State gameState = State.MainMenu;
 
     public static bool compareState(int x)
@@ -30,5 +31,13 @@ public static class GameState{
     public static void setState(State x)
     {
         gameState = x;
+    }
+    public static int getLevel()
+    {
+        return levelNumber;
+    }
+    public static void setLevel(int x)
+    {
+        levelNumber = x;
     }
 }

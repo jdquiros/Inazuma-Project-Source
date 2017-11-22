@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - HealthBarParent
   - EnemyProjectile
+  - Goal
   layers:
   - Default
   - TransparentFX
