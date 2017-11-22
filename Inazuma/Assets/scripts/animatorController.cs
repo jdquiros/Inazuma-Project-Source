@@ -18,19 +18,16 @@ public class animatorController : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		float xVel = playerController.getVelocity ().x;
-		float yVel = playerController.getVelocity ().y;
-		int facing = playerController.getFacingDirection ();
+		anim.SetFloat ("xVel", Mathf.Abs (playerController.getVelocity().x));
+		anim.SetFloat ("yVel", playerController.getVelocity().y);
+		anim.SetBool ("attacking", playerController.attacking());
+		anim.SetBool ("lunging", playerController.lungeAttacking ());
+		anim.SetBool ("moving", playerController.moving ());
+		anim.SetBool ("spawning", playerController.isSpawning ());
+		anim.SetBool ("grounded", playerController.isGrounded ());
 
-		anim.SetFloat ("xVel", Mathf.Abs (xVel));
-		anim.SetFloat ("yVel", yVel);
-	
-		//if (playerController....attacking())
-		//anim.SetBool("attacking", true);
-		//...
-
-		//int facing: 4 == left, 0 == right
-		if (facing == 0) {
+		//int getfacingdir: 4 == left, 0 == right
+		if (playerController.getFacingDirection () == 0) {
 			transform.localScale = new Vector3 (theScale.x, transform.localScale.y, transform.localScale.z);
 		} else {
 			transform.localScale = new Vector3(-theScale.x, transform.localScale.y, transform.localScale.z);
