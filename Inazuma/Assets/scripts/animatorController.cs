@@ -23,11 +23,12 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("attacking", playerController.attacking());
 		anim.SetBool ("lunging", playerController.lungeAttacking ());
 		anim.SetBool ("moving", playerController.moving ());
-		anim.SetBool ("spawning", playerController.isSpawning ());
+		anim.SetBool ("spawning", playerController.isSpawn	ing ());
 		anim.SetBool ("grounded", playerController.isGrounded ());
 		anim.SetInteger ("movementState", (int)playerController.movementState);
 
 
+		//consolidate attack & lunging anims to just "attack"? with "successful lunge" anim as a possible transition?
 // 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover
 //		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5
 
