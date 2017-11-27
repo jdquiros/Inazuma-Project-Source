@@ -23,7 +23,7 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("attacking", playerController.attacking());
 		anim.SetBool ("lunging", playerController.lungeAttacking ());
 		anim.SetBool ("moving", playerController.moving ());
-		anim.SetBool ("spawning", playerController.isSpawn	ing ());
+		anim.SetBool ("spawning", playerController.isSpawning ());
 		anim.SetBool ("grounded", playerController.isGrounded ());
 		anim.SetInteger ("movementState", (int)playerController.movementState);
 

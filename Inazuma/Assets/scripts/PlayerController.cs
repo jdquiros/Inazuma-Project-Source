@@ -995,7 +995,7 @@ public class PlayerController : MonoBehaviour
     }
     void onHitBoxCollision(Collider2D other)
     {
-
+        Debug.Log("Collided with: " + other.name);
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
@@ -1029,6 +1029,7 @@ public class PlayerController : MonoBehaviour
         } 
         else if (collision.gameObject.CompareTag("Ladder"))
         {
+            Debug.Log("Collided with: Ladder");
             inLadder = true;
             ladderBounds = collision.bounds;
             ladderBounds.center = new Vector3(ladderBounds.center.x, ladderBounds.center.y, transform.position.z);      //put bounds on same z position as player transform
