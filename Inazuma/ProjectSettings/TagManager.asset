@@ -9,6 +9,8 @@ TagManager:
   - Spike
   - Enemy
   - HealthBarParent
+  - EnemyProjectile
+  - Goal
   layers:
   - Default
   - TransparentFX

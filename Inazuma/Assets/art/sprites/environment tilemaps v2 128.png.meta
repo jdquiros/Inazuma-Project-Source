@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 37afb5f40c8339841ac397db85e7c82c
-timeCreated: 1510363168
+timeCreated: 1510972720
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -110,10 +110,16 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+      physicsShape:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_1
@@ -124,10 +130,16 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_2
@@ -138,10 +150,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 48, y: -31}
+        - {x: -62, y: -62}
+        - {x: -62, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -31}
+      physicsShape:
+      - - {x: 48, y: -31}
+        - {x: -62, y: -62}
+        - {x: -62, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -31}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_3
@@ -152,10 +174,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -12, y: -17}
+        - {x: -64, y: -29}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 1}
+        - {x: 60, y: 1}
+      physicsShape:
+      - - {x: -12, y: -17}
+        - {x: -64, y: -29}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 1}
+        - {x: 60, y: 1}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_4
@@ -166,10 +200,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 57, y: 33}
+        - {x: -56, y: 4}
+        - {x: -64, y: 2}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 33}
+      physicsShape:
+      - - {x: 57, y: 33}
+        - {x: -56, y: 4}
+        - {x: -64, y: 2}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 33}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_5
@@ -180,10 +226,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 53, y: 64}
+        - {x: -64, y: 34}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: 53, y: 64}
+        - {x: -64, y: 34}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_6
@@ -194,10 +250,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 35}
+        - {x: -53, y: 64}
+      physicsShape:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 35}
+        - {x: -53, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_7
@@ -208,10 +274,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -61, y: 33}
+        - {x: -64, y: 33}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 3}
+        - {x: -3, y: 21}
+      physicsShape:
+      - - {x: -61, y: 33}
+        - {x: -64, y: 33}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 3}
+        - {x: -3, y: 21}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_8
@@ -222,10 +300,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -60, y: 1}
+        - {x: -64, y: 1}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -30}
+      physicsShape:
+      - - {x: -60, y: 1}
+        - {x: -64, y: 1}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -30}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_9
@@ -236,10 +324,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -31}
+        - {x: -64, y: -64}
+        - {x: 62, y: -64}
+        - {x: 61, y: -61}
+        - {x: 52, y: -59}
+        - {x: -60, y: -31}
+      physicsShape:
+      - - {x: -64, y: -31}
+        - {x: -64, y: -64}
+        - {x: 62, y: -64}
+        - {x: 61, y: -61}
+        - {x: 52, y: -59}
+        - {x: -60, y: -31}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_10
@@ -250,10 +350,28 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 52, y: -28}
+        - {x: 43, y: -32}
+        - {x: 34, y: -27}
+        - {x: -58, y: -27}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -52}
+        - {x: 57, y: -37}
+      physicsShape:
+      - - {x: 52, y: -28}
+        - {x: 43, y: -32}
+        - {x: 34, y: -27}
+        - {x: -58, y: -27}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -52}
+        - {x: 57, y: -37}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_11
@@ -264,10 +382,18 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_12
@@ -278,10 +404,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -60, y: 36}
+        - {x: -64, y: 19}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 20}
+        - {x: 61, y: 36}
+      physicsShape:
+      - - {x: -60, y: 36}
+        - {x: -64, y: 19}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 20}
+        - {x: 61, y: 36}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_13
@@ -292,10 +430,18 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 2}
+        - {x: -64, y: 2}
+      physicsShape:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 2}
+        - {x: -64, y: 2}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_14
@@ -306,10 +452,18 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: 46}
+        - {x: 64, y: 46}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: -64, y: 64}
+        - {x: -64, y: 46}
+        - {x: 64, y: 46}
+        - {x: 64, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_15
@@ -320,10 +474,18 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -46}
+        - {x: -64, y: -46}
+      physicsShape:
+      - - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -46}
+        - {x: -64, y: -46}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_16
@@ -334,10 +496,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -61}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -53}
+        - {x: 35, y: -53}
+        - {x: -48, y: -57}
+      physicsShape:
+      - - {x: -64, y: -61}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -53}
+        - {x: 35, y: -53}
+        - {x: -48, y: -57}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_17
@@ -348,10 +522,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 36, y: -38}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -38}
+      physicsShape:
+      - - {x: 36, y: -38}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -38}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_18
@@ -362,10 +546,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -37}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -12}
+        - {x: 59, y: -12}
+        - {x: -44, y: -31}
+      physicsShape:
+      - - {x: -64, y: -37}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -12}
+        - {x: 59, y: -12}
+        - {x: -44, y: -31}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_19
@@ -376,10 +572,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: -11}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 61}
+        - {x: 61, y: 60}
+      physicsShape:
+      - - {x: -64, y: -11}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 61}
+        - {x: 61, y: 60}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_20
@@ -390,10 +596,20 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -64, y: 61}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -11}
+        - {x: -61, y: 61}
+      physicsShape:
+      - - {x: -64, y: 61}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -11}
+        - {x: -61, y: 61}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_21
@@ -404,10 +620,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -62, y: -12}
+        - {x: -64, y: -12}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -38}
+        - {x: 63, y: -36}
+      physicsShape:
+      - - {x: -62, y: -12}
+        - {x: -64, y: -12}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -38}
+        - {x: 63, y: -36}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_22
@@ -418,10 +646,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -57, y: -38}
+        - {x: -64, y: -38}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -52}
+        - {x: 52, y: -49}
+      physicsShape:
+      - - {x: -57, y: -38}
+        - {x: -64, y: -38}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -52}
+        - {x: 52, y: -49}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_23
@@ -432,10 +672,22 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -59, y: -53}
+        - {x: -64, y: -53}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -60}
+        - {x: 47, y: -58}
+      physicsShape:
+      - - {x: -59, y: -53}
+        - {x: -64, y: -53}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -60}
+        - {x: 47, y: -58}
       tessellationDetail: 0
     outline: []
     physicsShape: []
