@@ -334,11 +334,11 @@ MonoBehaviour:
   movementState: 1
   health: 1
   maxHorizontalVelocity: 12
-  maxVerticalVelocity: 50
-  acceleration: 150
+  maxVerticalVelocity: 17.5
+  acceleration: 100
   deceleration: 250
-  passiveDeceleration: 100
-  airAccelerationFactor: 0.2
+  passiveDeceleration: 50
+  airAccelerationFactor: 0.3
   highDecelerationFactor: 1.5
   highDecelerationThreshold: 10
   gravity: 30
@@ -346,20 +346,20 @@ MonoBehaviour:
   jumpButtonReleaseFactor: 0.3
   attackDuration: 0.05
   attackWindUp: 0.05
-  timeBetweenAttacks: 0.05
+  timeBetweenAttacks: 0.15
   attackHitBoxDist: 1.5
   dashDuration: 0.38
-  dashAcceleration: 1000
+  dashAcceleration: 130
   dashMaxVelocity: 17
-  dashCooldown: 0.05
+  dashCooldown: 0.5
   isDashing: 0
   lungeDuration: 0.08
   lungeAcceleration: 5
   lungeMaxVelocity: 50
-  lungeCooldown: 0.05
-  lungeHoverDuration: 0.25
-  lungeDiagonalScale: 0.8
-  velocityRestrictionRate: 600
+  lungeCooldown: 0.5
+  lungeHoverDuration: 0.35
+  lungeHoverXAccelFactor: 0.25
+  velocityRestrictionRate: 500
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 7f791dc9db11c1b4095eb2c7f5414323, type: 3}
@@ -379,8 +379,6 @@ MonoBehaviour:
   knockbackUpVelocity: 10
   hitStunDuration: 0.5
   hitInvincibilityDuration: 1
-  axisDeadZone: 0.05
-  spawnAnimDuration: 0.3
 --- !u!114 &114529580279281732
 MonoBehaviour:
   m_ObjectHideFlags: 1

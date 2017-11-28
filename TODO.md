@@ -1,18 +1,13 @@
 # Week 7
 - [x] Credits screen
-- [x] Fix jumping not cancelling dashes up slopes
-- [x] Lunging should make player invincible
-- [x] Add more public get methods for animator (attacks and jumps)
-- [x] Controller support
-- [x] Health Bars
-- [ ] End of Level Screen
+- [ ] Fix jumping not cancelling dashes up slopes
+- [ ] Health Bars
 - [ ] Game UI (health, tips, etc)
-- [x] Update idle animation 
+- [ ] Update idle animation 
 - [ ] First draft forest background 
 - [ ] Finished first level design
 - [ ] Test new tiles types (rounded, uneven, etc) 
 - [ ] Ask people to play-test 
-
 
 # Week 6
 - [x] Player-Attack -> Enemy/Object interaction

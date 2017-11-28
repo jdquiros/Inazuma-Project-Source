@@ -51,8 +51,6 @@ public class PauseMenuController : MonoBehaviour {
     public void mainMenuButtonPress()
     {
         unPause();
-        LevelData.resetAll();
-
         GameState.setState(GameState.State.MainMenu);
         SceneManager.LoadScene(mainMenuSceneName);
     }

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: eee81e55e3d2e6b4195768671510ccbb
-timeCreated: 1510974487
+timeCreated: 1510796844
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -162,13 +162,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_1
@@ -179,13 +176,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_2
@@ -196,13 +190,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -31}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_3
@@ -213,14 +204,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -31.002563}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 1}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_4
@@ -231,14 +218,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 1.0393066}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 33}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_5
@@ -249,14 +232,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 33.003174}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_6
@@ -267,14 +246,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 32.93799}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_7
@@ -285,14 +260,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 33}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 1.0255127}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_8
@@ -303,14 +274,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 1}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -30.984009}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_9
@@ -321,13 +288,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -31}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_10
@@ -338,13 +302,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_11
@@ -355,13 +316,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_12
@@ -372,13 +330,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: 64, y: 31}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_13
@@ -389,14 +344,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 30.928589}
-        - {x: 64, y: -1}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_14
@@ -407,14 +358,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -1.0837402}
-        - {x: 64, y: -33}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_15
@@ -425,14 +372,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -32.97522}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_16
@@ -443,14 +386,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -33.07251}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_17
@@ -461,14 +400,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 64, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -33}
-        - {x: 64, y: -1.0145264}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_18
@@ -479,14 +414,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -1}
-        - {x: 64, y: 31.043457}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_19
@@ -497,13 +428,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 31}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_20
@@ -514,13 +442,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 2}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_21
@@ -531,14 +456,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 2}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_22
@@ -549,14 +470,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 2.0249023}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_23
@@ -567,13 +484,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 64, y: -64}
-        - {x: -64, y: 2}
-        - {x: -64, y: -64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_24
@@ -584,13 +498,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -19}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_25
@@ -601,14 +512,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 23}
-        - {x: -64, y: -18.891602}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_26
@@ -619,14 +526,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 23}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_27
@@ -637,14 +540,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 22.995056}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_28
@@ -655,14 +554,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 23}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -19}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_29
@@ -673,13 +568,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -19}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_30
@@ -690,13 +582,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: 64, y: -2}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_31
@@ -707,14 +596,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -2.0234375}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_32
@@ -725,14 +610,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -2}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_33
@@ -743,13 +624,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -2}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_34
@@ -760,15 +638,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 61}
-        - {x: 61, y: 19}
-        - {x: 64, y: 19}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_35
@@ -779,16 +652,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 19}
-        - {x: -59, y: 17}
-        - {x: 61, y: -23}
-        - {x: 64, y: -23}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_36
@@ -799,16 +666,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -24}
-        - {x: -28, y: -37}
-        - {x: 58, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_37
@@ -819,16 +680,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: -48, y: -64}
-        - {x: 61, y: -26}
-        - {x: 64, y: -23}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_38
@@ -839,15 +694,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -23}
-        - {x: -54, y: -23}
-        - {x: 64, y: 18}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_39
@@ -858,15 +708,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 19}
-        - {x: -56, y: 20}
-        - {x: 64, y: 61}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_40
@@ -877,16 +722,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 61, y: 64}
-        - {x: 25, y: -44}
-        - {x: 20, y: -60}
-        - {x: 19, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_41
@@ -897,16 +736,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: -19, y: -64}
-        - {x: -19, y: -63}
-        - {x: -22, y: -50}
-        - {x: -61, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_42
@@ -917,16 +750,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 19, y: 64}
-        - {x: 14, y: 54}
-        - {x: -21, y: -55}
-        - {x: -23, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_43
@@ -937,16 +764,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -19, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 23, y: -64}
-        - {x: 23, y: -59}
-        - {x: -9, y: 39}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_44
@@ -957,16 +778,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 44, y: -3}
-        - {x: 31, y: -60}
-        - {x: 31, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 62}
-        - {x: 61, y: 61}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_45
@@ -977,16 +792,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -62, y: 62}
-        - {x: -64, y: 62}
-        - {x: -64, y: -64}
-        - {x: -31, y: -64}
-        - {x: -31, y: -55}
-        - {x: -49, y: 21}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_46
@@ -997,15 +806,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 53}
-        - {x: -34, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_47
@@ -1016,15 +820,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 36, y: -64}
-        - {x: 64, y: 53}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_48
@@ -1035,16 +834,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -24, y: 64}
-        - {x: -37, y: 28}
-        - {x: -64, y: -58}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_49
@@ -1055,16 +848,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -55}
-        - {x: 52, y: -4}
-        - {x: 24, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_50
@@ -1075,14 +862,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -2, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
-        - {x: 61, y: 63}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_51
@@ -1093,15 +876,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: -64}
-        - {x: 2, y: -64}
-        - {x: -13, y: -32}
-        - {x: -62, y: 64}
-        - {x: -64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_52
@@ -1112,16 +890,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 30, y: 64}
-        - {x: 25, y: 49}
-        - {x: -1, y: -58}
-        - {x: -1, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_53
@@ -1132,16 +904,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -30, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 1, y: -64}
-        - {x: 1, y: -57}
-        - {x: -15, y: 9}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_54
@@ -1152,15 +918,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -33, y: 64}
-        - {x: -33, y: 57}
-        - {x: -3, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_55
@@ -1171,15 +932,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 2, y: -64}
-        - {x: 33, y: 56}
-        - {x: 33, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_56
@@ -1190,15 +946,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 53}
-        - {x: -32, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_57
@@ -1209,16 +960,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 26, y: -64}
-        - {x: 29, y: -62}
-        - {x: 64, y: 57}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_58
@@ -1229,15 +974,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -3, y: 64}
-        - {x: -64, y: -59}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_59
@@ -1248,15 +988,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -59}
-        - {x: 2, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_60
@@ -1267,17 +1002,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -2, y: 64}
-        - {x: -4, y: 56}
-        - {x: -24, y: -19}
-        - {x: -33, y: -61}
-        - {x: -33, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_61
@@ -1288,16 +1016,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 2, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 33, y: -64}
-        - {x: 33, y: -57}
-        - {x: 23, y: -15}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_62
@@ -1308,15 +1030,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -1, y: 64}
-        - {x: -1, y: 57}
-        - {x: 30, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_63
@@ -1327,16 +1044,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: -30, y: -64}
-        - {x: -27, y: -61}
-        - {x: 1, y: 60}
-        - {x: 1, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_64
@@ -1347,16 +1058,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -23, y: 64}
-        - {x: -23, y: 49}
-        - {x: 11, y: -62}
-        - {x: 17, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_65
@@ -1367,17 +1072,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 23, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: -19, y: -64}
-        - {x: -14, y: -54}
-        - {x: 6, y: 3}
-        - {x: 23, y: 62}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_66
@@ -1388,15 +1086,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: 59}
-        - {x: -2, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_67
@@ -1407,15 +1100,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 3, y: -64}
-        - {x: 64, y: 59}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_68
@@ -1426,16 +1114,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -34, y: 64}
-        - {x: -36, y: 60}
-        - {x: -64, y: -56}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_69
@@ -1446,15 +1128,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -53}
-        - {x: 34, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_70
@@ -1465,15 +1142,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 31, y: 64}
-        - {x: 31, y: 60}
-        - {x: 59, y: -62}
-        - {x: 64, y: -62}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_71
@@ -1484,16 +1156,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -31, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -62}
-        - {x: -61, y: -61}
-        - {x: -55, y: -41}
-        - {x: -31, y: 60}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_72
@@ -1504,16 +1170,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: 19, y: 64}
-        - {x: 20, y: 56}
-        - {x: 59, y: -58}
-        - {x: 61, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_73
@@ -1524,15 +1184,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -64, y: 64}
-        - {x: -64, y: -64}
-        - {x: -61, y: -64}
-        - {x: -19, y: 59}
-        - {x: -19, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_74
@@ -1543,15 +1198,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -2, y: 64}
-        - {x: 13, y: 32}
-        - {x: 62, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 64}
+      physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: slopes_75
@@ -1562,14 +1212,10 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape:
-      - - {x: -61, y: -63}
-        - {x: 2, y: 64}
-        - {x: -64, y: 64}
-        - {x: -64, y: -64}
+      physicsShape: []
       tessellationDetail: 0
     outline: []
     physicsShape: []

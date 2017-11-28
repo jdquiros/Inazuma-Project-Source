@@ -115,14 +115,14 @@ public class MainMenuController : MonoBehaviour {
     }
     private void updateLevelSelect()
     {
-        if (Input.GetAxis("Horizontal") > 0.05f)
+        if (Input.GetKey(KeyCode.RightArrow))
         {
             if (allowInputs)
             {
                 incrementLevel();
                 StartCoroutine(preventInputAfterPress(afterPressDelay));
             }
-        } else if (Input.GetAxis("Horizontal") < -0.05f)
+        } else if (Input.GetKey(KeyCode.LeftArrow))
         {
             if (allowInputs)
             {

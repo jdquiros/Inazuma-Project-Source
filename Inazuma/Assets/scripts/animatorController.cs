@@ -18,22 +18,19 @@ public class animatorController : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		anim.SetFloat ("xVel", Mathf.Abs (playerController.getVelocity().x));
-		anim.SetFloat ("yVel", playerController.getVelocity().y);
-		anim.SetBool ("attacking", playerController.attacking());
-		anim.SetBool ("lunging", playerController.lungeAttacking ());
-		anim.SetBool ("moving", playerController.moving ());
-		anim.SetBool ("spawning", playerController.isSpawning ());
-		anim.SetBool ("grounded", playerController.isGrounded ());
-		anim.SetInteger ("movementState", (int)playerController.movementState);
+		float xVel = playerController.getVelocity ().x;
+		float yVel = playerController.getVelocity ().y;
+		int facing = playerController.getFacingDirection ();
 
+		anim.SetFloat ("xVel", Mathf.Abs (xVel));
+		anim.SetFloat ("yVel", yVel);
+	
+		//if (playerController....attacking())
+		//anim.SetBool("attacking", true);
+		//...
 
-		//consolidate attack & lunging anims to just "attack"? with "successful lunge" anim as a possible transition?
-// 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover
-//		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5
-
-		//int getfacingdir: 4 == left, 0 == right
-		if (playerController.getFacingDirection () == 0) {
+		//int facing: 4 == left, 0 == right
+		if (facing == 0) {
 			transform.localScale = new Vector3 (theScale.x, transform.localScale.y, transform.localScale.z);
 		} else {
 			transform.localScale = new Vector3(-theScale.x, transform.localScale.y, transform.localScale.z);

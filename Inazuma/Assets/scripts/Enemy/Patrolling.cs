@@ -10,8 +10,8 @@ public class Patrolling : MonoBehaviour
     private bool isWaiting;
     private float waitTimer;
 
-    public Transform waypointA;
-    public Transform waypointB;
+    public Transform WayPointA;
+    public Transform WayPointB;
 
     private Vector3 destination;
     private Vector3 enemyPos;
@@ -22,30 +22,24 @@ public class Patrolling : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if(waypointA != null)
-            destination = waypointA.position;
+        destination = WayPointA.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (destination != null)
+        if (!isWaiting)
         {
-            if (!isWaiting)
-            {
-                MoveToPoint(destination);
-            }
-
-            if (waitTimer <= 0)
-            {
-                isWaiting = false;
-            }
-            else
-            {
-                waitTimer -= Time.deltaTime;
-            }
-
+            MoveToPoint(destination);
         }
+          
+        if (waitTimer <= 0) {
+            isWaiting = false;
+        } else {
+            waitTimer -= Time.deltaTime;
+        }
+        
+
     }
 
     void MoveToPoint(Vector3 target)
@@ -59,11 +53,11 @@ public class Patrolling : MonoBehaviour
             transform.position = target;
             waitTimer = waitDuration;
             isWaiting = true;
-            if (destination == waypointA.position) {
-                destination = waypointB.position;
+            if (destination == WayPointA.position) {
+                destination = WayPointB.position;
             } else
             {
-                destination = waypointA.position;
+                destination = WayPointA.position;
             }
         }
         else
@@ -71,10 +65,5 @@ public class Patrolling : MonoBehaviour
             transform.position += moveVector;
         }
     }
-    public void setWaypoints(Transform A, Transform B)
-    {
-        waypointA = A;
-        waypointB = B;
-        destination = waypointA.position;
-    }
+
 }
