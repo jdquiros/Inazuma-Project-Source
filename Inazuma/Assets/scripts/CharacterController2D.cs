@@ -84,7 +84,7 @@ public class CharacterController2D : MonoBehaviour
 		}
 	}
 
-
+    
 	/// <summary>
 	/// mask with all layers that the player should interact with
 	/// </summary>
@@ -175,7 +175,8 @@ public class CharacterController2D : MonoBehaviour
 	// we use this flag to mark the case where we are travelling up a slope and we modified our delta.y to allow the climb to occur.
 	// the reason is so that if we reach the end of the slope we can make an adjustment to stay grounded
 	bool _isGoingUpSlope = false;
-
+    bool movingUpSlope = false;
+    public bool isMovingUpSlope() { return movingUpSlope; }
 
 	#region Monobehaviour
 
@@ -241,8 +242,10 @@ public class CharacterController2D : MonoBehaviour
 	/// <param name="deltaMovement">Delta movement.</param>
 	public void move( Vector3 deltaMovement )
 	{
-		// save off our current grounded state which we will use for wasGroundedLastFrame and becameGroundedThisFrame
-		collisionState.wasGroundedLastFrame = collisionState.below;
+            // save off our current grounded state which we will use for wasGroundedLastFrame and becameGroundedThisFrame
+            movingUpSlope = false;
+
+            collisionState.wasGroundedLastFrame = collisionState.below;
 
 		// clear our state
 		collisionState.reset();
@@ -417,7 +420,7 @@ public class CharacterController2D : MonoBehaviour
 		if( Mathf.RoundToInt( angle ) == 90 )
 			return false;
 
-		// if we can walk on slopes and our angle is small enough we need to move up
+            // if we can walk on slopes and our angle is small enough we need to move up
 		if( angle < slopeLimit )
 		{
 			// we only need to adjust the deltaMovement if we are not jumping
@@ -464,7 +467,7 @@ public class CharacterController2D : MonoBehaviour
 
 		return true;
 	}
-
+    
 
 	void moveVertically( ref Vector3 deltaMovement )
 	{
@@ -547,6 +550,7 @@ public class CharacterController2D : MonoBehaviour
 
 			// we are moving down the slope if our normal and movement direction are in the same x direction
 			var isMovingDownSlope = Mathf.Sign( _raycastHit.normal.x ) == Mathf.Sign( deltaMovement.x );
+            movingUpSlope = true;
 			if( isMovingDownSlope )
 			{
 				// going down we want to speed up in most cases so the slopeSpeedMultiplier curve should be > 1 for negative angles
@@ -559,7 +563,7 @@ public class CharacterController2D : MonoBehaviour
 			}
 		}
 	}
-
+    
 	#endregion
-
+    
 }}
