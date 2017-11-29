@@ -344,6 +344,7 @@ public class PlayerController : MonoBehaviour
         xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
         yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
         rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis("RStickHorizontal"), Input.GetAxis("RStickVertical"))) >= (1 - axisDeadZone);
+        print(Input.GetAxis("RStickHorizontal") + ", " + Input.GetAxis("RStickVertical"));
     }
     private void checkForAttackInput()
     {

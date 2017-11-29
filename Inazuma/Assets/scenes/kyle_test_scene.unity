@@ -7459,6 +7459,11 @@ Prefab:
       propertyPath: minDashTime
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 114822324619094332, guid: d567727fe81913f49ad12765029df287,
+        type: 2}
+      propertyPath: axisDeadZone
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d567727fe81913f49ad12765029df287, type: 2}
   m_IsPrefabParent: 0
@@ -8604,11 +8609,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4119885868044014, guid: 93b4fdb10fc9c514ba03befbb61be7b1, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 4.4421
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4119885868044014, guid: 93b4fdb10fc9c514ba03befbb61be7b1, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 3.1524408
+      value: 16.72
       objectReference: {fileID: 0}
     - target: {fileID: 4119885868044014, guid: 93b4fdb10fc9c514ba03befbb61be7b1, type: 2}
       propertyPath: m_LocalPosition.z
