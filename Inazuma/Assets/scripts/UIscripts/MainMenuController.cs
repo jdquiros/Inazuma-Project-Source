@@ -10,12 +10,13 @@ public class MainMenuController : MonoBehaviour {
     // Use this for initialization
     public enum MenuState
     {
-        MainMenu, LevelSelect, Credits, None
+        MainMenu, LevelSelect, Credits, Options, None
     }
     public static MenuState menuState;
     private Canvas mainMenuCanvas;
     public Canvas levelSelectCanvas;
     public Canvas creditsCanvas;
+    public Canvas optionsCanvas;
 
     public bool debug = false;
     public EventSystem eventSystem;
@@ -23,6 +24,7 @@ public class MainMenuController : MonoBehaviour {
     public Button levelSelectButton;
     public Button creditsButton;
     public Button quitButton;
+    public Button optionsButton;
 
     public Button LSPlayButton;
     public Button LSBackButton;
@@ -110,6 +112,15 @@ public class MainMenuController : MonoBehaviour {
         else
         {
             quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+
+        }
+        if (eventSystem.currentSelectedGameObject == optionsButton.gameObject)
+        {
+            optionsButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
+        }
+        else
+        {
+            optionsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
 
         }
     }
@@ -295,6 +306,16 @@ public class MainMenuController : MonoBehaviour {
             creditsCanvas.enabled = false;
             mainMenuCanvas.enabled = true;
             eventSystem.SetSelectedGameObject(playButton.gameObject);
+        }
+    }
+    public void optionsButtonPress()
+    {
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.Options;
+            optionsCanvas.enabled = true;
+            mainMenuCanvas.enabled = false;
+            eventSystem.SetSelectedGameObject(LSPlayButton.gameObject);
         }
     }
 }
