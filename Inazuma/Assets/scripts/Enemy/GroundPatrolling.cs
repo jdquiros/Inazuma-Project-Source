@@ -5,7 +5,7 @@ using UnityEngine;
 public class GroundPatrolling : MonoBehaviour
 {
 
-    private Prime31.CharacterController2D charController;
+    private Prime31.EnemyController2D charController;
     public float xVelocity = 0;
     public int waitDuration;
     public int gravity;
@@ -20,29 +20,30 @@ public class GroundPatrolling : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        charController = GetComponent<Prime31.CharacterController2D>();
+        charController = GetComponent<Prime31.EnemyController2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
         charController.move(new Vector2(0, -gravity * Time.deltaTime));
-
-        if (!isWaiting)
+        if (charController.isGrounded)
         {
-            moveHorizontal(xVelocity * Time.deltaTime);
-        }
+            if (!isWaiting)
+            {
+                moveHorizontal(xVelocity * Time.deltaTime);
+            }
 
-        if (waitTimer <= 0)
-        {
-            isWaiting = false;
-        }
+            if (waitTimer <= 0)
+            {
+                isWaiting = false;
+            }
 
-        else
-        {
-            waitTimer -= Time.deltaTime;
+            else
+            {
+                waitTimer -= Time.deltaTime;
+            }
         }
-
     }
 
 
@@ -74,5 +75,6 @@ public class GroundPatrolling : MonoBehaviour
         waypointA = A;
         waypointB = B;
     }
-
+    public bool waiting() { return isWaiting; }
+    public bool isGrounded() { return charController.isGrounded; }
 }
