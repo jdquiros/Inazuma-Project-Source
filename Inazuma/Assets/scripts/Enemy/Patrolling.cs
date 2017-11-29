@@ -29,22 +29,25 @@ public class Patrolling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (destination != null)
+        if (!GameState.compareState(GameState.State.MainMenu))
         {
-            if (!isWaiting)
+            if (destination != null)
             {
-                MoveToPoint(destination);
-            }
+                if (!isWaiting)
+                {
+                    MoveToPoint(destination);
+                }
 
-            if (waitTimer <= 0)
-            {
-                isWaiting = false;
-            }
-            else
-            {
-                waitTimer -= Time.deltaTime;
-            }
+                if (waitTimer <= 0)
+                {
+                    isWaiting = false;
+                }
+                else
+                {
+                    waitTimer -= Time.deltaTime;
+                }
 
+            }
         }
     }
 

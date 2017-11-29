@@ -22,16 +22,22 @@ public class ArtilleryTurret : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        calculateLaunchAngle();
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, launchAngle*Mathf.Rad2Deg));
+        if (!GameState.compareState(GameState.State.MainMenu))
+        {
+            calculateLaunchAngle();
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, launchAngle * Mathf.Rad2Deg));
+        }
 	}
     private void spawnProjectile()
     {
-        GameObject projectile = Instantiate(projectileType).gameObject;
-        projectile.transform.position = transform.position;
-        projectile.GetComponent<TrailRenderer>().Clear();
-        projectile.GetComponent<LobbedProjectile>().gravity = projectileGravity;
-        projectile.GetComponent<LobbedProjectile>().setVelocity(transform.right * launchVelocity);
+        if (!GameState.compareState(GameState.State.MainMenu))
+        {
+            GameObject projectile = Instantiate(projectileType).gameObject;
+            projectile.transform.position = transform.position;
+            projectile.GetComponent<TrailRenderer>().Clear();
+            projectile.GetComponent<LobbedProjectile>().gravity = projectileGravity;
+            projectile.GetComponent<LobbedProjectile>().setVelocity(transform.right * launchVelocity);
+        }
     }
     private void calculateLaunchAngle()
     {

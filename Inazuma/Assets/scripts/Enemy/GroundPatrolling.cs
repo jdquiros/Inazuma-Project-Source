@@ -26,22 +26,25 @@ public class GroundPatrolling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        charController.move(new Vector2(0, -gravity * Time.deltaTime));
-        if (charController.isGrounded)
+        if (GameState.compareState(GameState.State.InGame) || GameState.compareState(GameState.State.LevelWon) || GameState.compareState(GameState.State.PlayerDead))
         {
-            if (!isWaiting)
+            charController.move(new Vector2(0, -gravity * Time.deltaTime));
+            if (charController.isGrounded)
             {
-                moveHorizontal(xVelocity * Time.deltaTime);
-            }
+                if (!isWaiting)
+                {
+                    moveHorizontal(xVelocity * Time.deltaTime);
+                }
 
-            if (waitTimer <= 0)
-            {
-                isWaiting = false;
-            }
+                if (waitTimer <= 0)
+                {
+                    isWaiting = false;
+                }
 
-            else
-            {
-                waitTimer -= Time.deltaTime;
+                else
+                {
+                    waitTimer -= Time.deltaTime;
+                }
             }
         }
     }

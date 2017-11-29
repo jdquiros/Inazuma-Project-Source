@@ -930,7 +930,7 @@ public class PlayerController : MonoBehaviour
                 }
             
         }
-        return facingDirection;         //If no key input, default to where your character is facing
+        return aimDirection;         //If no key input, no change
 
     }
     private Vector3 getAimVector(Direction dir)
@@ -1000,7 +1000,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
             ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking)
+            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
             {
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
@@ -1009,7 +1009,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.GetComponent<Bullet>().hitByPlayer();
             ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking)
+            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
             {
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
@@ -1085,13 +1085,19 @@ public class PlayerController : MonoBehaviour
         dashCooldownTimer = attackWindUp + attackDuration;
         spriteRenderer.color = Color.blue;
         yield return new WaitForSeconds(attackWindUp);
+        if(movementState != MovementState.Free)
+        {
+            canAttack = true;
+            yield break;
+        }
         spawnAttackTrail(aimDirection);
+
         enemyHits = 0;
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg * Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
         spriteRenderer.color = Color.red;
         soundEffectPlayer.PlayOneShot(attackSound);
-
+        
         yield return new WaitForSeconds(attackDuration);
         spriteRenderer.color = Color.gray;
         isLungeAttacking = false;
@@ -1186,6 +1192,7 @@ public class PlayerController : MonoBehaviour
         
         if ((movementState != MovementState.Paralyzed) && !invulnerable)
         {
+           
             yVelocity = knockbackUpVelocity;
             charController.move(new Vector2(0, .2f));
             if (transform.position.x < enemyPos.x)
@@ -1369,7 +1376,7 @@ public class PlayerController : MonoBehaviour
     {
         return (int)facingDirection;
     }
-    public int getAimDirectin()
+    public int getAimDirection()
     {
         return (int)aimDirection;
     }
@@ -1393,4 +1400,5 @@ public class PlayerController : MonoBehaviour
     {
         return inSpawnAnimation;
     }
+    
 }
