@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 37afb5f40c8339841ac397db85e7c82c
-timeCreated: 1510972720
+timeCreated: 1511989985
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -506,12 +506,9 @@ TextureImporter:
         - {x: 35, y: -53}
         - {x: -48, y: -57}
       physicsShape:
-      - - {x: -64, y: -61}
-        - {x: -64, y: -64}
+      - - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: -53}
-        - {x: 35, y: -53}
-        - {x: -48, y: -57}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_17
@@ -531,8 +528,7 @@ TextureImporter:
         - {x: 64, y: -64}
         - {x: 64, y: -38}
       physicsShape:
-      - - {x: 36, y: -38}
-        - {x: -64, y: -52}
+      - - {x: -64, y: -52.973206}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: -38}
@@ -556,12 +552,10 @@ TextureImporter:
         - {x: 59, y: -12}
         - {x: -44, y: -31}
       physicsShape:
-      - - {x: -64, y: -37}
+      - - {x: -64, y: -37.884827}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: -12}
-        - {x: 59, y: -12}
-        - {x: -44, y: -31}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_19
@@ -581,11 +575,12 @@ TextureImporter:
         - {x: 64, y: 61}
         - {x: 61, y: 60}
       physicsShape:
-      - - {x: -64, y: -11}
+      - - {x: 29.489868, y: 29.394714}
+        - {x: -17.677246, y: 4.349304}
+        - {x: -64, y: -12.096497}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
-        - {x: 64, y: 61}
-        - {x: 61, y: 60}
+        - {x: 64, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_20
@@ -605,11 +600,12 @@ TextureImporter:
         - {x: 64, y: -11}
         - {x: -61, y: 61}
       physicsShape:
-      - - {x: -64, y: 61}
+      - - {x: 14.307373, y: 4.215088}
+        - {x: -31.553955, y: 29.490479}
+        - {x: -64, y: 64}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
-        - {x: 64, y: -11}
-        - {x: -61, y: 61}
+        - {x: 64, y: -12.158203}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_21
@@ -630,12 +626,10 @@ TextureImporter:
         - {x: 64, y: -38}
         - {x: 63, y: -36}
       physicsShape:
-      - - {x: -62, y: -12}
-        - {x: -64, y: -12}
+      - - {x: -64, y: -12}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: -38}
-        - {x: 63, y: -36}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_22
@@ -656,12 +650,10 @@ TextureImporter:
         - {x: 64, y: -52}
         - {x: 52, y: -49}
       physicsShape:
-      - - {x: -57, y: -38}
-        - {x: -64, y: -38}
+      - - {x: -64, y: -38}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
-        - {x: 64, y: -52}
-        - {x: 52, y: -49}
+        - {x: 64, y: -52.94757}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_23
@@ -682,12 +674,9 @@ TextureImporter:
         - {x: 64, y: -60}
         - {x: 47, y: -58}
       physicsShape:
-      - - {x: -59, y: -53}
-        - {x: -64, y: -53}
+      - - {x: -64, y: -53}
         - {x: -64, y: -64}
         - {x: 64, y: -64}
-        - {x: 64, y: -60}
-        - {x: 47, y: -58}
       tessellationDetail: 0
     outline: []
     physicsShape: []
