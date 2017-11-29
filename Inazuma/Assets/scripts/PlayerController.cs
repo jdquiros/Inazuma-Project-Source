@@ -162,6 +162,9 @@ public class PlayerController : MonoBehaviour
     public float spawnAnimDuration = .2f;
     private bool inSpawnAnimation = false;
 
+    private string aimStickHorizontal;
+    private string aimStickVertical;
+
     private void Awake()
     {
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
@@ -182,11 +185,18 @@ public class PlayerController : MonoBehaviour
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
         hoverCoroutine = hoverForDuration(lungeHoverDuration);
         //charController.warpToGrounded();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        aimStickHorizontal = (GameState.controlLayout == 0) ? "RStickHorizontal" : "Horizontal";
+        aimStickVertical = (GameState.controlLayout == 0) ? "RStickVertical" : "Vertical";
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            GameState.controlLayout = (GameState.controlLayout + 1) % 2;
+        }
         if (playerDead || GameState.compareState(GameState.State.LevelWon))
         {
             movementState = MovementState.Paralyzed;
@@ -223,7 +233,7 @@ public class PlayerController : MonoBehaviour
         }
         switch (movementState) {
             case MovementState.Free:
-                if (Input.GetButtonDown("Jump"))
+                if (Input.GetButtonDown("Layout"+GameState.controlLayout+"Jump"))
                 {
                     //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
                     if ((charController.isGrounded  || jumpInAirTimer > 0) && !jumping && canJump)
@@ -254,7 +264,7 @@ public class PlayerController : MonoBehaviour
                     //needs improvement to only activate once
                     attemptDropThroughPlatform();
                 }
-                if (Input.GetButtonDown("Dash") && canDash)
+                if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
                 {
                     source.Stop();
 
@@ -298,7 +308,7 @@ public class PlayerController : MonoBehaviour
                 break;
             case MovementState.Dash:
                 checkForAttackInput();
-                if(Input.GetButtonDown("Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
+                if(Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
                 {
                     jump();
                     endDash();
@@ -322,7 +332,7 @@ public class PlayerController : MonoBehaviour
                     movementState = MovementState.Free;
                     StopCoroutine(hoverCoroutine);
                 }
-                if (Input.GetButtonDown("Dash") && canDash)
+                if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
                 {
                     StopCoroutine(hoverCoroutine);
                     dash(facingDirection);
@@ -343,13 +353,12 @@ public class PlayerController : MonoBehaviour
 
         xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
         yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
-        rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis("RStickHorizontal"), Input.GetAxis("RStickVertical"))) >= (1 - axisDeadZone);
-        print(Input.GetAxis("RStickHorizontal") + ", " + Input.GetAxis("RStickVertical"));
+        rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone);
     }
     private void checkForAttackInput()
     {
         
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Attack"))
         {
             if (canAttack)
             {
@@ -363,7 +372,7 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        if (Input.GetButtonDown("Lunge") || maxedRightStickThisFrame())
+        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Lunge") || (maxedRightStickThisFrame() && GameState.controlLayout == 0))
         {
             if (canAttack)
             {
@@ -619,13 +628,13 @@ public class PlayerController : MonoBehaviour
                     {
                         //if this is >0, then character is rising until apex.
                         jumpApexTimer -= Time.deltaTime;
-                        if (!Input.GetButton("Jump") && jumpKeyHeld)
+                        if (!Input.GetButton("Layout" + GameState.controlLayout + "Jump") && jumpKeyHeld)
                         {
                             //you release the jump key before you reach the apex
                             jumpApexTimer = 0;
                             yVelocity *= jumpButtonReleaseFactor;
                         }
-                        jumpKeyHeld = Input.GetButton("Jump");
+                        jumpKeyHeld = Input.GetButton("Layout" + GameState.controlLayout + "Jump");
                         if (yVelocity < 0)
                         {
                             //you hit the ceiling or something, so the apex timer is not applicable anymore
@@ -779,7 +788,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
         source.clip = climbSound;
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump"))
         {
             //jump off of ladder
             movementState = MovementState.Free;
@@ -888,7 +897,7 @@ public class PlayerController : MonoBehaviour
     }
     private Direction calculateAimDirection()
     {
-        if ((Mathf.Abs(Input.GetAxis("RStickHorizontal")) < axisDeadZone && Mathf.Abs(Input.GetAxis("RStickVertical")) < axisDeadZone))
+        if ((Mathf.Abs(Input.GetAxis(aimStickHorizontal)) < axisDeadZone && Mathf.Abs(Input.GetAxis(aimStickVertical)) < axisDeadZone))
         {
             
             if (Input.GetKey(leftButton) && Input.GetKey(upButton) && Input.GetKey(rightButton))
@@ -920,7 +929,7 @@ public class PlayerController : MonoBehaviour
         {
             //diagonals must be tested before singular directions, because single directions are subsets of diagonals
             
-                float stickAngle = (Mathf.Atan2(Input.GetAxis("RStickVertical"), Input.GetAxis("RStickHorizontal")) * Mathf.Rad2Deg);
+                float stickAngle = (Mathf.Atan2(Input.GetAxis(aimStickVertical), Input.GetAxis(aimStickHorizontal)) * Mathf.Rad2Deg);
                 if (stickAngle < 0) stickAngle += 360;
                 for (int i = 0; i < 8; ++i)
                 {
@@ -996,7 +1005,6 @@ public class PlayerController : MonoBehaviour
     }
     void onHitBoxCollision(Collider2D other)
     {
-        Debug.Log("Collided with: " + other.name);
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
@@ -1286,6 +1294,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(fadeSound);
         }
     }
+    
     private void startUniqueCoroutine(IEnumerator func, ref IEnumerator funcVariable)
     {
         StopCoroutine(funcVariable);
@@ -1342,11 +1351,11 @@ public class PlayerController : MonoBehaviour
 
     private bool maxedRightStickThisFrame()
     {
-        return Vector2.Distance(Vector2.zero,new Vector2(Input.GetAxis("RStickHorizontal"),Input.GetAxis("RStickVertical"))) >= (1 - axisDeadZone) && !rightStickMaxed;
+        return Vector2.Distance(Vector2.zero,new Vector2(Input.GetAxis(aimStickHorizontal),Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone) && !rightStickMaxed;
     }
     private bool unMaxedRightStickThisFrame()
     {
-        return Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis("RStickHorizontal"), Input.GetAxis("RStickVertical"))) <= (1 - axisDeadZone) && rightStickMaxed;
+        return Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) <= (1 - axisDeadZone) && rightStickMaxed;
     }
     private bool holdingDirection(Direction dir)
     {
