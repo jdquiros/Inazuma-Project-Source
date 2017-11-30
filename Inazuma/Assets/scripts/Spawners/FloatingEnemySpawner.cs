@@ -9,7 +9,6 @@ public class FloatingEnemySpawner : EnemySpawner {
         GameObject explosion = (GameObject)Instantiate(Resources.Load("RadialExplosionRed"));
         explosion.transform.position = transform.position;
         GameObject newEnemy = (GameObject)Instantiate(Resources.Load("Floating Enemy"));
-        newEnemy.GetComponent<Floating>().enemyPos = transform.position;
         newEnemy.transform.position = transform.position;
 
         newEnemy.GetComponent<Enemy>().spawnedBy = this;

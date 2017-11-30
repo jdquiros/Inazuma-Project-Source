@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Floating : MonoBehaviour {
 
-    public Vector3 enemyPos;
+    private Vector3 enemyPos;
 
 	// Use this for initialization
 	void Start () {
-		
+        enemyPos = transform.position;
 	}
 
     // Update is called once per frame
