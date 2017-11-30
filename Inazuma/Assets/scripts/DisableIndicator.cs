@@ -14,7 +14,7 @@ public class DisableIndicator : MonoBehaviour {
 	void Update () {
         if (GameState.controlLayout == 0)
             spriteRenderer.enabled = false;
-        else
+        else if(!GameState.compareState(GameState.State.MainMenu))
             spriteRenderer.enabled = true;
 	}
 }

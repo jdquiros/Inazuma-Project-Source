@@ -25,12 +25,14 @@ public class MainMenuController : MonoBehaviour {
     public Button creditsButton;
     public Button quitButton;
     public Button optionsButton;
+    public Button optionsDefaultButton;
 
     public Button LSPlayButton;
     public Button LSBackButton;
 
     public Button creditsBackButton;
 
+    public MatchFontSizes optionsMatchSizes;
     public GraphicColorLerp title;
     private AudioSource source;
 
@@ -52,6 +54,7 @@ public class MainMenuController : MonoBehaviour {
         menuState = MenuState.MainMenu;
         levelSelectCanvas.enabled = false;
         creditsCanvas.enabled = false;
+        optionsCanvas.enabled = false;
         creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
     }
     void Start () {
@@ -315,7 +318,18 @@ public class MainMenuController : MonoBehaviour {
             menuState = MenuState.Options;
             optionsCanvas.enabled = true;
             mainMenuCanvas.enabled = false;
-            eventSystem.SetSelectedGameObject(LSPlayButton.gameObject);
+            eventSystem.SetSelectedGameObject(optionsDefaultButton.gameObject);
+            optionsMatchSizes.resizeText();
+        }
+    }
+    public void optionsBackButtonPress()
+    {
+        if (GameState.compareState(GameState.State.MainMenu))
+        {
+            menuState = MenuState.MainMenu;
+            optionsCanvas.enabled = false;
+            mainMenuCanvas.enabled = true;
+            eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
     }
 }

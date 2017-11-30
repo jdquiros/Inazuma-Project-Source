@@ -9,10 +9,7 @@ public class MatchFontSizes : MonoBehaviour {
     public Text[] textList;
 
 	void Start () {
-		foreach(var item in textList){
-            item.resizeTextMaxSize = 1000;
-        }
-        StartCoroutine(waitForFrame());
+        resizeText();
 	}
 	private IEnumerator waitForFrame()
     {
@@ -31,6 +28,14 @@ public class MatchFontSizes : MonoBehaviour {
         {
             item.resizeTextMaxSize = minSize;
         }
+    }
+    public void resizeText()
+    {
+        foreach (var item in textList)
+        {
+            item.resizeTextMaxSize = 1000;
+        }
+        StartCoroutine(waitForFrame());
     }
 	// Update is called once per frame
 	void Update () {
