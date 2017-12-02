@@ -40,7 +40,7 @@ public class SyncedEyes : MonoBehaviour {
         }
         for (int i = 0; i < eyePivots.Length; ++i)
         {
-            eyePivots[i].rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0, desiredAngle)), lookSpeed * Time.deltaTime);
+            eyePivots[i].rotation = Quaternion.Lerp(eyePivots[i].rotation, Quaternion.Euler(new Vector3(0, 0, desiredAngle)), lookSpeed * Time.deltaTime);
         }
     }
 
