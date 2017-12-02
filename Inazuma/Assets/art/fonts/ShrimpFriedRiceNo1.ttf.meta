@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: bfe0e163749dad3458d44eb0d8007124
+timeCreated: 1512186792
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: ShrimpFriedRiceNo1
+  fontNames:
+  - ShrimpFriedRiceNo1
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
