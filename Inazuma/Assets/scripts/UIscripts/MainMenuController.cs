@@ -199,6 +199,7 @@ public class MainMenuController : MonoBehaviour {
             levelSelectButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             creditsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             quitButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
+            optionsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             title.startColorChange();
 
             eventSystem.SetSelectedGameObject(null);

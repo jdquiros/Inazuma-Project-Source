@@ -1157,6 +1157,7 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = lungeDuration;
+        dashCooldownTimer = lungeDuration;
         movementState = MovementState.Lunge;
         xVelocity = forcedMoveVector.x * lungeMaxVelocity;
         yVelocity = forcedMoveVector.y * lungeMaxVelocity;

@@ -17224,6 +17224,7 @@ GameObject:
   - component: {fileID: 846669318}
   - component: {fileID: 846669317}
   - component: {fileID: 846669316}
+  - component: {fileID: 846669319}
   m_Layer: 5
   m_Name: OptionsButton
   m_TagString: Untagged
@@ -17390,6 +17391,22 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &846669319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 846669312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b25b44d344559c841a60494de9c937d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playOn: 2
+  startColor: {r: 0, g: 0, b: 0, a: 1}
+  endColor: {r: 0, g: 0, b: 0, a: 0}
+  duration: 0.5
+  initialDelay: 0
 --- !u!1 &870880652
 GameObject:
   m_ObjectHideFlags: 0
@@ -98275,7 +98292,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1892389573}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -254.125, y: -142.94531, z: 0}
+  m_LocalPosition: {x: -426.075, y: -239.66719, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2077692187}
@@ -98878,7 +98895,7 @@ RectTransform:
   m_GameObject: {fileID: 2077692183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.09191277, y: 0.09191277, z: 0.09191277}
+  m_LocalScale: {x: 0.05481977, y: 0.05481977, z: 0.05481977}
   m_Children:
   - {fileID: 1892389574}
   m_Father: {fileID: 0}
