@@ -1109,6 +1109,7 @@ public class PlayerController : MonoBehaviour
         
         yield return new WaitForSeconds(attackDuration);
         spriteRenderer.color = Color.gray;
+        yield return new WaitForEndOfFrame();
         isLungeAttacking = false;
 
         yield return new WaitForSeconds(timeBetweenAttacks);
