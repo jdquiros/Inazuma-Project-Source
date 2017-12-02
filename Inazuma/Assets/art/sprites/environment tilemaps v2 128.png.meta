@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 37afb5f40c8339841ac397db85e7c82c
-timeCreated: 1511989985
+timeCreated: 1512190415
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -363,15 +363,10 @@ TextureImporter:
         - {x: 64, y: -52}
         - {x: 57, y: -37}
       physicsShape:
-      - - {x: 52, y: -28}
-        - {x: 43, y: -32}
-        - {x: 34, y: -27}
-        - {x: -58, y: -27}
-        - {x: -64, y: -52}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: -52}
-        - {x: 57, y: -37}
+      - - {x: 50.10663, y: -32.575684}
+        - {x: -51.68869, y: -32.99585}
+        - {x: -60.38794, y: -64}
+        - {x: 60.38794, y: -64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_11
@@ -414,12 +409,10 @@ TextureImporter:
         - {x: 64, y: 20}
         - {x: 61, y: 36}
       physicsShape:
-      - - {x: -60, y: 36}
-        - {x: -64, y: 19}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
-        - {x: 64, y: 20}
-        - {x: 61, y: 36}
+      - - {x: -50.21747, y: 31.582092}
+        - {x: -59.424316, y: 0.69091797}
+        - {x: 61.002136, y: 0.5331421}
+        - {x: 49.797424, y: 31.897644}
       tessellationDetail: 0
     - serializedVersion: 2
       name: environment tilemaps v2 128_13
