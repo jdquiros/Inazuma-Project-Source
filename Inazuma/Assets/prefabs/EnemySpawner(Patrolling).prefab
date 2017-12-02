@@ -94,6 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8878cea6ffd82a540a24d08c53d1ebf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnPrefab: {fileID: 4484632397064836, guid: a0fb37aef12f33946b7fbc8907080055,
+    type: 2}
   desiredEnemyCount: 1
   enemyCount: 0
   spawnDelay: 3

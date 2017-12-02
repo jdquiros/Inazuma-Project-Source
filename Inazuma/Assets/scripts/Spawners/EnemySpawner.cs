@@ -14,6 +14,7 @@ public abstract class EnemySpawner : MonoBehaviour {
      * 
      * 
      */
+    public Transform spawnPrefab;
     public int desiredEnemyCount;           //will spawn new enemies while enemyCount < desiredEnemyCount
     [HideInInspector]
     public int enemyCount;

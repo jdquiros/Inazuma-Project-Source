@@ -16,7 +16,7 @@ public class PatrolEnemySpawner : EnemySpawner {
     {
         GameObject explosion = (GameObject)Instantiate(Resources.Load("RadialExplosionRed"));
         explosion.transform.position = transform.position;
-        GameObject newEnemy = (GameObject)Instantiate(Resources.Load("Patrolling Enemy"));
+        GameObject newEnemy = Instantiate(spawnPrefab).gameObject;
         newEnemy.transform.position = transform.position;
         newEnemy.GetComponent<Enemy>().spawnedBy = this;
         newEnemy.GetComponent<Patrolling>().setWaypoints(waypointA, waypointB);
