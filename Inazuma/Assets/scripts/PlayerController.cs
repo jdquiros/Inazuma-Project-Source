@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public MovementState movementState = MovementState.Free;
     
     private bool allowPlayerInput;              //can the character be controlled?
+    private int maxHealth;
     public int health = 1;                      
     private bool playerDead = false;
     public float maxHorizontalVelocity = 0;     //should be positive
@@ -117,6 +118,7 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded;
 
 	private Vector3 respawnPos;                                     //move player to this position when spawning
+    private bool wasMovingHorizontal = false;
     private bool isMovingHorizontal = false;                                  //actually requires movement.  running into a wall will not cause this to be true;
     private bool isMovingVertical = false;                          //actually requires movement
 
@@ -131,6 +133,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip climbSound;
     public AudioClip hitTakenSound;
     public AudioClip landingSound;
+    public AudioClip dashCooldownSound;
+    public AudioClip wallCollisionSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -145,6 +149,7 @@ public class PlayerController : MonoBehaviour
     private bool inLadder = false;                                  //are you touching a ladder
 
     public bool attacksEndDashes = false;                           //should attacks end dashes?
+    private bool playCooldownSound = false;
 
     public float knockbackBackVelocity;                             //player's x velocity is set to this when knocked back
     public float knockbackUpVelocity;                               //player's y velocity is set to this when knocked back
@@ -167,6 +172,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+       
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -175,6 +181,7 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
+        maxHealth = health;
         transform.position = Checkpoint.GetCurrentCheckpointPos();
         charController.warpToGrounded();
         if (GameState.compareState(GameState.State.InGame))
@@ -351,7 +358,8 @@ public class PlayerController : MonoBehaviour
         updateVerticalVelocity();
         updatePosition();
         updateDirections();
-
+        wasMovingHorizontal = isMovingHorizontal;
+        
         xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
         yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
         rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone);
@@ -391,8 +399,10 @@ public class PlayerController : MonoBehaviour
     }
     private void moveHorizontal(float xV)
     {
+        bool grounded = isGrounded();
         isMovingHorizontal = true;
         Vector3 position = transform.position;
+
         charController.move(new Vector2(xV, 0));
         if (xV != 0 && Vector3.Distance(position, transform.position) < 0.0005f)          //I don't know how to check for wall collisions in CharacterController2D so this is a janky workaround
         {
@@ -402,6 +412,10 @@ public class PlayerController : MonoBehaviour
         if(Mathf.Abs(xV) < 0.000005f)
         {
             isMovingHorizontal = false;
+        }
+        if (wasMovingHorizontal && !isMovingHorizontal && Mathf.Abs(xV) > 0.000005f && grounded && movementState == MovementState.Free)
+        {
+            soundEffectPlayer.PlayOneShot(wallCollisionSound);
         }
     }
     private void moveVertical(float yV)
@@ -760,6 +774,11 @@ public class PlayerController : MonoBehaviour
                     else if(!preventCooldown)       //do not finish cooldown until you are grounded
                     {
                         dashCooldownTimer = 0;
+                        if (playCooldownSound)
+                        {
+                            soundEffectPlayer.PlayOneShot(dashCooldownSound);
+                            playCooldownSound = false;
+                        }
                         canDash = true;
                         if(debugColors)
                             spriteRenderer.color = Color.yellow;
@@ -790,7 +809,8 @@ public class PlayerController : MonoBehaviour
     {
         charController.ignoreOneWayPlatformsThisFrame = true;
         xVelocity = 0;
-        spriteRenderer.color = Color.green;
+        if (debugColors)
+            spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
         source.clip = climbSound;
         if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump"))
@@ -798,7 +818,8 @@ public class PlayerController : MonoBehaviour
             //jump off of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
-            spriteRenderer.color = Color.yellow;
+            if (debugColors)
+                spriteRenderer.color = Color.yellow;
             if (!holdingDirection(Direction.Down))
             {
                 jump();
@@ -822,7 +843,8 @@ public class PlayerController : MonoBehaviour
             {
                 movementState = MovementState.Free;
                 ladderGrabTimer = ladderGrabCooldown / 2;
-                spriteRenderer.color = Color.yellow;
+                if (debugColors)
+                    spriteRenderer.color = Color.yellow;
                 yVelocity = 0;
             }
             else
@@ -850,7 +872,8 @@ public class PlayerController : MonoBehaviour
             //if you go off top or bottom of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
-            spriteRenderer.color = Color.yellow;
+            if (debugColors)
+                spriteRenderer.color = Color.yellow;
             yVelocity = 0;
         }
         
@@ -1037,6 +1060,7 @@ public class PlayerController : MonoBehaviour
     {
 		if (collision.gameObject.CompareTag("Checkpoint"))
 		{
+            health = maxHealth;
 			respawnPos = Checkpoint.GetCurrentCheckpointPos ();
 		}
    		else if(collision.gameObject.CompareTag("Spike")) 
@@ -1138,13 +1162,14 @@ public class PlayerController : MonoBehaviour
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
-        canAttack = false;
+        //canAttack = false;
         dashTimer = dashDuration;
         minDashTimer = minDashTime;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
         soundEffectPlayer.PlayOneShot(dashSound);
+        playCooldownSound = true;
         if (!isGrounded())
             preventCooldown = true;
 
@@ -1157,11 +1182,13 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         dashTimer = dashDuration;
-        canAttack = false;
+        //canAttack = false;
         movementState = MovementState.Dash;
         xVelocity = 0;
         yVelocity = 0;
         soundEffectPlayer.PlayOneShot(dashSound);
+        playCooldownSound = true;
+
         if (!isGrounded())
             preventCooldown = true;
     }
@@ -1252,18 +1279,15 @@ public class PlayerController : MonoBehaviour
     {
         movementState = MovementState.Paralyzed;
         invulnerable = true;
-        if (debugColors)
             spriteRenderer.color = Color.grey;
         yield return new WaitForSeconds(duration);
-        if (debugColors)
-            spriteRenderer.color = Color.white;
+       
         if(!playerDead)
             movementState = MovementState.Free;
+        spriteRenderer.color = Color.white;
 
         yield return new WaitForSeconds(invincibilityDuration-duration);
         invulnerable = false;
-        if (debugColors)
-            spriteRenderer.color = Color.yellow;
 
     }
     public void attemptDamagePlayer(int dmg)
