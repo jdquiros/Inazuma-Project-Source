@@ -5,6 +5,7 @@ using UnityEngine;
 public class HitBoxReport : MonoBehaviour {
 
     // Use this for initialization
+    public bool debug = false;
     public GameObject reportTarget;     //default is parent gameobject
     private PolygonCollider2D col;
     private float enableTimer = 0f;
@@ -32,7 +33,8 @@ public class HitBoxReport : MonoBehaviour {
             if(enableTimer > 0)
             {
                 enableTimer -= Time.deltaTime;
-                spriteRenderer.color = new Color(1, 0, 0, 0.25f);
+                if(debug)
+                    spriteRenderer.color = new Color(1, 0, 0, 0.25f);
             } else
             {
                 enableTimer = 0;

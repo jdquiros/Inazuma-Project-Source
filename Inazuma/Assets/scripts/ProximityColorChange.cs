@@ -5,6 +5,7 @@ using UnityEngine;
 public class ProximityColorChange : MonoBehaviour {
 
     // Use this for initialization
+    public Transform activationPoint;
     public float activationDistance;
     public Color startColor = Color.white;
     public Color endColor = Color.white;
@@ -14,6 +15,8 @@ public class ProximityColorChange : MonoBehaviour {
     private TextMesh textMesh;
     private Transform playerTransform;
 	void Start () {
+        if (activationPoint == null)
+            activationPoint = transform;
         if (duration <= 0)
             duration = 0.001f;      //duration can't be zero, because div by zero errors
 
@@ -24,7 +27,7 @@ public class ProximityColorChange : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Vector3.Distance(transform.position,playerTransform.position) < activationDistance)
+		if(Vector3.Distance(activationPoint.position,playerTransform.position) < activationDistance)
         {
             if(colorChangeTimer < duration)
             {
