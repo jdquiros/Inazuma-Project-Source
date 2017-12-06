@@ -7,6 +7,7 @@ public class PlayerHealthUI : MonoBehaviour {
     // Use this for initialization
     private PlayerController player;
     public Image[] heartList;
+    public Text healthText;
 	void Start () {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
 	}
@@ -15,7 +16,7 @@ public class PlayerHealthUI : MonoBehaviour {
 	void Update () {
 		for(int i = 0; i < heartList.Length; ++i)
         {
-            if(player.health >= (i+1))
+            if(player.health >= (i+1) && !GameState.compareState(GameState.State.MainMenu))
             {
                 heartList[i].enabled = true;
             } else
@@ -23,5 +24,12 @@ public class PlayerHealthUI : MonoBehaviour {
                 heartList[i].enabled = false;
             }
         }
-	}
+        if (!GameState.compareState(GameState.State.MainMenu)){
+            healthText.enabled = true;
+        } else
+        {
+            healthText.enabled = false;
+        }
+
+    }
 }

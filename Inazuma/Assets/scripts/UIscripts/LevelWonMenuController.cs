@@ -51,6 +51,7 @@ public class LevelWonMenuController : MonoBehaviour {
     }
     public void continueButtonPress()
     {
+        GameState.setState(GameState.State.InGame);
         GameState.setLevel(++GameState.levelNumber);
         SceneManager.LoadScene("level_" + GameState.levelNumber);
     }

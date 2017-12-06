@@ -1292,13 +1292,14 @@ public class PlayerController : MonoBehaviour
     }
     public void attemptDamagePlayer(int dmg)
     {
-        if(!invulnerable)
+        if(!invulnerable && !playerDead)
             setHealth(health - dmg);
         
     }
     public void forceDamagePlayer(int dmg)
     {
-        setHealth(health - dmg);
+        if(!playerDead)
+            setHealth(health - dmg);
     }
     private void setHealth(int hp)
     {

@@ -334,6 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7428ebd511455a3409cf734d18e00d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugColors: 0
   leftButton: 97
   rightButton: 100
   upButton: 119
@@ -344,7 +345,7 @@ MonoBehaviour:
   dashButton: 304
   restartButton: 114
   movementState: 1
-  health: 1
+  health: 3
   maxHorizontalVelocity: 12
   maxVerticalVelocity: 50
   acceleration: 150
@@ -383,6 +384,8 @@ MonoBehaviour:
   climbSound: {fileID: 8300000, guid: 8ad5ed75884f3f347857449493f7fc5a, type: 3}
   hitTakenSound: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
   landingSound: {fileID: 8300000, guid: fb88975bfa4bece44ae332cbc0cc2f8f, type: 3}
+  dashCooldownSound: {fileID: 8300000, guid: fb147f7cff4fde5448b91590cac4ed0f, type: 3}
+  wallCollisionSound: {fileID: 8300000, guid: c1a7b4ec086d45c4b87ac4a02beb3cf1, type: 3}
   footstepSoundFadeDuration: 0.25
   jumpInAirDuration: 0.04
   ladderClimbSpeed: 6
