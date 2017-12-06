@@ -26,6 +26,7 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("spawning", playerController.isSpawning ());
 		anim.SetBool ("grounded", playerController.isGrounded ());
 		anim.SetInteger ("movementState", (int)playerController.movementState);
+		anim.SetBool ("dead", playerController.isDead ());
 
 
 		//consolidate attack & lunging anims to just "attack"? with "successful lunge" anim as a possible transition?
