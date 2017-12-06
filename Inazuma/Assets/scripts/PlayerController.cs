@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     
     Prime31.CharacterController2D charController;
-
+    public bool debugColors = false;
     public KeyCode leftButton = KeyCode.A;                      //deprecated.  go to unity editor -> project settings -> Input
     public KeyCode rightButton = KeyCode.D;                     //deprecated
     public KeyCode upButton = KeyCode.W;                        //deprecated
@@ -299,7 +299,8 @@ public class PlayerController : MonoBehaviour
 			    {
 				    respawn ();
 			    }
-                spriteRenderer.color = Color.black;
+                if(debugColors)
+                    spriteRenderer.color = Color.black;
 		        break;
             case MovementState.OnLadder:
                 updateLadderMovement();
@@ -722,7 +723,8 @@ public class PlayerController : MonoBehaviour
                 if (dashTimer > 0)
                 {
                     dashTimer -= Time.deltaTime;
-                    spriteRenderer.color = Color.magenta;
+                    if(debugColors)
+                        spriteRenderer.color = Color.magenta;
                 }
                 else
                 {
@@ -740,7 +742,8 @@ public class PlayerController : MonoBehaviour
                 if (dashTimer > 0)
                 {
                     dashTimer -= Time.deltaTime;
-                    spriteRenderer.color = Color.magenta;
+                    if(debugColors)
+                        spriteRenderer.color = Color.magenta;
                 }
                 else
                 {
@@ -758,7 +761,8 @@ public class PlayerController : MonoBehaviour
                     {
                         dashCooldownTimer = 0;
                         canDash = true;
-                        spriteRenderer.color = Color.yellow;
+                        if(debugColors)
+                            spriteRenderer.color = Color.yellow;
                     }
                 }
                 break;
@@ -773,7 +777,8 @@ public class PlayerController : MonoBehaviour
                     {
                         dashCooldownTimer = 0;
                         canDash = true;
-                        spriteRenderer.color = Color.yellow;
+                        if(debugColors)
+                            spriteRenderer.color = Color.yellow;
                     }
                 }
                 break;
@@ -982,14 +987,16 @@ public class PlayerController : MonoBehaviour
         dashCooldownTimer = dashCooldown;
         isDashing = false;
         movementState = MovementState.Free;
-        spriteRenderer.color = Color.gray;
+        if(debugColors)
+            spriteRenderer.color = Color.gray;
     }
     private void endLunge()
     {
         invulnerable = false;
         dashTimer = 0;
         isDashing = false;
-        spriteRenderer.color = Color.yellow;
+        if(debugColors)
+            spriteRenderer.color = Color.yellow;
         canAttack = true;
         StopCoroutine(hoverCoroutine);
 
@@ -1068,7 +1075,7 @@ public class PlayerController : MonoBehaviour
        
         dashCooldownTimer = attackWindUp + attackDuration;
         //for debug
-        
+        if(debugColors)
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
@@ -1076,13 +1083,16 @@ public class PlayerController : MonoBehaviour
 
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg*Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
+        if(debugColors)
           spriteRenderer.color = Color.red;                                                   //active frames: red
         soundEffectPlayer.PlayOneShot(attackSound);
         yield return new WaitForSeconds(attackDuration);        
+        if(debugColors)
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
         
         isAttacking = false;
         yield return new WaitForSeconds(timeBetweenAttacks);
+        if(debugColors)
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
     }
@@ -1092,7 +1102,8 @@ public class PlayerController : MonoBehaviour
         canAttack = false;
         canDash = false;
         dashCooldownTimer = attackWindUp + attackDuration;
-        spriteRenderer.color = Color.blue;
+        if (debugColors)
+            spriteRenderer.color = Color.blue;
         yield return new WaitForSeconds(attackWindUp);
         if(movementState != MovementState.Free)
         {
@@ -1104,16 +1115,19 @@ public class PlayerController : MonoBehaviour
         enemyHits = 0;
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg * Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
-        spriteRenderer.color = Color.red;
+        if (debugColors)
+            spriteRenderer.color = Color.red;
         soundEffectPlayer.PlayOneShot(attackSound);
         
         yield return new WaitForSeconds(attackDuration);
-        spriteRenderer.color = Color.gray;
+        if (debugColors)
+            spriteRenderer.color = Color.gray;
         yield return new WaitForEndOfFrame();
         isLungeAttacking = false;
 
         yield return new WaitForSeconds(timeBetweenAttacks);
-        spriteRenderer.color = Color.yellow;
+        if (debugColors)
+            spriteRenderer.color = Color.yellow;
         canAttack = true;
 
     }
@@ -1238,15 +1252,18 @@ public class PlayerController : MonoBehaviour
     {
         movementState = MovementState.Paralyzed;
         invulnerable = true;
-        spriteRenderer.color = Color.grey;
+        if (debugColors)
+            spriteRenderer.color = Color.grey;
         yield return new WaitForSeconds(duration);
-        spriteRenderer.color = Color.white;
+        if (debugColors)
+            spriteRenderer.color = Color.white;
         if(!playerDead)
             movementState = MovementState.Free;
 
         yield return new WaitForSeconds(invincibilityDuration-duration);
         invulnerable = false;
-        spriteRenderer.color = Color.yellow;
+        if (debugColors)
+            spriteRenderer.color = Color.yellow;
 
     }
     public void attemptDamagePlayer(int dmg)
@@ -1268,7 +1285,8 @@ public class PlayerController : MonoBehaviour
             playerDead = true;
             print("Player is Dead");
             allowPlayerInput = false;
-            spriteRenderer.color = Color.black;
+            if (debugColors)
+                spriteRenderer.color = Color.black;
             movementState = MovementState.Paralyzed;
         }
     }
@@ -1319,11 +1337,13 @@ public class PlayerController : MonoBehaviour
         GameObject beam = (GameObject)Instantiate(Resources.Load("GrowingBeam"));
         beam.transform.position = transform.position;
         movementState = MovementState.Paralyzed;
-        spriteRenderer.enabled = false;
+        if (debugColors)
+            spriteRenderer.enabled = false;
         inSpawnAnimation = true;
         yield return new WaitForSeconds(duration);
         inSpawnAnimation = false;
-        spriteRenderer.enabled = true;
+        if (debugColors)
+            spriteRenderer.enabled = true;
         movementState = MovementState.Free;
     }
     private bool maxedYAxisThisFrame(Direction dir)
