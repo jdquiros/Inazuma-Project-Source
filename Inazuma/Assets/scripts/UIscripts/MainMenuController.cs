@@ -299,6 +299,12 @@ public class MainMenuController : MonoBehaviour {
             menuState = MenuState.MainMenu;
             levelSelectCanvas.enabled = false;
             mainMenuCanvas.enabled = true;
+            for(int i = 0; i < levelList.Length; ++i)
+            {
+                levelList[i].hideUI(1);
+            }
+            levelList[0].revealUI(1);
+            levelIndex = 0;
             eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
     }
