@@ -19,7 +19,7 @@ public class MainMenuController : MonoBehaviour {
     public Canvas optionsCanvas;
 
     public bool debug = false;
-    public EventSystem eventSystem;
+    private EventSystem eventSystem;
     public Button playButton;
     public Button levelSelectButton;
     public Button creditsButton;
@@ -29,7 +29,8 @@ public class MainMenuController : MonoBehaviour {
 
     public Button LSPlayButton;
     public Button LSBackButton;
-
+    public returnToPosition LSLeftArrow;
+    public returnToPosition LSRightArrow;
     public Button creditsBackButton;
 
     public MatchFontSizes optionsMatchSizes;
@@ -49,6 +50,7 @@ public class MainMenuController : MonoBehaviour {
     private bool allowInputs = true;
     private void Awake()
     {
+        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         mainMenuCanvas = GetComponent<Canvas>();
         source = GetComponent<AudioSource>();
         menuState = MenuState.MainMenu;
@@ -153,6 +155,14 @@ public class MainMenuController : MonoBehaviour {
             levelList[levelIndex+1].revealUI(1);
             ++levelIndex;
             source.PlayOneShot(source.clip);
+            LSRightArrow.moveRectTransform(new Vector2(-.05f, 0));
+            if(levelIndex >= levelList.Length - 1)
+            {
+                LSRightArrow.gameObject.GetComponent<Image>().enabled = false;
+            } 
+            LSLeftArrow.gameObject.GetComponent<Image>().enabled = true;
+
+            
         }
     }
     private void decrementLevel()
@@ -163,7 +173,14 @@ public class MainMenuController : MonoBehaviour {
             levelList[levelIndex - 1].revealUI(-1);
             --levelIndex;
             source.PlayOneShot(source.clip);
+            LSLeftArrow.moveRectTransform(new Vector2(.05f, 0));
+            if(levelIndex == 0)
+            {
+                LSLeftArrow.gameObject.GetComponent<Image>().enabled = false;
+            } 
+            LSRightArrow.gameObject.GetComponent<Image>().enabled = true;
 
+            
         }
     }
     private IEnumerator preventInputAfterPress(float duration)
@@ -238,6 +255,8 @@ public class MainMenuController : MonoBehaviour {
             levelSelectCanvas.enabled = true;
             mainMenuCanvas.enabled = false;
             eventSystem.SetSelectedGameObject(LSPlayButton.gameObject);
+            LSRightArrow.updateOriginalPosition();
+            LSLeftArrow.updateOriginalPosition();
         }
     }
     public void creditsButtonPress()

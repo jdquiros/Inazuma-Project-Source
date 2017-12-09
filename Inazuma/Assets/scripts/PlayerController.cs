@@ -135,6 +135,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip landingSound;
     public AudioClip dashCooldownSound;
     public AudioClip wallCollisionSound;
+    public AudioClip deathSound;
+    public AudioClip spawnSound;
 
     private IEnumerator fadeSound;
     public float footstepSoundFadeDuration = 0f;
@@ -222,129 +224,133 @@ public class PlayerController : MonoBehaviour
         {
             source.Stop();
         }
-        switch (movementState) {
-            case MovementState.Free:
-                if (Input.GetButtonDown("Layout"+GameState.controlLayout+"Jump"))
-                {
-                    if ((charController.isGrounded  || jumpInAirTimer > 0) && !jumping && canJump)
+        if (!PauseMenuController.paused)
+        {
+            switch (movementState)
+            {
+                case MovementState.Free:
+                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump"))
                     {
-                        jump();
+                        if ((charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
+                        {
+                            jump();
+                        }
                     }
-                }
-                
-                if (isMovingHorizontal && isGrounded())
-                {
-                    source.clip = footstepSound;
-                    if (!source.isPlaying)
+
+                    if (isMovingHorizontal && isGrounded())
                     {
-                        source.volume = 1;
-                        source.Play();
-                        source.loop = true;
-                        stopStepping = false;
+                        source.clip = footstepSound;
+                        if (!source.isPlaying)
+                        {
+                            source.volume = 1;
+                            source.Play();
+                            source.loop = true;
+                            stopStepping = false;
+                        }
                     }
-                }
-                else
-                {
-                    fadeFootsteps();
-                    stopStepping = true;
+                    else
+                    {
+                        fadeFootsteps();
+                        stopStepping = true;
 
-                }
-                if (maxedYAxisThisFrame(Direction.Down))
-                {   
-                    attemptDropThroughPlatform();
-                }
-                if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
-                {
-                    source.Stop();
-
-                    dash(facingDirection);
-                }
-                checkForAttackInput();
-                if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())
-                    ||((yAxisMaxed && ladderGrabTimer <= 0))) 
-                    && movementState == MovementState.Free 
-                    && inLadder)
-                {
-                    movementState = MovementState.OnLadder;
-                    transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
-                    
-                    charController.ignoreOneWayPlatformsThisFrame = true;
+                    }
                     if (maxedYAxisThisFrame(Direction.Down))
                     {
                         attemptDropThroughPlatform();
                     }
-                    xVelocity = 0;
+                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
+                    {
+                        source.Stop();
+
+                        dash(facingDirection);
+                    }
+                    checkForAttackInput();
+                    if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())
+                        || ((yAxisMaxed && ladderGrabTimer <= 0)))
+                        && movementState == MovementState.Free
+                        && inLadder)
+                    {
+                        movementState = MovementState.OnLadder;
+                        transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
+
+                        charController.ignoreOneWayPlatformsThisFrame = true;
+                        if (maxedYAxisThisFrame(Direction.Down))
+                        {
+                            attemptDropThroughPlatform();
+                        }
+                        xVelocity = 0;
 
 
-                }
-                if (jumpInAirTimer > 0)
-                    jumpInAirTimer -= Time.deltaTime;
-                else
-                    jumpInAirTimer = 0;
-                
-                break;  
-		    case MovementState.Paralyzed:
-			    if (playerDead && (Input.GetKeyDown (restartButton) || Input.GetButtonDown("Submit"))) 
-			    {
-				    respawn ();
-			    }
-                if(debugColors)
-                    spriteRenderer.color = Color.black;
-		        break;
-            case MovementState.OnLadder:
-                updateLadderMovement();
-                canJump = true;
-                preventCooldown = false;
-                break;
-            case MovementState.Dash:
-                checkForAttackInput();
-                if(Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
-                {
-                    jump();
-                    endDash();
-                }
-                if (wasGrounded && !isGrounded() && !jumping)
-                {
-                    jumpInAirTimer = jumpInAirDuration;
-                }
-                if (jumpInAirTimer > 0)
-                    jumpInAirTimer -= Time.deltaTime;
-                else
-                    jumpInAirTimer = 0;
+                    }
+                    if (jumpInAirTimer > 0)
+                        jumpInAirTimer -= Time.deltaTime;
+                    else
+                        jumpInAirTimer = 0;
 
-                break;
-            case MovementState.Lunge:
-                checkForAttackInput();
-                break;
-            case MovementState.Hover:
-                if (isGrounded())
-                {
-                    movementState = MovementState.Free;
-                    StopCoroutine(hoverCoroutine);
-                }
-                if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
-                {
-                    StopCoroutine(hoverCoroutine);
-                    dash(facingDirection);
-                }
-                break;
+                    break;
+                case MovementState.Paralyzed:
+                    if (playerDead && (Input.GetKeyDown(restartButton) || Input.GetButtonDown("Submit")))
+                    {
+                        respawn();
+                    }
+                    if (debugColors)
+                        spriteRenderer.color = Color.black;
+                    break;
+                case MovementState.OnLadder:
+                    updateLadderMovement();
+                    canJump = true;
+                    preventCooldown = false;
+                    break;
+                case MovementState.Dash:
+                    checkForAttackInput();
+                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
+                    {
+                        jump();
+                        endDash();
+                    }
+                    if (wasGrounded && !isGrounded() && !jumping)
+                    {
+                        jumpInAirTimer = jumpInAirDuration;
+                    }
+                    if (jumpInAirTimer > 0)
+                        jumpInAirTimer -= Time.deltaTime;
+                    else
+                        jumpInAirTimer = 0;
+
+                    break;
+                case MovementState.Lunge:
+                    checkForAttackInput();
+                    break;
+                case MovementState.Hover:
+                    if (isGrounded())
+                    {
+                        movementState = MovementState.Free;
+                        StopCoroutine(hoverCoroutine);
+                    }
+                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
+                    {
+                        StopCoroutine(hoverCoroutine);
+                        dash(facingDirection);
+                    }
+                    break;
+            }
+            if (ladderGrabTimer > 0)
+            {
+                ladderGrabTimer -= Time.deltaTime;
+            }
+
+            wasGrounded = isGrounded();
+            updateDashing();
+            updateHorizontalVelocity();
+            updateVerticalVelocity();
+            updatePosition();
+            updateDirections();
+            wasMovingHorizontal = isMovingHorizontal;
+
+            xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
+            yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
+            rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone);
         }
-        if (ladderGrabTimer > 0)
-        {
-            ladderGrabTimer -= Time.deltaTime;
-        } 
-        
-        wasGrounded = isGrounded();
-        updateDashing();
-        updateHorizontalVelocity();
-        updateVerticalVelocity();
-        updatePosition();
-        updateDirections();
-        wasMovingHorizontal = isMovingHorizontal;
-        
-        xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
-        yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
-        rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone);
     }
     private void checkForAttackInput()
     {
@@ -1295,6 +1301,7 @@ public class PlayerController : MonoBehaviour
             if (debugColors)
                 spriteRenderer.color = Color.black;
             movementState = MovementState.Paralyzed;
+            soundEffectPlayer.PlayOneShot(deathSound);
         }
     }
     private void respawn()
@@ -1346,6 +1353,7 @@ public class PlayerController : MonoBehaviour
         movementState = MovementState.Paralyzed;
         if (debugColors)
             spriteRenderer.enabled = false;
+        soundEffectPlayer.PlayOneShot(spawnSound);
         inSpawnAnimation = true;
         yield return new WaitForSeconds(duration);
         inSpawnAnimation = false;
