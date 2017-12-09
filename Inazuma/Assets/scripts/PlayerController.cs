@@ -200,10 +200,7 @@ public class PlayerController : MonoBehaviour
     {
         aimStickHorizontal = (GameState.controlLayout == 0) ? "RStickHorizontal" : "Horizontal";
         aimStickVertical = (GameState.controlLayout == 0) ? "RStickVertical" : "Vertical";
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            GameState.controlLayout = (GameState.controlLayout + 1) % 2;
-        }
+        
         if (playerDead || GameState.compareState(GameState.State.LevelWon))
         {
             movementState = MovementState.Paralyzed;
@@ -211,20 +208,7 @@ public class PlayerController : MonoBehaviour
         }
         playerHitThisFrame = false;
         landedThisFrame = false;
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            GameObject pExplosion = (GameObject)Instantiate(Resources.Load("ZigZagParticleExplosion"));
-            pExplosion.transform.position = transform.position;
-            foreach(TrailRenderer tr in pExplosion.GetComponentsInChildren<TrailRenderer>())
-            {
-                tr.Clear();
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            GameObject beam = (GameObject)Instantiate(Resources.Load("GrowingBeam"));
-            beam.transform.position = transform.position;
-        }
+        
         if(!GameState.compareState(GameState.State.InGame))
         {
             movementState = MovementState.Paralyzed;
@@ -242,7 +226,6 @@ public class PlayerController : MonoBehaviour
             case MovementState.Free:
                 if (Input.GetButtonDown("Layout"+GameState.controlLayout+"Jump"))
                 {
-                    //print("grounded: " + charController.isGrounded + "; jumping: " + jumping + "; canJump: " + canJump);
                     if ((charController.isGrounded  || jumpInAirTimer > 0) && !jumping && canJump)
                     {
                         jump();
@@ -268,7 +251,6 @@ public class PlayerController : MonoBehaviour
                 }
                 if (maxedYAxisThisFrame(Direction.Down))
                 {   
-                    //needs improvement to only activate once
                     attemptDropThroughPlatform();
                 }
                 if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
