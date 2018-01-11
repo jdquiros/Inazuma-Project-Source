@@ -17,6 +17,7 @@ public class MainMenuController : MonoBehaviour {
     public Canvas levelSelectCanvas;
     public Canvas creditsCanvas;
     public Canvas optionsCanvas;
+    public Canvas transitionCanvas;
 
     public bool debug = false;
     private EventSystem eventSystem;
@@ -32,6 +33,7 @@ public class MainMenuController : MonoBehaviour {
     public returnToPosition LSLeftArrow;
     public returnToPosition LSRightArrow;
     public Button creditsBackButton;
+    public ScreenOverlayController screenOverlay;
 
     public MatchFontSizes optionsMatchSizes;
     public GraphicColorLerp title;
@@ -308,7 +310,7 @@ public class MainMenuController : MonoBehaviour {
             GameState.setState(GameState.State.InGame);
             menuState = MenuState.None;
             eventSystem.SetSelectedGameObject(null);
-            SceneManager.LoadScene(levelNames[levelIndex]);
+            StartCoroutine(transitionThenLoad(0.3f,levelNames[levelIndex]));
         }
     }
     public void LSBackButtonPress()
@@ -357,5 +359,13 @@ public class MainMenuController : MonoBehaviour {
             mainMenuCanvas.enabled = true;
             eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
+    }
+    public IEnumerator transitionThenLoad(float delay, string sceneName)
+    {
+        menuState = MenuState.None;
+        screenOverlay.screenAppear();
+        yield return new WaitForSeconds(delay);
+        GameState.playTransition = true;
+        SceneManager.LoadScene(sceneName);
     }
 }

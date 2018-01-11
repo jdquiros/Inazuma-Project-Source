@@ -12,6 +12,8 @@ public class LevelWonMenuController : MonoBehaviour {
     public GraphicColorLerp[] colorLerps;
     public EventSystem eventSystem;
     public GameObject continueButton;
+    public ScreenOverlayController screenOverlay;
+    public bool allowInput = true;
 	void Start () {
         source = GetComponent<AudioSource>();
         myCanvas = GetComponent<Canvas>();
@@ -42,24 +44,41 @@ public class LevelWonMenuController : MonoBehaviour {
     public void playSoundOnNavigation(AudioClip clip)
     {
         //needs to be updated for controller support
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
-        || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
+        if (allowInput)
         {
-            source.PlayOneShot(clip);
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
+            {
+                source.PlayOneShot(clip);
+            }
         }
 
     }
     public void continueButtonPress()
     {
-        GameState.setState(GameState.State.InGame);
-        GameState.setLevel(++GameState.levelNumber);
-        SceneManager.LoadScene("level_" + GameState.levelNumber);
+        if (allowInput)
+        {
+            GameState.setState(GameState.State.InGame);
+            GameState.setLevel(++GameState.levelNumber);
+            StartCoroutine(transitionThenLoad(0.3f, "level_" + GameState.levelNumber));
+        }
     }
     public void mainMenuButtonPress()
     {
-        GameState.setState(GameState.State.MainMenu);
-        GameState.setLevel(1);
-        LevelData.resetAll();
-        SceneManager.LoadScene("menu_and_level_1");
+        if (allowInput)
+        {
+            GameState.setState(GameState.State.MainMenu);
+            GameState.setLevel(1);
+            LevelData.resetAll();
+            StartCoroutine(transitionThenLoad(0.3f,("menu_and_level_1")));
+        }
+    }
+    public IEnumerator transitionThenLoad(float delay, string sceneName)
+    {
+        allowInput = false;
+        screenOverlay.screenAppear();
+        yield return new WaitForSeconds(delay);
+        GameState.playTransition = true;
+        SceneManager.LoadScene(sceneName);
     }
 }

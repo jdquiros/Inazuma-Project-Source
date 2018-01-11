@@ -1349,6 +1349,8 @@ public class PlayerController : MonoBehaviour
     public IEnumerator spawnPlayer(float duration)
     {
         GameObject beam = (GameObject)Instantiate(Resources.Load("GrowingBeam"));
+        GameObject flash = (GameObject)Instantiate(Resources.Load("LightningFlash"));
+        flash.transform.position = transform.position;
         beam.transform.position = transform.position;
         movementState = MovementState.Paralyzed;
         if (debugColors)

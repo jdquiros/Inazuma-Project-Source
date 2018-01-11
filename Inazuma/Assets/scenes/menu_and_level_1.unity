@@ -88,6 +88,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -3117,142 +3118,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 224119460919564324, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 32.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224980352601471314, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -7.2000003
-      objectReference: {fileID: 0}
-    - target: {fileID: 224527690492155064, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 7.200001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114986894072404934, guid: 08315473d35c89a4e9dcca96ba1683a2,
+    - target: {fileID: 114012230023663650, guid: 08315473d35c89a4e9dcca96ba1683a2,
         type: 2}
       propertyPath: eventSystem
       value: 
       objectReference: {fileID: 1540310261}
-    - target: {fileID: 224386044801589834, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 224386044801589834, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 224596671875759398, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -35.190014
-      objectReference: {fileID: 0}
-    - target: {fileID: 224137925853232044, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 265.65002
-      objectReference: {fileID: 0}
-    - target: {fileID: 224137925853232044, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 162.95999
-      objectReference: {fileID: 0}
-    - target: {fileID: 224848767059251352, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224755384864322464, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.0000019073486
-      objectReference: {fileID: 0}
-    - target: {fileID: 224755384864322464, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 224151974752633460, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 23.460014
-      objectReference: {fileID: 0}
-    - target: {fileID: 224151974752633460, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224901151570740016, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 345
-      objectReference: {fileID: 0}
-    - target: {fileID: 224901151570740016, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 194
-      objectReference: {fileID: 0}
-    - target: {fileID: 224402639764206148, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -35
-      objectReference: {fileID: 0}
-    - target: {fileID: 224464094333817914, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 46.92002
-      objectReference: {fileID: 0}
-    - target: {fileID: 224464094333817914, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224984680904799658, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.0000019073486
-      objectReference: {fileID: 0}
-    - target: {fileID: 224984680904799658, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 224135347678235428, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.0000019073486
-      objectReference: {fileID: 0}
-    - target: {fileID: 224135347678235428, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -35
-      objectReference: {fileID: 0}
-    - target: {fileID: 224762195980726278, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -24
-      objectReference: {fileID: 0}
-    - target: {fileID: 224762195980726278, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 224382177780887500, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -407.66
-      objectReference: {fileID: 0}
-    - target: {fileID: 224382177780887500, guid: 08315473d35c89a4e9dcca96ba1683a2,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -438.27667
-      objectReference: {fileID: 0}
-    - target: {fileID: 114012230023663650, guid: 08315473d35c89a4e9dcca96ba1683a2,
+    - target: {fileID: 114986894072404934, guid: 08315473d35c89a4e9dcca96ba1683a2,
         type: 2}
       propertyPath: eventSystem
       value: 
@@ -68169,6 +68040,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10

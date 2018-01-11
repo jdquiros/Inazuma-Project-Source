@@ -10,10 +10,12 @@ public class PauseMenuController : MonoBehaviour {
     public KeyCode pauseButton = KeyCode.P;
     public string mainMenuSceneName = "menu_and_level_1";
     public GameObject resumeButton;
+    public ScreenOverlayController screenOverlay;
     public EventSystem eventSystem;
 
     private Canvas myCanvas;
     private AudioSource source;
+    public bool allowInput = true;
 	void Start () {
         paused = false;
         myCanvas = GetComponent<Canvas>();
@@ -25,10 +27,10 @@ public class PauseMenuController : MonoBehaviour {
 	void Update () {
 		if(GameState.gameState == GameState.State.InGame)
         {
-            if(!paused && Input.GetKeyDown(pauseButton))
+            if(!paused && Input.GetKeyDown(pauseButton) && allowInput)
             {
                 pause();
-            } else if(paused && Input.GetKeyDown(pauseButton))
+            } else if(paused && Input.GetKeyDown(pauseButton) && allowInput)
             {
                 unPause();
             }
@@ -36,41 +38,60 @@ public class PauseMenuController : MonoBehaviour {
 	}
     private void pause()
     {
-        paused = true;
-        Time.timeScale = 0;
-        myCanvas.enabled = true;
-        eventSystem.SetSelectedGameObject(resumeButton);
+        if (allowInput)
+        {
+            paused = true;
+            Time.timeScale = 0;
+            myCanvas.enabled = true;
+            eventSystem.SetSelectedGameObject(resumeButton);
+        }
     }
     private void unPause()
     {
-        paused = false;
-        Time.timeScale = 1;
-        myCanvas.enabled = false;
-        eventSystem.SetSelectedGameObject(null);
+        if (allowInput)
+        {
+            paused = false;
+            Time.timeScale = 1;
+            myCanvas.enabled = false;
+            eventSystem.SetSelectedGameObject(null);
+        }
     }
     public void mainMenuButtonPress()
     {
-        unPause();
-        LevelData.resetAll();
+        if (allowInput)
+        {
+            unPause();
+            LevelData.resetAll();
 
-        GameState.setState(GameState.State.MainMenu);
-        SceneManager.LoadScene(mainMenuSceneName);
+            GameState.setState(GameState.State.MainMenu);
+            StartCoroutine(transitionThenLoad(0.3f, mainMenuSceneName));
+        }
     }
     public void resumeButtonPress()
     {
+        if(allowInput)
         unPause();
     }
     public void playSoundOnNavigation(AudioClip clip)
     {
-       
+        if (allowInput)
+        {
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow)
             || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
             {
                 Time.timeScale = 1;
                 source.PlayOneShot(clip);
-                if(paused)
+                if (paused)
                     Time.timeScale = 0;
             }
-        
+        }
+    }
+    public IEnumerator transitionThenLoad(float delay, string sceneName)
+    {
+        allowInput = false;
+        screenOverlay.screenAppear();
+        yield return new WaitForSeconds(delay);
+        GameState.playTransition = true;
+        SceneManager.LoadScene(sceneName);
     }
 }

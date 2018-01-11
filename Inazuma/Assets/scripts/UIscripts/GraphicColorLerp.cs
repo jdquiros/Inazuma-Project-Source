@@ -61,6 +61,7 @@ public class GraphicColorLerp : MonoBehaviour
     }
     public void startColorChange()
     {
+        graphicRenderer.enabled = true;
         StopCoroutine(colorCoroutine);
         colorCoroutine = colorChange();
         StartCoroutine(colorCoroutine);
