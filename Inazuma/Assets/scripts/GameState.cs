@@ -11,6 +11,7 @@ public static class GameState{
     }
     public static int levelNumber = 1;
     public static int controlLayout = 0;
+    public static int keyboardLayout = 0;
     public static bool playTransition = false;
         //layout 0 is right stick aiming
         //layout 1 is left stick aiming

@@ -229,7 +229,8 @@ public class PlayerController : MonoBehaviour
             switch (movementState)
             {
                 case MovementState.Free:
-                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump"))
+                    if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump")
+                        || Input.GetButtonDown("keyLayout" + GameState.keyboardLayout + "Jump"))
                     {
                         if ((charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
                         {
@@ -258,7 +259,8 @@ public class PlayerController : MonoBehaviour
                     {
                         attemptDropThroughPlatform();
                     }
-                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
+                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash") 
+                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Dash")) && canDash)
                     {
                         source.Stop();
 
@@ -303,7 +305,10 @@ public class PlayerController : MonoBehaviour
                     break;
                 case MovementState.Dash:
                     checkForAttackInput();
-                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump") && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) && !jumping && canJump)
+                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump") 
+                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Jump")) 
+                        && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) 
+                        && !jumping && canJump)
                     {
                         jump();
                         endDash();
@@ -327,7 +332,8 @@ public class PlayerController : MonoBehaviour
                         movementState = MovementState.Free;
                         StopCoroutine(hoverCoroutine);
                     }
-                    if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Dash") && canDash)
+                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash") 
+                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Dash"))&& canDash)
                     {
                         StopCoroutine(hoverCoroutine);
                         dash(facingDirection);
@@ -355,7 +361,8 @@ public class PlayerController : MonoBehaviour
     private void checkForAttackInput()
     {
         
-        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Attack"))
+        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")
+            || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))
         {
             if (canAttack)
             {
@@ -369,7 +376,9 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Lunge") || (maxedRightStickThisFrame() && GameState.controlLayout == 0))
+        if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Lunge") 
+            ||Input.GetButtonDown("keyLayout"+GameState.keyboardLayout + "Lunge"))
+            || (maxedRightStickThisFrame() && GameState.controlLayout == 0))
         {
             if (canAttack)
             {
@@ -631,13 +640,15 @@ public class PlayerController : MonoBehaviour
                     {
                         //if this is >0, then character is rising until apex.
                         jumpApexTimer -= Time.deltaTime;
-                        if (!Input.GetButton("Layout" + GameState.controlLayout + "Jump") && jumpKeyHeld)
+                        if (!(Input.GetButton("ctrlLayout" + GameState.controlLayout + "Jump")
+                            ||Input.GetButton("keyLayout"+GameState.keyboardLayout+"Jump")) 
+                            && jumpKeyHeld)
                         {
                             //you release the jump key before you reach the apex
                             jumpApexTimer = 0;
                             yVelocity *= jumpButtonReleaseFactor;
                         }
-                        jumpKeyHeld = Input.GetButton("Layout" + GameState.controlLayout + "Jump");
+                        jumpKeyHeld = Input.GetButton("ctrlLayout" + GameState.controlLayout + "Jump") || Input.GetButton("keyLayout" + GameState.keyboardLayout + "Jump");
                         if (yVelocity < 0)
                         {
                             //you hit the ceiling or something, so the apex timer is not applicable anymore
@@ -801,7 +812,8 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
         source.clip = climbSound;
-        if (Input.GetButtonDown("Layout" + GameState.controlLayout + "Jump"))
+        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump") 
+            || Input.GetButton("keyLayout" + GameState.keyboardLayout + "Jump"))
         {
             //jump off of ladder
             movementState = MovementState.Free;
