@@ -356,6 +356,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1142317185248936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4242340413952846}
+  - component: {fileID: 114764943421768024}
+  m_Layer: 0
+  m_Name: SceneController
+  m_TagString: SceneController
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1147142977435438
 GameObject:
   m_ObjectHideFlags: 1
@@ -2248,6 +2264,19 @@ Transform:
   m_Father: {fileID: 4197322884810220}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4242340413952846
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1142317185248936}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4309990465471052}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4247905629805408
 Transform:
   m_ObjectHideFlags: 1
@@ -2297,6 +2326,7 @@ Transform:
   - {fileID: 224901151570740016}
   - {fileID: 224313813621945518}
   - {fileID: 4787931522221406}
+  - {fileID: 4242340413952846}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4646,9 +4676,7 @@ MonoBehaviour:
   - {fileID: 114346722171010682}
   - {fileID: 114633093761162088}
   - {fileID: 114367671750928842}
-  eventSystem: {fileID: 0}
   continueButton: {fileID: 1178892691985320}
-  screenOverlay: {fileID: 114212532081187586}
   allowInput: 1
 --- !u!114 &114012563853139970
 MonoBehaviour:
@@ -7013,7 +7041,6 @@ MonoBehaviour:
   LSLeftArrow: {fileID: 114144265054808718}
   LSRightArrow: {fileID: 114129784678880466}
   creditsBackButton: {fileID: 114505684155137088}
-  screenOverlay: {fileID: 114212532081187586}
   optionsMatchSizes: {fileID: 114370714964565222}
   title: {fileID: 114830746579903788}
   levelList:
@@ -8522,6 +8549,18 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Resume
+--- !u!114 &114764943421768024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1142317185248936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa90aa91a8799f4ab02229e23f86901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  screenOverlay: {fileID: 114212532081187586}
 --- !u!114 &114783593317989588
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9783,8 +9822,6 @@ MonoBehaviour:
   pauseButton: 112
   mainMenuSceneName: menu_and_level_1
   resumeButton: {fileID: 1368083975459074}
-  screenOverlay: {fileID: 114212532081187586}
-  eventSystem: {fileID: 0}
   allowInput: 1
 --- !u!114 &114991638914114066
 MonoBehaviour:

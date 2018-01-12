@@ -171,10 +171,10 @@ public class PlayerController : MonoBehaviour
 
     private string aimStickHorizontal;
     private string aimStickVertical;
-
+    private SceneController sceneController;
     private void Awake()
     {
-       
+        sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
         charController = gameObject.GetComponent<Prime31.CharacterController2D>();
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -1306,10 +1306,8 @@ public class PlayerController : MonoBehaviour
     }
     private void respawn()
     {
-
         Scene scene = SceneManager.GetActiveScene();
-
-        SceneManager.LoadScene(scene.name);
+        StartCoroutine(sceneController.transitionThenLoad(.08f,false,scene.name));
     }
     public bool isDead()
     {

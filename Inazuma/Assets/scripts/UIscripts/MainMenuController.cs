@@ -21,6 +21,7 @@ public class MainMenuController : MonoBehaviour {
 
     public bool debug = false;
     private EventSystem eventSystem;
+    private SceneController sceneController;
     public Button playButton;
     public Button levelSelectButton;
     public Button creditsButton;
@@ -33,7 +34,6 @@ public class MainMenuController : MonoBehaviour {
     public returnToPosition LSLeftArrow;
     public returnToPosition LSRightArrow;
     public Button creditsBackButton;
-    public ScreenOverlayController screenOverlay;
 
     public MatchFontSizes optionsMatchSizes;
     public GraphicColorLerp title;
@@ -54,6 +54,7 @@ public class MainMenuController : MonoBehaviour {
     private float gameStartDelay = 0.2f;
     private void Awake()
     {
+        sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
         eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         mainMenuCanvas = GetComponent<Canvas>();
         source = GetComponent<AudioSource>();
@@ -326,7 +327,7 @@ public class MainMenuController : MonoBehaviour {
             GameState.setState(GameState.State.InGame);
             menuState = MenuState.None;
             eventSystem.SetSelectedGameObject(null);
-            StartCoroutine(transitionThenLoad(0.3f,levelNames[levelIndex]));
+            StartCoroutine(sceneController.transitionThenLoad(true,levelNames[levelIndex]));
         }
     }
     public void LSBackButtonPress()
@@ -377,14 +378,7 @@ public class MainMenuController : MonoBehaviour {
             eventSystem.SetSelectedGameObject(playButton.gameObject);
         }
     }
-    public IEnumerator transitionThenLoad(float delay, string sceneName)
-    {
-        menuState = MenuState.None;
-        screenOverlay.screenAppear();
-        yield return new WaitForSeconds(delay);
-        GameState.playTransition = true;
-        SceneManager.LoadScene(sceneName);
-    }
+    
     private void resetAllOutlines()
     {
         for(int i = 0; i < outlineList.Length; i++)

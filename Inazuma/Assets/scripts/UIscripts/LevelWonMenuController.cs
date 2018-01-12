@@ -12,10 +12,11 @@ public class LevelWonMenuController : MonoBehaviour {
     public GraphicColorLerp[] colorLerps;
     private EventSystem eventSystem;
     public GameObject continueButton;
-    public ScreenOverlayController screenOverlay;
+    private SceneController sceneController;
     public bool allowInput = true;
 	void Start () {
         eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+        sceneController = GameObject.Find("SceneController").GetComponent<SceneController>();
         source = GetComponent<AudioSource>();
         myCanvas = GetComponent<Canvas>();
         goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<LevelGoal>();
@@ -61,7 +62,8 @@ public class LevelWonMenuController : MonoBehaviour {
         {
             GameState.setState(GameState.State.InGame);
             GameState.setLevel(++GameState.levelNumber);
-            StartCoroutine(transitionThenLoad(0.3f, "level_" + GameState.levelNumber));
+            allowInput = false;
+            StartCoroutine(sceneController.transitionThenLoad(true,"level_" + GameState.levelNumber));
         }
     }
     public void mainMenuButtonPress()
@@ -71,15 +73,9 @@ public class LevelWonMenuController : MonoBehaviour {
             GameState.setState(GameState.State.MainMenu);
             GameState.setLevel(1);
             LevelData.resetAll();
-            StartCoroutine(transitionThenLoad(0.3f,("menu_and_level_1")));
+            allowInput = false;
+            StartCoroutine(sceneController.transitionThenLoad(true,"menu_and_level_1"));
         }
     }
-    public IEnumerator transitionThenLoad(float delay, string sceneName)
-    {
-        allowInput = false;
-        screenOverlay.screenAppear();
-        yield return new WaitForSeconds(delay);
-        GameState.playTransition = true;
-        SceneManager.LoadScene(sceneName);
-    }
+    
 }

@@ -10,17 +10,18 @@ public class PauseMenuController : MonoBehaviour {
     public KeyCode pauseButton = KeyCode.P;
     public string mainMenuSceneName = "menu_and_level_1";
     public GameObject resumeButton;
-    public ScreenOverlayController screenOverlay;
     private EventSystem eventSystem;
 
     private Canvas myCanvas;
     private AudioSource source;
     public bool allowInput = true;
+    private SceneController sceneController;
 	void Start () {
         paused = false;
         myCanvas = GetComponent<Canvas>();
         myCanvas.enabled = false;
         source = GetComponent<AudioSource>();
+        sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
 	}
 	
 	// Update is called once per frame
@@ -63,9 +64,9 @@ public class PauseMenuController : MonoBehaviour {
         {
             unPause();
             LevelData.resetAll();
-
+            allowInput = false;
             GameState.setState(GameState.State.MainMenu);
-            StartCoroutine(transitionThenLoad(0.3f, mainMenuSceneName));
+            StartCoroutine(sceneController.transitionThenLoad(true,mainMenuSceneName));
         }
     }
     public void resumeButtonPress()
@@ -87,12 +88,5 @@ public class PauseMenuController : MonoBehaviour {
             }
         }
     }
-    public IEnumerator transitionThenLoad(float delay, string sceneName)
-    {
-        allowInput = false;
-        screenOverlay.screenAppear();
-        yield return new WaitForSeconds(delay);
-        GameState.playTransition = true;
-        SceneManager.LoadScene(sceneName);
-    }
+    
 }
