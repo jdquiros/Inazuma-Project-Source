@@ -11,7 +11,7 @@ public class PauseMenuController : MonoBehaviour {
     public string mainMenuSceneName = "menu_and_level_1";
     public GameObject resumeButton;
     public ScreenOverlayController screenOverlay;
-    public EventSystem eventSystem;
+    private EventSystem eventSystem;
 
     private Canvas myCanvas;
     private AudioSource source;
@@ -35,6 +35,7 @@ public class PauseMenuController : MonoBehaviour {
                 unPause();
             }
         }
+        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
 	}
     private void pause()
     {

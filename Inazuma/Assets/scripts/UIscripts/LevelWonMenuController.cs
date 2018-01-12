@@ -10,11 +10,12 @@ public class LevelWonMenuController : MonoBehaviour {
     private LevelGoal goal;
     private AudioSource source;
     public GraphicColorLerp[] colorLerps;
-    public EventSystem eventSystem;
+    private EventSystem eventSystem;
     public GameObject continueButton;
     public ScreenOverlayController screenOverlay;
     public bool allowInput = true;
 	void Start () {
+        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         source = GetComponent<AudioSource>();
         myCanvas = GetComponent<Canvas>();
         goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<LevelGoal>();
