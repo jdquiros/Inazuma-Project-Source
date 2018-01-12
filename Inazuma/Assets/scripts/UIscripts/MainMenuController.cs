@@ -50,6 +50,8 @@ public class MainMenuController : MonoBehaviour {
     private IEnumerator creditsFunc;
     public float afterPressDelay;
     private bool allowInputs = true;
+    public ButtonOutlineController[] outlineList;
+    private float gameStartDelay = 0.2f;
     private void Awake()
     {
         eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
@@ -62,14 +64,24 @@ public class MainMenuController : MonoBehaviour {
         creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
     }
     void Start () {
+
         if (GameState.compareState(GameState.State.InGame))
         {
             skipToGame();
         } else if (GameState.compareState(GameState.State.MainMenu))
         {
-            menuState = MenuState.MainMenu;
-            mainMenuCanvas.enabled = true;
+            if (SceneManager.GetActiveScene().name == "menu_and_level_1")
+            {
+                menuState = MenuState.MainMenu;
+                mainMenuCanvas.enabled = true;
+            } else
+            {
+                menuState = MenuState.None;
+                mainMenuCanvas.enabled = false;
+                skipToGame();
+            }
         }
+        outlineList[0].resetOutline();
 	}
 	
 	// Update is called once per frame
@@ -86,48 +98,55 @@ public class MainMenuController : MonoBehaviour {
 	}
     private void updateMainMenu()
     {
-        if(eventSystem.currentSelectedGameObject == playButton.gameObject)
-        { 
-            playButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
-        } else
-        {
-            playButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+        if (gameStartDelay <= 0) { 
+            gameStartDelay = 0;
+            if (eventSystem.currentSelectedGameObject == playButton.gameObject)
+            {
+                outlineList[0].drawOutline();
+            }
+            else
+            {
+                outlineList[0].resetOutline();
 
-        }
-        if (eventSystem.currentSelectedGameObject == levelSelectButton.gameObject)
-        {
-            levelSelectButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
-        }
-        else
-        {
-            levelSelectButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            }
+            if (eventSystem.currentSelectedGameObject == levelSelectButton.gameObject)
+            {
+                outlineList[1].drawOutline();
+            }
+            else
+            {
+                outlineList[1].resetOutline();
 
-        }
-        if (eventSystem.currentSelectedGameObject == creditsButton.gameObject)
-        {
-            creditsButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
-        }
-        else
-        {
-            creditsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            }
+            if (eventSystem.currentSelectedGameObject == optionsButton.gameObject)
+            {
+                outlineList[2].drawOutline();
+            }
+            else
+            {
+                outlineList[2].resetOutline();
 
-        }
-        if (eventSystem.currentSelectedGameObject == quitButton.gameObject)
-        {
-            quitButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
-        }
-        else
-        {
-            quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            }
+            if (eventSystem.currentSelectedGameObject == creditsButton.gameObject)
+            {
+                outlineList[3].drawOutline();
+            }
+            else
+            {
+                outlineList[3].resetOutline();
 
-        }
-        if (eventSystem.currentSelectedGameObject == optionsButton.gameObject)
-        {
-            optionsButton.gameObject.GetComponent<ColorOscillation>().startColorChange();
-        }
-        else
-        {
-            optionsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
+            }
+            if (eventSystem.currentSelectedGameObject == quitButton.gameObject)
+            {
+                outlineList[4].drawOutline();
+            }
+            else
+            {
+                outlineList[4].resetOutline();
+
+            }
+        } else {
+            gameStartDelay -= Time.deltaTime;
 
         }
     }
@@ -209,18 +228,13 @@ public class MainMenuController : MonoBehaviour {
             menuState = MenuState.None;
             GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().setMovementState(1);
 
-            playButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-            levelSelectButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-            creditsButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-            quitButton.gameObject.GetComponent<ColorOscillation>().stopColorChange();
-
             playButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             levelSelectButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             creditsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             quitButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             optionsButton.gameObject.GetComponent<GraphicColorLerp>().startColorChange();
             title.startColorChange();
-
+            resetAllOutlines();
             eventSystem.SetSelectedGameObject(null);
             if (!debug)
             {
@@ -240,7 +254,7 @@ public class MainMenuController : MonoBehaviour {
         quitButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         title.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         eventSystem.SetSelectedGameObject(null);
-
+        resetAllOutlines();
         if (!debug)
         {
             Cursor.visible = false;
@@ -259,6 +273,7 @@ public class MainMenuController : MonoBehaviour {
             eventSystem.SetSelectedGameObject(LSPlayButton.gameObject);
             LSRightArrow.updateOriginalPosition();
             LSLeftArrow.updateOriginalPosition();
+            resetAllOutlines();
         }
     }
     public void creditsButtonPress()
@@ -277,6 +292,7 @@ public class MainMenuController : MonoBehaviour {
             StopCoroutine(creditsFunc);
             creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
             StartCoroutine(creditsFunc);
+            resetAllOutlines();
         }
     }
     public void quitButtonPress()
@@ -348,6 +364,7 @@ public class MainMenuController : MonoBehaviour {
             mainMenuCanvas.enabled = false;
             eventSystem.SetSelectedGameObject(optionsDefaultButton.gameObject);
             optionsMatchSizes.resizeText();
+            resetAllOutlines();
         }
     }
     public void optionsBackButtonPress()
@@ -367,5 +384,12 @@ public class MainMenuController : MonoBehaviour {
         yield return new WaitForSeconds(delay);
         GameState.playTransition = true;
         SceneManager.LoadScene(sceneName);
+    }
+    private void resetAllOutlines()
+    {
+        for(int i = 0; i < outlineList.Length; i++)
+        {
+            outlineList[i].resetOutline();
+        }
     }
 }
