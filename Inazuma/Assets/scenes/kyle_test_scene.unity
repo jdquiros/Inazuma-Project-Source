@@ -8298,6 +8298,7 @@ MonoBehaviour:
   levelSelectCanvas: {fileID: 1663576796}
   creditsCanvas: {fileID: 870880655}
   optionsCanvas: {fileID: 1285775753}
+  transitionCanvas: {fileID: 0}
   debug: 1
   playButton: {fileID: 988924647}
   levelSelectButton: {fileID: 1280318609}
@@ -8310,6 +8311,7 @@ MonoBehaviour:
   LSLeftArrow: {fileID: 0}
   LSRightArrow: {fileID: 0}
   creditsBackButton: {fileID: 96751467}
+  screenOverlay: {fileID: 0}
   optionsMatchSizes: {fileID: 101253797}
   title: {fileID: 463070699}
   levelList:
@@ -8938,6 +8940,8 @@ MonoBehaviour:
   - {fileID: 2061151263}
   eventSystem: {fileID: 1649734913}
   continueButton: {fileID: 1235542230}
+  screenOverlay: {fileID: 0}
+  allowInput: 1
 --- !u!82 &577208801
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15653,7 +15657,9 @@ MonoBehaviour:
   pauseButton: 112
   mainMenuSceneName: menu_and_level_1
   resumeButton: {fileID: 548122462}
+  screenOverlay: {fileID: 0}
   eventSystem: {fileID: 1649734913}
+  allowInput: 1
 --- !u!82 &1092579177
 AudioSource:
   m_ObjectHideFlags: 0
@@ -17767,6 +17773,26 @@ Prefab:
       propertyPath: health
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
+        type: 2}
+      propertyPath: attackSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
+    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
+        type: 2}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 17d27f0a2b78897409f542364f611921, type: 3}
+    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
+        type: 2}
+      propertyPath: spawnSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 1f6a6c41b7e06014d909daeadab7a072, type: 3}
+    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
+        type: 2}
+      propertyPath: hitTakenSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 16f032a57f33cad45b7789992661041c, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
   m_IsPrefabParent: 0
