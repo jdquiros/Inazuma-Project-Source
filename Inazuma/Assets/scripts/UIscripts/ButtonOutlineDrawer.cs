@@ -38,7 +38,7 @@ public class ButtonOutlineDrawer : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void LateUpdate () {
         if (isMoving)
         {
             if (Mathf.Abs(transform.localPosition.y - yStop) < speed * Time.deltaTime)
