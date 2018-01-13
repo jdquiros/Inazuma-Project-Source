@@ -8,6 +8,7 @@ public class LightningLine : MonoBehaviour {
     public Transform endPointA;
     public Transform endPointB;
     public int vertexCount = 1;
+    public int lineCount = 1;
     public float lineWidth;
     public float randomOffset;
     public float timeBetweenDraws;
@@ -34,19 +35,24 @@ public class LightningLine : MonoBehaviour {
         }
         else
         {
-            lineRenderer.SetPosition(0, endPointA.position);
-            for (int i = 1; i < vertexCount - 1; i++)
+            for (int j = 0; j < lineCount; j++)
             {
-                int rngSign = Random.value > 0.5f ? 1 : -1;
-                point = Vector3.Lerp(endPointA.position, endPointB.position, i * stepSize + (randomOffset * Random.value * rngSign));
-                vectorFromA = point - endPointA.position;
-                orthoVector = new Vector3(-vectorFromA.y, vectorFromA.x, 0).normalized;
-                rngSign = Random.value > 0.5f ? 1 : -1;
-                point += orthoVector * (lineWidth / 2 * Random.value) * rngSign;
-                lineRenderer.SetPosition(i, point);
+                lineRenderer.SetPosition(0, endPointA.position);
+                for (int i = 1; i < vertexCount - 1; i++)
+                {
+
+                    int rngSign = Random.value > 0.5f ? 1 : -1;
+                    point = Vector3.Lerp(endPointA.position, endPointB.position, i * stepSize + (randomOffset * Random.value * rngSign));
+                    vectorFromA = point - endPointA.position;
+                    orthoVector = new Vector3(-vectorFromA.y, vectorFromA.x, 0).normalized;
+                    rngSign = Random.value > 0.5f ? 1 : -1;
+                    point += orthoVector * (lineWidth / 2 * Random.value) * rngSign;
+                    lineRenderer.SetPosition(i, point);
+
+                }
+                lineRenderer.SetPosition(vertexCount - 1, endPointB.position);
+                drawTimer = timeBetweenDraws;
             }
-            lineRenderer.SetPosition(vertexCount - 1, endPointB.position);
-            drawTimer = timeBetweenDraws;
         }
     }
 }
