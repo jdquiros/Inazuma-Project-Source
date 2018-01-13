@@ -137,7 +137,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1893793}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.57, z: 0}
+  m_LocalPosition: {x: 0, y: 0.089, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1249416294}
@@ -155,8 +155,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onEnter: 1
-  onStay: 0
-  onExit: 0
+  onStay: 1
+  onExit: 1
 --- !u!61 &1893796
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -180,7 +180,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.98, y: 0.1}
+  m_Size: {x: 0.9, y: 1.05}
   m_EdgeRadius: 0
 --- !u!1 &36196563
 GameObject:
@@ -11119,6 +11119,8 @@ GameObject:
   - component: {fileID: 1249416295}
   - component: {fileID: 1249416293}
   - component: {fileID: 1249416292}
+  - component: {fileID: 1249416296}
+  - component: {fileID: 1249416297}
   m_Layer: 8
   m_Name: TimedPlatform
   m_TagString: Untagged
@@ -11137,10 +11139,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be6b014daacde74c8d8a08843a0da1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeUntilFade: 0
-  fadeDuration: 0
-  respawnDelay: 0
-  respawnDuration: 0
+  timeUntilFade: 5.5
+  criticalFlashingDuration: 1
+  criticalFlashSpeedMultiplier: 3
+  fadeDuration: 1
+  respawnDelay: 3
+  respawnDuration: 1
 --- !u!212 &1249416293
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11176,7 +11180,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300022, guid: 37afb5f40c8339841ac397db85e7c82c, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.77205884, g: 0.584721, b: 0.584721, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11224,6 +11228,41 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1249416296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1249416291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c42b784c21a418347b591f2436f485e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playOn: 2
+  startColor: {r: 0.9058824, g: 0.7565383, b: 0.121825606, a: 1}
+  endColor: {r: 0.9058824, g: 0.7565383, b: 0.121825606, a: 0}
+  duration: 1
+  initialDelay: 0
+--- !u!114 &1249416297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1249416291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e26779fcadf5054ba23f28896287e45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playOn: 3
+  spriteRenderer: {fileID: 1249416293}
+  startColor: {r: 0.9058824, g: 0.7565383, b: 0.121825606, a: 1}
+  endColor: {r: 0.3275862, g: 0.31056875, b: 0.26802504, a: 1}
+  transitionTime: 0.5
+  initialDelay: 0
+  timer: 0
+  stopped: 0
 --- !u!1 &1289628622
 GameObject:
   m_ObjectHideFlags: 0
