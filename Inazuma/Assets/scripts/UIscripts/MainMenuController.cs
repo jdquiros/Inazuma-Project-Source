@@ -256,7 +256,6 @@ public class MainMenuController : MonoBehaviour {
         creditsButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         quitButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         title.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
-        background.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         eventSystem.SetSelectedGameObject(null);
         resetAllOutlines();
         if (!debug)
