@@ -22,17 +22,24 @@ public class ButtonOutlineDrawer : MonoBehaviour {
     private float yStop;
 
     private bool atHeight;
-    private TrailRenderer trailRenderer;
+    private LineRenderer lineRenderer;
+    int pointIndex = 0;
     private bool isMoving;
     private Vector3 originalPosition;
+    private Vector3 pointB, pointA;
     public bool playOnAwake = false;
+    private bool cornerReached = false;
 	void Awake () {
-        trailRenderer = GetComponent<TrailRenderer>();
+        lineRenderer = GetComponent<LineRenderer>();
         xSign = (xDir == Direction.Positive) ? 1 : -1;
         ySign = (yDir == Direction.Positive) ? 1 : -1;
-        xStop = transform.localPosition.x + xDistance * xSign;
-        yStop = transform.localPosition.y + yDistance * ySign;
-        originalPosition = transform.localPosition;
+        xStop = xDistance * xSign;
+        yStop = yDistance * ySign;
+        originalPosition = new Vector3(-xSign,0);
+        lineRenderer.positionCount = 3;
+        lineRenderer.SetPosition(0, originalPosition);
+        lineRenderer.SetPosition(1, originalPosition);
+        lineRenderer.SetPosition(2, originalPosition);
         if (playOnAwake)
             drawLine();
 	}
@@ -41,22 +48,34 @@ public class ButtonOutlineDrawer : MonoBehaviour {
 	void LateUpdate () {
         if (isMoving)
         {
-            if (Mathf.Abs(transform.localPosition.y - yStop) < speed * Time.deltaTime)
+            if (Mathf.Abs(pointA.y - yStop) < speed * Time.deltaTime)
             {
-                if (atHeight && Mathf.Abs(transform.localPosition.x - xStop) < speed * Time.deltaTime)
+                if (!atHeight)
                 {
-                    transform.localPosition = new Vector3(xStop, transform.localPosition.y, 0);
+                    atHeight = true;
+                    pointA = new Vector3(pointA.x, yStop, 0);
+                    lineRenderer.SetPosition(1, pointA);
+                    pointB = pointA;
+
                 }
                 else
                 {
-                    transform.localPosition += Vector3.right * Time.deltaTime * speed * xSign;
+                    if (atHeight && Mathf.Abs(pointB.x - xStop) < speed * Time.deltaTime)
+                    {
+                        pointB = new Vector3(xStop, transform.localPosition.y, 0);
+                    }
+                    else
+                    {
+                        pointB += Vector3.right * Time.deltaTime * speed * xSign;
+                    }
                 }
-                transform.localPosition = new Vector3(transform.localPosition.x, yStop, 0);
-                atHeight = true;
+                lineRenderer.SetPosition(2,new Vector3(pointB.x, yStop, 0));
             }
             else
             {
-                transform.localPosition += Vector3.up * Time.deltaTime * speed * ySign;
+                
+                pointA += Vector3.up * Time.deltaTime * speed * ySign;
+                lineRenderer.SetPosition(1, pointA);
             }
         }
     }
@@ -69,6 +88,10 @@ public class ButtonOutlineDrawer : MonoBehaviour {
         isMoving = false;
         atHeight = false;
         transform.localPosition = originalPosition;
-        trailRenderer.Clear();
+        cornerReached = false;
+        pointA = originalPosition;
+        pointB = originalPosition;
+        lineRenderer.SetPosition(1, pointA);
+        lineRenderer.SetPosition(2, pointB);
     }
 }
