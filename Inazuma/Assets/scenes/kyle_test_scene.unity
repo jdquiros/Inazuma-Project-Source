@@ -11270,61 +11270,41 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 119.4127
+      value: 120.42
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 22.362053
+      value: 16.1
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalPosition.z
       value: 4.829864
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+    - target: {fileID: 4418477331108424, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1699105804799210, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
-      propertyPath: m_Name
-      value: ShootyEyeWisp
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 8accfd404f3866045a8467cf1dc17a90, type: 2}
+  m_ParentPrefab: {fileID: 100100000, guid: d8092cf00906d114a9ebf59cc3684b94, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1272556719 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1699105804799210, guid: 8accfd404f3866045a8467cf1dc17a90,
-    type: 2}
-  m_PrefabInternal: {fileID: 1272556718}
---- !u!114 &1272556720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1272556719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8792e513e935f7242bf47962750b958e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1289628622
 GameObject:
   m_ObjectHideFlags: 0
