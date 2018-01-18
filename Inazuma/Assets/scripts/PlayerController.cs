@@ -11,15 +11,15 @@ public class PlayerController : MonoBehaviour
     
     Prime31.CharacterController2D charController;
     public bool debugColors = false;
-    public KeyCode leftButton = KeyCode.A;                      //deprecated.  go to unity editor -> project settings -> Input
-    public KeyCode rightButton = KeyCode.D;                     //deprecated
-    public KeyCode upButton = KeyCode.W;                        //deprecated
-    public KeyCode downButton = KeyCode.S;                      //deprecated
-    public KeyCode jumpButton = KeyCode.Space;                  //deprecated
-    public KeyCode attackButton = KeyCode.J;                    //deprecated
-    public KeyCode lungeButton = KeyCode.K;                     //deprecated
-    public KeyCode dashButton = KeyCode.LeftShift;              //deprecated
-    public KeyCode restartButton = KeyCode.R;                   //deprecated
+    private KeyCode leftButton = KeyCode.A;                     
+    private KeyCode rightButton = KeyCode.D;                     
+    private KeyCode upButton = KeyCode.W;                        
+    private KeyCode downButton = KeyCode.S;                      
+    private KeyCode jumpButton = KeyCode.Space;                  
+    private KeyCode attackButton = KeyCode.J;                    
+    private KeyCode lungeButton = KeyCode.K;                     
+    private KeyCode dashButton = KeyCode.LeftShift;             
+    private KeyCode restartButton = KeyCode.R;                  
     /*
      *                      ^ positiveY
      *                      |
@@ -85,10 +85,11 @@ public class PlayerController : MonoBehaviour
     public float lungeHoverDuration;
     private bool isLungeAttacking = false;
     [Range(0.707f, 1f)]
-    public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) speed (which is the distance of a (1,1) vector)
+    public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) * speed (which is the distance of a (1,1) vector)
                                                 //this value changes that speed to the distance of a (lungeDiagonalScale,lungeDiagonalScale) vector
                                                 //distance of (0.707,0.707) is 1
                                                 //distance of (1,1) is 1.414
+                                                //basically diagonal lunges go farther if this is higher, relative to flat lunges
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -151,6 +152,7 @@ public class PlayerController : MonoBehaviour
     private bool inLadder = false;                                  //are you touching a ladder
 
     public bool attacksEndDashes = false;                           //should attacks end dashes?
+    public bool moveToEnemyOnHit = false;
     private bool playCooldownSound = false;
 
     public float knockbackBackVelocity;                             //player's x velocity is set to this when knocked back
@@ -172,6 +174,7 @@ public class PlayerController : MonoBehaviour
     private string aimStickHorizontal;
     private string aimStickVertical;
     private SceneController sceneController;
+    
     private void Awake()
     {
         sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
@@ -240,6 +243,7 @@ public class PlayerController : MonoBehaviour
 
                     if (isMovingHorizontal && isGrounded())
                     {
+                        //For playing footsteps and for fading out the footstep sound gradually
                         source.clip = footstepSound;
                         if (!source.isPlaying)
                         {
@@ -257,6 +261,7 @@ public class PlayerController : MonoBehaviour
                     }
                     if (maxedYAxisThisFrame(Direction.Down))
                     {
+                        //To fall through one way platforms
                         attemptDropThroughPlatform();
                     }
                     if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash") 
@@ -267,7 +272,7 @@ public class PlayerController : MonoBehaviour
                         dash(facingDirection);
                     }
                     checkForAttackInput();
-                    if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())
+                    if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
                         || ((yAxisMaxed && ladderGrabTimer <= 0)))
                         && movementState == MovementState.Free
                         && inLadder)
@@ -284,10 +289,7 @@ public class PlayerController : MonoBehaviour
 
 
                     }
-                    if (jumpInAirTimer > 0)
-                        jumpInAirTimer -= Time.deltaTime;
-                    else
-                        jumpInAirTimer = 0;
+                    
 
                     break;
                 case MovementState.Paralyzed:
@@ -313,14 +315,10 @@ public class PlayerController : MonoBehaviour
                         jump();
                         endDash();
                     }
-                    if (wasGrounded && !isGrounded() && !jumping)
+                    if (wasGrounded && !isGrounded() && !jumping)       //true when you start a dash on ground, then end it in the air
                     {
                         jumpInAirTimer = jumpInAirDuration;
                     }
-                    if (jumpInAirTimer > 0)
-                        jumpInAirTimer -= Time.deltaTime;
-                    else
-                        jumpInAirTimer = 0;
 
                     break;
                 case MovementState.Lunge:
@@ -329,10 +327,11 @@ public class PlayerController : MonoBehaviour
                 case MovementState.Hover:
                     if (isGrounded())
                     {
+                        //If you are touching the ground, end hover state and move to free state
                         movementState = MovementState.Free;
                         StopCoroutine(hoverCoroutine);
                     }
-                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash") 
+                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash")               //you can cancel the hover state with a dash
                         || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Dash"))&& canDash)
                     {
                         StopCoroutine(hoverCoroutine);
@@ -361,8 +360,8 @@ public class PlayerController : MonoBehaviour
     private void checkForAttackInput()
     {
         
-        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")
-            || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))
+        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")      //"attack" is no longer used.  
+            || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))      //Lunge is used instead
         {
             if (canAttack)
             {
@@ -408,10 +407,11 @@ public class PlayerController : MonoBehaviour
         }
         if(Mathf.Abs(xV) < 0.000005f)
         {
-            isMovingHorizontal = false;
+            isMovingHorizontal = false; //tracks if the player is actually moving
         }
         if (wasMovingHorizontal && !isMovingHorizontal && Mathf.Abs(xV) > 0.000005f && grounded && movementState == MovementState.Free)
         {
+            //true when hitting walls
             soundEffectPlayer.PlayOneShot(wallCollisionSound);
         }
     }
@@ -434,7 +434,7 @@ public class PlayerController : MonoBehaviour
         }
         if (movementState == MovementState.Free)
         {
-            if (wasGrounded && !isGrounded() && !jumping)
+            if (wasGrounded && !isGrounded() && !jumping)   //if you fall off of a ledge, your yVelocity should be zero at that instant
             {
                 yVelocity = 0;
                 transform.position = position;
@@ -662,6 +662,10 @@ public class PlayerController : MonoBehaviour
                         jumping = false;
                     }
                 }
+                if (jumpInAirTimer > 0)
+                    jumpInAirTimer -= Time.deltaTime;
+                else
+                    jumpInAirTimer = 0;
                 if (isGrounded() && !jumping)
                 {
                     yVelocity = -25f;       //downward force so you stick to slopes
@@ -689,6 +693,10 @@ public class PlayerController : MonoBehaviour
                     jumping = false;        //cancel jump physics
                     jumpApexTimer = 0;
                 }
+                if (jumpInAirTimer > 0)
+                    jumpInAirTimer -= Time.deltaTime;
+                else
+                    jumpInAirTimer = 0;
                 break;
             case (MovementState.Lunge):
                 yVelocity += forcedMoveVector.y * lungeAcceleration * Time.deltaTime;
@@ -925,6 +933,7 @@ public class PlayerController : MonoBehaviour
     }
     private Direction calculateAimDirection()
     {
+        //returns Direction up, upright, right,...etc
         if ((Mathf.Abs(Input.GetAxis(aimStickHorizontal)) < axisDeadZone && Mathf.Abs(Input.GetAxis(aimStickVertical)) < axisDeadZone))
         {
             
@@ -1005,6 +1014,7 @@ public class PlayerController : MonoBehaviour
     }
     private void endDash()
     {
+        //terminate a dash
         dashTimer = 0;
         minDashTimer = 0;
         dashCooldownTimer = dashCooldown;
@@ -1015,6 +1025,7 @@ public class PlayerController : MonoBehaviour
     }
     private void endLunge()
     {
+        //terminate a lunge
         invulnerable = false;
         dashTimer = 0;
         isDashing = false;
@@ -1035,12 +1046,15 @@ public class PlayerController : MonoBehaviour
     }
     void onHitBoxCollision(Collider2D other)
     {
+        //runs if the child hitbox for the sword intersects something on the "TriggerLayer"
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
             ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
+            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)      //Only activate the movement portion of the lunge ONCE
             {
+                if(moveToEnemyOnHit)
+                    transform.position = other.transform.position;
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
             }
@@ -1050,6 +1064,8 @@ public class PlayerController : MonoBehaviour
             ++enemyHits;
             if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
             {
+                if(moveToEnemyOnHit)
+                transform.position = other.transform.position;
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
             }
@@ -1069,7 +1085,6 @@ public class PlayerController : MonoBehaviour
         } 
         else if (collision.gameObject.CompareTag("Ladder"))
         {
-            Debug.Log("Collided with: Ladder");
             inLadder = true;
             ladderBounds = collision.bounds;
             ladderBounds.center = new Vector3(ladderBounds.center.x, ladderBounds.center.y, transform.position.z);      //put bounds on same z position as player transform
@@ -1103,19 +1118,22 @@ public class PlayerController : MonoBehaviour
           spriteRenderer.color = Color.cyan;                                                  //windup: cyan
         
         yield return new WaitForSeconds(attackWindUp);
-        spawnAttackTrail(aimDirection);
 
+        spawnAttackTrail(aimDirection);
         attackHitBoxReport.moveHitBox(transform.position + aimVector * attackHitBoxDist, Mathf.Rad2Deg*Mathf.Atan2(aimVector.y, aimVector.x));
         attackHitBoxReport.enableHitBox(attackDuration);
         if(debugColors)
           spriteRenderer.color = Color.red;                                                   //active frames: red
         soundEffectPlayer.PlayOneShot(attackSound);
-        yield return new WaitForSeconds(attackDuration);        
+
+        yield return new WaitForSeconds(attackDuration); 
+        
         if(debugColors)
           spriteRenderer.color = Color.gray;                                                  //cooldown: gray
-        
         isAttacking = false;
+
         yield return new WaitForSeconds(timeBetweenAttacks);
+
         if(debugColors)
           spriteRenderer.color = Color.yellow;                                                //default: yellow
         canAttack = true;
@@ -1128,7 +1146,9 @@ public class PlayerController : MonoBehaviour
         dashCooldownTimer = attackWindUp + attackDuration;
         if (debugColors)
             spriteRenderer.color = Color.blue;
+
         yield return new WaitForSeconds(attackWindUp);
+
         if(movementState != MovementState.Free)
         {
             canAttack = true;
@@ -1144,12 +1164,16 @@ public class PlayerController : MonoBehaviour
         soundEffectPlayer.PlayOneShot(attackSound);
         
         yield return new WaitForSeconds(attackDuration);
+
         if (debugColors)
             spriteRenderer.color = Color.gray;
+
         yield return new WaitForEndOfFrame();
+
         isLungeAttacking = false;
 
         yield return new WaitForSeconds(timeBetweenAttacks);
+
         if (debugColors)
             spriteRenderer.color = Color.yellow;
         canAttack = true;
@@ -1280,6 +1304,7 @@ public class PlayerController : MonoBehaviour
         movementState = MovementState.Paralyzed;
         invulnerable = true;
             spriteRenderer.color = Color.grey;
+
         yield return new WaitForSeconds(duration);
        
         if(!playerDead)
@@ -1287,6 +1312,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.white;
 
         yield return new WaitForSeconds(invincibilityDuration-duration);
+
         invulnerable = false;
 
     }
@@ -1367,7 +1393,9 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.enabled = false;
         soundEffectPlayer.PlayOneShot(spawnSound);
         inSpawnAnimation = true;
+
         yield return new WaitForSeconds(duration);
+
         inSpawnAnimation = false;
         if (debugColors)
             spriteRenderer.enabled = true;
@@ -1375,6 +1403,7 @@ public class PlayerController : MonoBehaviour
     }
     private bool maxedYAxisThisFrame(Direction dir)
     {
+        //returns true when the stick hits the edge, for 1 frame
         switch (dir)
         {
             case (Direction.Up):
@@ -1387,6 +1416,8 @@ public class PlayerController : MonoBehaviour
     }
     private bool maxedXAxisThisFrame(Direction dir)
     {
+        //returns true when the stick hits the edge, for 1 frame
+
         switch (dir)
         {
             case (Direction.Right):
@@ -1400,10 +1431,14 @@ public class PlayerController : MonoBehaviour
 
     private bool maxedRightStickThisFrame()
     {
+        //returns true when the stick hits the edge, for 1 frame
+
         return Vector2.Distance(Vector2.zero,new Vector2(Input.GetAxis(aimStickHorizontal),Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone) && !rightStickMaxed;
     }
     private bool unMaxedRightStickThisFrame()
     {
+        //returns true when the stick hits the edge, for 1 frame
+
         return Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) <= (1 - axisDeadZone) && rightStickMaxed;
     }
     private bool holdingDirection(Direction dir)
