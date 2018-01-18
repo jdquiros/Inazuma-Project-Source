@@ -1069,6 +1069,17 @@ public class PlayerController : MonoBehaviour
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
             }
+        } else if (other.gameObject.CompareTag("HittableObject"))
+        {
+            other.gameObject.GetComponent<HittableObject>().hitByPlayer(transform.position);
+            ++enemyHits;
+            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
+            {
+                if (moveToEnemyOnHit)
+                    transform.position = other.transform.position;
+                lungeDash(getAimVector(dashDirection));
+                isLungeAttacking = false;
+            }
         }
     }
     

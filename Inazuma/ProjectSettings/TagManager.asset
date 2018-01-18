@@ -12,6 +12,7 @@ TagManager:
   - EnemyProjectile
   - Goal
   - SceneController
+  - HittableObject
   layers:
   - Default
   - TransparentFX

@@ -19,7 +19,6 @@ public class Bullet : MonoBehaviour {
 	}
     public void setVelocity(Vector3 newDir,float newSpeed)
     {
-        print(newDir + ":" + newSpeed);
         moveDirection = newDir.normalized;
         speed = newSpeed;
         transform.GetComponent<Rigidbody2D>().velocity = moveDirection * speed;
