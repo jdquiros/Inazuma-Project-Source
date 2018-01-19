@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 61719207701310642}
   - component: {fileID: 114937348542426126}
   - component: {fileID: 114978490758277496}
+  - component: {fileID: 95851078177821334}
   m_Layer: 10
   m_Name: Checkpoint
   m_TagString: Checkpoint
@@ -36,8 +37,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1617503293788136}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.55, y: 6.67, z: 0.15800145}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.8, y: -3.2, z: -4.802936}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -68,6 +69,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.2, y: 13}
   m_EdgeRadius: 0
+--- !u!95 &95851078177821334
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1617503293788136}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 171b641b40ec8dd4c9ac0dc50044b984, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114937348542426126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -95,8 +113,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelNumber: 0
   category: Checkpoint
-  objName: 
-  initialState: 0
+  objName: initialCheckpoint
+  initialState: 1
 --- !u!212 &212182177985095794
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -128,8 +146,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -957245665
-  m_SortingLayer: -2
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 11c250515b55ba74db96cfe238323de7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

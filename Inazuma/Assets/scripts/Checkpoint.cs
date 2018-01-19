@@ -5,12 +5,8 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour {
 
 	public bool active = false;
-    public Sprite activeSprite;
-    public Sprite inactiveSprite;
-    private SpriteRenderer spriteRenderer;
 	public static GameObject[] checkpoints;
     LevelState stateData;
-	private bool wasEnabled = false;  //to prevent previously acquired checkpoints from being activated
 
     // Use this for initialization
     private void Awake()
@@ -18,12 +14,8 @@ public class Checkpoint : MonoBehaviour {
         checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
         stateData = GetComponent<LevelState>();
         stateData.initialLoad();        //forces stateData to load its data, regardless of if its Awake() will be run in the future
-        spriteRenderer = GetComponent<SpriteRenderer>();
         active = (stateData.getLoadState() == 1);  //1 is active, 0 is inactive
-        if (active)
-            spriteRenderer.sprite = activeSprite;
-        else
-            spriteRenderer.sprite = inactiveSprite;
+		gameObject.GetComponent<Animator>().SetBool("active", active);
     }
     void Start () 
 	{
@@ -34,14 +26,15 @@ public class Checkpoint : MonoBehaviour {
 	{
         disableAllCheckpoints();
 		enabled = true;
-        spriteRenderer.sprite = activeSprite;
+		gameObject.GetComponent<Animator> ().SetBool ("active", true);
         stateData.setLoadState(1);
 	}
     public void disableCheckpoint(GameObject checkpoint)
     {
-        checkpoint.GetComponent<Checkpoint>().active = false;
+        checkpoint.GetComponent<Checkpoint>().active = false;	
         checkpoint.GetComponent<LevelState>().setLoadState(0);
-        checkpoint.GetComponent<SpriteRenderer>().sprite = inactiveSprite;
+		checkpoint.GetComponent<Animator> ().SetBool ("active", false);
+
     }
     private void disableAllCheckpoints()
     {
