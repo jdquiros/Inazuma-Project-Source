@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 69410c0ba2aba9045a035fb1a449cd0d
-timeCreated: 1516418515
+timeCreated: 1516418811
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -94,12 +94,21 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: 52, y: -28}
+        - {x: 43, y: -32}
+        - {x: 34, y: -27}
+        - {x: -58, y: -27}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: -52}
+        - {x: 57, y: -37}
       physicsShape:
       - - {x: 50.58232, y: -32.784668}
         - {x: -52.329224, y: -32.8479}
-        - {x: -64, y: -64}
-        - {x: 64, y: -64}
+        - {x: -56.00612, y: -64}
+        - {x: 56.982285, y: -64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: hazards_1
@@ -112,11 +121,15 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: -64, y: 36}
+        - {x: -64, y: -2}
+        - {x: 64, y: -2}
+        - {x: 64, y: 36}
       physicsShape:
       - - {x: -50.32431, y: 30.736877}
-        - {x: -64, y: 0.12658691}
-        - {x: 64, y: 0.12652588}
+        - {x: -55.432068, y: 0.12658691}
+        - {x: 54.873566, y: 0.12652588}
         - {x: 52.23694, y: 31.993713}
       tessellationDetail: 0
     - serializedVersion: 2
@@ -130,12 +143,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape:
+      outline:
       - - {x: -64, y: 64}
+        - {x: -64, y: 28}
+        - {x: 55, y: 28}
+        - {x: 64, y: 38}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: -55.428177, y: 64}
         - {x: -50.38351, y: 31.911133}
         - {x: 49.64032, y: 31.621399}
-        - {x: 64, y: 64}
+        - {x: 54.49475, y: 64}
       tessellationDetail: 0
     - serializedVersion: 2
       name: hazards_3
@@ -148,12 +166,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: -64, y: -25}
+        - {x: -56, y: -37}
+        - {x: 60, y: -37}
+        - {x: 64, y: -14}
+        - {x: 64, y: 2}
+        - {x: -64, y: 2}
       physicsShape:
       - - {x: -50.64032, y: -31.20575}
         - {x: 51.743195, y: -31.20575}
-        - {x: 64, y: -0.028015137}
-        - {x: -64, y: 0.116882324}
+        - {x: 54.143143, y: -0.4029541}
+        - {x: -56.96286, y: -0.45715332}
       tessellationDetail: 0
     outline: []
     physicsShape: []
