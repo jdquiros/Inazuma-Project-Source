@@ -103,8 +103,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1514278036868136}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -31, z: 0}
-  m_LocalScale: {x: 0.49, y: 0.5, z: 1}
+  m_LocalPosition: {x: 0.048, y: -30.85, z: 0}
+  m_LocalScale: {x: 0.53366655, y: 0.27003366, z: 1.0612748}
   m_Children: []
   m_Father: {fileID: 4052902232383600}
   m_RootOrder: 1
@@ -354,17 +354,17 @@ MonoBehaviour:
   attackHitBoxDist: 2
   dashDuration: 0.38
   dashAcceleration: 1000
-  dashMaxVelocity: 17
-  dashCooldown: 0.05
+  dashMaxVelocity: 24
+  dashCooldown: 0.25
   minDashTime: 0.1
   isDashing: 0
-  lungeDuration: 0.08
-  lungeAcceleration: 5
-  lungeMaxVelocity: 50
-  lungeCooldown: 0.05
-  lungeHoverDuration: 0.25
-  lungeDiagonalScale: 0.8
-  velocityRestrictionRate: 600
+  lungeDuration: 0.035
+  lungeAcceleration: 10
+  lungeMaxVelocity: 70
+  lungeCooldown: 0.001
+  lungeHoverDuration: 0.35
+  lungeDiagonalScale: 0.707
+  velocityRestrictionRate: 800
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
@@ -384,7 +384,7 @@ MonoBehaviour:
   ladderClimbSpeed: 6
   ladderGrabCooldown: 0.5
   attacksEndDashes: 1
-  moveToEnemyOnHit: 0
+  moveToEnemyOnHit: 1
   knockbackBackVelocity: 8
   knockbackUpVelocity: 10
   hitStunDuration: 0.5
