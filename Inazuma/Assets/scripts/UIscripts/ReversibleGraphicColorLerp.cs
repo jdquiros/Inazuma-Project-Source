@@ -17,7 +17,8 @@ public class ReversibleGraphicColorLerp : MonoBehaviour {
     public Color endColor = Color.white;
     public float duration = 0;
     private Graphic graphicRenderer;
-
+    [Range(0.0f, 1.0f)]
+    public float initialTimerState = 0;
     private float colorTimer = 0;
     private int direction;
     private bool activated = false;
@@ -25,7 +26,7 @@ public class ReversibleGraphicColorLerp : MonoBehaviour {
     void Awake()
     {
         graphicRenderer = GetComponent<Graphic>();
-
+        colorTimer = duration * initialTimerState;
     }
     void OnEnable()
     {
@@ -72,5 +73,11 @@ public class ReversibleGraphicColorLerp : MonoBehaviour {
         startColor = newStartColor;
         endColor = newEndColor;
     }
+    public void setColorTimer(float perc)
+    {
+        //Between 0% and 100%
+        colorTimer = duration*perc;
+        graphicRenderer.color = Color.Lerp(startColor, endColor, colorTimer / duration);
 
+    }
 }

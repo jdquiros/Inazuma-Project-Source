@@ -29,7 +29,7 @@ public class MainMenuController : MonoBehaviour {
     public Button optionsButton;
     public Button optionsDefaultButton;
 
-    public Button LSInitialButton;
+
 
     public Button creditsBackButton;
 
@@ -265,7 +265,6 @@ public class MainMenuController : MonoBehaviour {
             menuState = MenuState.LevelSelect;
             levelSelectCanvas.enabled = true;
             mainMenuCanvas.enabled = false;
-            eventSystem.SetSelectedGameObject(LSInitialButton.gameObject);
             resetAllOutlines();
         }
     }

@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class MatchFontSizes : MonoBehaviour {
 
     // Use this for initialization
+
     public Text[] textList;
 
 	void Start () {
         resizeText();
 	}
-	private IEnumerator waitForFrame()
+
+    private IEnumerator waitForFrame()
     {
         yield return null;
         applySizes();

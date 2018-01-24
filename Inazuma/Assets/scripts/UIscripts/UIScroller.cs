@@ -228,6 +228,11 @@ public class UIScroller : MonoBehaviour
         moving = false;
         setRectTransform(hiddenAnchorsBefore);
     }
+    public void revealImmediately()
+    {
+        moving = false;
+        setRectTransform(revealedAnchors);
+    }
     private void setRectTransform(float[] anchors)
     {
         myTransform.anchorMin = new Vector2(anchors[0], anchors[1]);
