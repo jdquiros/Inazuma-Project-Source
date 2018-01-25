@@ -154,7 +154,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1869389459080256, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
       propertyPath: m_Name
-      value: Character (animations) (use this one) (1)
+      value: Character
       objectReference: {fileID: 0}
     - target: {fileID: 1869389459080256, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
       propertyPath: m_IsActive
