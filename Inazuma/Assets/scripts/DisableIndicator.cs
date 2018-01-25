@@ -12,9 +12,26 @@ public class DisableIndicator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (GameState.controlLayout == 0)
+        if (!GameState.compareState(GameState.State.MainMenu))
+        {
+            switch (PlayerInputHandler.controlType)
+            {
+                case (PlayerInputHandler.ControlType.Keyboard):
+                    spriteRenderer.enabled = true;
+                    break;
+                case (PlayerInputHandler.ControlType.Controller):
+                    if(GameState.controlLayout == 0)
+                    {
+                        spriteRenderer.enabled = false;
+                    } else
+                    {
+                        spriteRenderer.enabled = true;
+                    }
+                    break;
+            }
+        } else
+        {
             spriteRenderer.enabled = false;
-        else if(!GameState.compareState(GameState.State.MainMenu))
-            spriteRenderer.enabled = true;
+        }
 	}
 }
