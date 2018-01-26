@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour
         Paralyzed, Free, Dash, Lunge, OnLadder, Hover
     }
     public MovementState movementState = MovementState.Free;
-    
+
     private bool allowPlayerInput;              //can the character be controlled?
     private int maxHealth;
     public int health = 1;                      
@@ -105,7 +106,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 forcedMoveVector;           //this vector is the direction of a dash/lungedash
     int enemyHits = 0;                          //# of enemies hit in a single attack
 
-    private enum Direction
+    public enum Direction
     {
         Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
     }
@@ -162,18 +163,16 @@ public class PlayerController : MonoBehaviour
     private bool invulnerable = false;                              //can the player be damaged (forceDamagePlayer(int x) will bypass this (eg spikes))
     private bool landedThisFrame = false;
     private bool playerHitThisFrame = false;
-    private bool xAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
-    private bool yAxisMaxed = false;                                //is the xAxis of the left analog stick maxed out (either direction counts)
-    private bool rightStickMaxed = false;                            //is the right analog stick maxed out (any direction)
-    public float axisDeadZone = 0.05f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
+
+    public float axisDeadZone = 0.1f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
     private IEnumerator hoverCoroutine;
     private bool flipSwing = false;
     public float spawnAnimDuration = .2f;
     private bool inSpawnAnimation = false;
 
-    private string aimStickHorizontal;
-    private string aimStickVertical;
+
     private SceneController sceneController;
+    private PlayerInputHandler pInput;
     
     private void Awake()
     {
@@ -182,7 +181,7 @@ public class PlayerController : MonoBehaviour
         attackHitBoxReport = GetComponentInChildren<HitBoxReport>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         source = GetComponent<AudioSource>();
-        
+        pInput = GetComponent<PlayerInputHandler>();
     }
     void Start()
     {
@@ -203,9 +202,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        aimStickHorizontal = (GameState.controlLayout == 0) ? "RStickHorizontal" : "Horizontal";
-        aimStickVertical = (GameState.controlLayout == 0) ? "RStickVertical" : "Vertical";
-        
+   
         if (playerDead || GameState.compareState(GameState.State.LevelWon))
         {
             movementState = MovementState.Paralyzed;
@@ -232,8 +229,7 @@ public class PlayerController : MonoBehaviour
             switch (movementState)
             {
                 case MovementState.Free:
-                    if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump")
-                        || Input.GetButtonDown("keyLayout" + GameState.keyboardLayout + "Jump"))
+                    if (pInput.jumpButton(PlayerInputHandler.Action.Down))
                     {
                         if ((charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
                         {
@@ -259,21 +255,20 @@ public class PlayerController : MonoBehaviour
                         stopStepping = true;
 
                     }
-                    if (maxedYAxisThisFrame(Direction.Down))
+                    if (pInput.maxedYAxisThisFrame(Direction.Down))
                     {
                         //To fall through one way platforms
                         attemptDropThroughPlatform();
                     }
-                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash") 
-                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Dash")) && canDash)
+                    if (pInput.dashButton(PlayerInputHandler.Action.Down) && canDash)
                     {
                         source.Stop();
 
                         dash(facingDirection);
                     }
                     checkForAttackInput();
-                    if ((((maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
-                        || ((yAxisMaxed && ladderGrabTimer <= 0)))
+                    if ((((pInput.maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
+                        || ((pInput.maxedYAxis() && ladderGrabTimer <= 0)))
                         && movementState == MovementState.Free
                         && inLadder)
                     {
@@ -281,7 +276,7 @@ public class PlayerController : MonoBehaviour
                         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
 
                         charController.ignoreOneWayPlatformsThisFrame = true;
-                        if (maxedYAxisThisFrame(Direction.Down))
+                        if (pInput.maxedYAxisThisFrame(Direction.Down))
                         {
                             attemptDropThroughPlatform();
                         }
@@ -293,7 +288,7 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case MovementState.Paralyzed:
-                    if (playerDead && (Input.GetKeyDown(restartButton) || Input.GetButtonDown("Submit")))
+                    if (playerDead && pInput.restartButton(PlayerInputHandler.Action.Down))
                     {
                         respawn();
                     }
@@ -307,8 +302,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 case MovementState.Dash:
                     checkForAttackInput();
-                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump") 
-                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Jump")) 
+                    if (pInput.jumpButton(PlayerInputHandler.Action.Down)
                         && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope()) 
                         && !jumping && canJump)
                     {
@@ -331,8 +325,7 @@ public class PlayerController : MonoBehaviour
                         movementState = MovementState.Free;
                         StopCoroutine(hoverCoroutine);
                     }
-                    if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Dash")               //you can cancel the hover state with a dash
-                        || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Dash"))&& canDash)
+                    if (pInput.dashButton(PlayerInputHandler.Action.Down) && canDash)
                     {
                         StopCoroutine(hoverCoroutine);
                         dash(facingDirection);
@@ -352,38 +345,35 @@ public class PlayerController : MonoBehaviour
             updateDirections();
             wasMovingHorizontal = isMovingHorizontal;
 
-            xAxisMaxed = Mathf.Abs(Input.GetAxis("Horizontal")) >= .95f;
-            yAxisMaxed = Mathf.Abs(Input.GetAxis("Vertical")) >= .95f;
-            rightStickMaxed = Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone);
         }
     }
     private void checkForAttackInput()
     {
-        
-        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")      //"attack" is no longer used.  
-            || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))      //Lunge is used instead
+
+        //if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")      //"attack" is no longer used.  
+        //    || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))      //Lunge is used instead
+        //{
+        //    if (canAttack)
+        //    {
+        //        source.Stop();
+
+        //        StartCoroutine(attack(getAimVector(aimDirection).normalized));
+        //        if (attacksEndDashes)
+        //        {
+        //            endDash();
+        //        }
+        //    }
+
+        //}
+        if (pInput.lungeButton(PlayerInputHandler.Action.Down)
+            || (pInput.maxedRightStickThisFrame() && GameState.controlLayout == 0 
+            && PlayerInputHandler.controlType == PlayerInputHandler.ControlType.Controller))
         {
             if (canAttack)
             {
                 source.Stop();
 
-                StartCoroutine(attack(getAimVector(aimDirection).normalized));
-                if (attacksEndDashes)
-                {
-                    endDash();
-                }
-            }
-
-        }
-        if ((Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Lunge") 
-            ||Input.GetButtonDown("keyLayout"+GameState.keyboardLayout + "Lunge"))
-            || (maxedRightStickThisFrame() && GameState.controlLayout == 0))
-        {
-            if (canAttack)
-            {
-                source.Stop();
-
-                aimDirection = calculateAimDirection();
+                aimDirection = pInput.calculateAimDirection(aimDirection);
                 dashDirection = aimDirection;
                 StartCoroutine(lungeAttack(getAimVector(aimDirection).normalized));
                 if (attacksEndDashes)
@@ -460,7 +450,7 @@ public class PlayerController : MonoBehaviour
         {
             case (MovementState.Free):
                 //regular movement, not dashing
-                if (holdingDirection(Direction.Left))
+                if (pInput.holdingDirection(Direction.Left))
                 {
                     if (xVelocity <= 0)
                     {
@@ -473,7 +463,7 @@ public class PlayerController : MonoBehaviour
                         xVelToAdd = (-deceleration) * Time.deltaTime;
                     }
                 }
-                else if (holdingDirection(Direction.Right))
+                else if (pInput.holdingDirection(Direction.Right))
                 {
                     if (xVelocity >= 0)
                     {
@@ -557,7 +547,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-                if (holdingDirection(Direction.Left))
+                if (pInput.holdingDirection(Direction.Left))
                 {
                     if (xVelocity <= 0)
                     {
@@ -570,7 +560,7 @@ public class PlayerController : MonoBehaviour
                         xVelToAdd = (-deceleration) * Time.deltaTime;
                     }
                 }
-                else if (holdingDirection(Direction.Right))
+                else if (pInput.holdingDirection(Direction.Right))
                 {
                     if (xVelocity >= 0)
                     {
@@ -640,15 +630,14 @@ public class PlayerController : MonoBehaviour
                     {
                         //if this is >0, then character is rising until apex.
                         jumpApexTimer -= Time.deltaTime;
-                        if (!(Input.GetButton("ctrlLayout" + GameState.controlLayout + "Jump")
-                            ||Input.GetButton("keyLayout"+GameState.keyboardLayout+"Jump")) 
+                        if (!(pInput.jumpButton(PlayerInputHandler.Action.Pressed)) 
                             && jumpKeyHeld)
                         {
                             //you release the jump key before you reach the apex
                             jumpApexTimer = 0;
                             yVelocity *= jumpButtonReleaseFactor;
                         }
-                        jumpKeyHeld = Input.GetButton("ctrlLayout" + GameState.controlLayout + "Jump") || Input.GetButton("keyLayout" + GameState.keyboardLayout + "Jump");
+                        jumpKeyHeld = pInput.jumpButton(PlayerInputHandler.Action.Pressed);
                         if (yVelocity < 0)
                         {
                             //you hit the ceiling or something, so the apex timer is not applicable anymore
@@ -820,19 +809,18 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.color = Color.green;
         transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);    //ensure player is centered on ladder
         source.clip = climbSound;
-        if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Jump") 
-            || Input.GetButton("keyLayout" + GameState.keyboardLayout + "Jump"))
+        if (pInput.jumpButton(PlayerInputHandler.Action.Down))
         {
             //jump off of ladder
             movementState = MovementState.Free;
             ladderGrabTimer = ladderGrabCooldown;
             if (debugColors)
                 spriteRenderer.color = Color.yellow;
-            if (!holdingDirection(Direction.Down))
+            if (!pInput.holdingDirection(Direction.Down))
             {
                 jump();
             }
-        } else if (holdingDirection(Direction.Up))
+        } else if (pInput.holdingDirection(Direction.Up))
         {
             //climb up
             if (!source.isPlaying)
@@ -844,7 +832,7 @@ public class PlayerController : MonoBehaviour
                 stopStepping = false;
             }
             yVelocity = ladderClimbSpeed;
-        } else if (holdingDirection(Direction.Down))
+        } else if (pInput.holdingDirection(Direction.Down))
         {
             //climb down
             if (isGrounded())
@@ -918,68 +906,20 @@ public class PlayerController : MonoBehaviour
         if (movementState == MovementState.Free || movementState == MovementState.OnLadder || movementState == MovementState.Hover)                             //you cannot change your facing direction while dashing
         {
             
-                if (holdingDirection(Direction.Right))
+                if (pInput.holdingDirection(Direction.Right))
                     facingDirection = Direction.Right;
-                else if (holdingDirection(Direction.Left))
+                else if (pInput.holdingDirection(Direction.Left))
                     facingDirection = Direction.Left;
             
         }
         
-            aimDirection = calculateAimDirection();
+            aimDirection = pInput.calculateAimDirection(aimDirection);
  
             
         
 
     }
-    private Direction calculateAimDirection()
-    {
-        //returns Direction up, upright, right,...etc
-        if ((Mathf.Abs(Input.GetAxis(aimStickHorizontal)) < axisDeadZone && Mathf.Abs(Input.GetAxis(aimStickVertical)) < axisDeadZone))
-        {
-            
-            if (Input.GetKey(leftButton) && Input.GetKey(upButton) && Input.GetKey(rightButton))
-                return Direction.Up;
-            if (Input.GetKey(upButton) && Input.GetKey(rightButton) && Input.GetKey(downButton))
-                return Direction.Right;
-            if (Input.GetKey(rightButton) && Input.GetKey(downButton) && Input.GetKey(leftButton))
-                return Direction.Down;
-            if (Input.GetKey(downButton) && Input.GetKey(leftButton) && Input.GetKey(upButton))
-                return Direction.Left;
-            if (Input.GetKey(upButton) && Input.GetKey(rightButton))         //upright
-                return Direction.UpRight;
-            if (Input.GetKey(upButton) && Input.GetKey(leftButton))         //upleft
-                return Direction.UpLeft;
-            if (Input.GetKey(downButton) && Input.GetKey(rightButton))       //downright
-                return Direction.DownRight;
-            if (Input.GetKey(downButton) && Input.GetKey(leftButton))        //downLeft
-                return Direction.DownLeft;
-            if (Input.GetKey(upButton))                                     //up
-                return Direction.Up;
-            if (Input.GetKey(rightButton))                                   //right
-                return Direction.Right;
-            if (Input.GetKey(downButton))                                    //down
-                return Direction.Down;
-            if (Input.GetKey(leftButton))                                    //left
-                return Direction.Left;
-        }
-        else
-        {
-            //diagonals must be tested before singular directions, because single directions are subsets of diagonals
-            
-                float stickAngle = (Mathf.Atan2(Input.GetAxis(aimStickVertical), Input.GetAxis(aimStickHorizontal)) * Mathf.Rad2Deg);
-                if (stickAngle < 0) stickAngle += 360;
-                for (int i = 0; i < 8; ++i)
-                {
-                    if (Mathf.Abs(i * 45 - stickAngle) <= 22.5f)
-                    {
-                        return (Direction)i;
-                    }
-                }
-            
-        }
-        return aimDirection;         //If no key input, no change
-
-    }
+    
     private Vector3 getAimVector(Direction dir)
     {
         Vector3 result = Vector3.zero;
@@ -1412,71 +1352,7 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.enabled = true;
         movementState = MovementState.Free;
     }
-    private bool maxedYAxisThisFrame(Direction dir)
-    {
-        //returns true when the stick hits the edge, for 1 frame
-        switch (dir)
-        {
-            case (Direction.Up):
-                return Input.GetAxis("Vertical") >= (1 - axisDeadZone) && !yAxisMaxed;
-            case (Direction.Down):
-                return Input.GetAxis("Vertical") <= (-1 + axisDeadZone) && !yAxisMaxed; 
-        }
-        print("maxedYAxisThisFrame: Invalid Direction->" + dir);
-        return false;
-    }
-    private bool maxedXAxisThisFrame(Direction dir)
-    {
-        //returns true when the stick hits the edge, for 1 frame
-
-        switch (dir)
-        {
-            case (Direction.Right):
-                return Input.GetAxis("Horizontal") >= (1-axisDeadZone) && !xAxisMaxed;
-            case (Direction.Left):
-                return Input.GetAxis("Horizontal") <= (-1+axisDeadZone) && !xAxisMaxed;
-        }
-        print("maxedXAxisThisFrame: Invalid Direction->" + dir);
-        return false;
-    }
-
-    private bool maxedRightStickThisFrame()
-    {
-        //returns true when the stick hits the edge, for 1 frame
-
-        return Vector2.Distance(Vector2.zero,new Vector2(Input.GetAxis(aimStickHorizontal),Input.GetAxis(aimStickVertical))) >= (1 - axisDeadZone) && !rightStickMaxed;
-    }
-    private bool unMaxedRightStickThisFrame()
-    {
-        //returns true when the stick hits the edge, for 1 frame
-
-        return Vector2.Distance(Vector2.zero, new Vector2(Input.GetAxis(aimStickHorizontal), Input.GetAxis(aimStickVertical))) <= (1 - axisDeadZone) && rightStickMaxed;
-    }
-    private bool holdingDirection(Direction dir)
-    {
-        switch (dir)
-        {
-            case (Direction.Right):
-                return Input.GetAxis("Horizontal") > axisDeadZone;
-            case (Direction.Left):
-                return Input.GetAxis("Horizontal") < -axisDeadZone;
-            case (Direction.Up):
-                return Input.GetAxis("Vertical") > axisDeadZone;
-            case (Direction.Down):
-                return Input.GetAxis("Vertical") < -axisDeadZone;
-
-            case (Direction.UpRight):
-                return Input.GetAxis("Horizontal") > axisDeadZone && Input.GetAxis("Vertical") > -axisDeadZone;
-            case (Direction.DownRight):
-                return Input.GetAxis("Vertical") < -axisDeadZone && Input.GetAxis("Horizontal") > axisDeadZone;
-            case (Direction.DownLeft):
-                return Input.GetAxis("Vertical") < -axisDeadZone && Input.GetAxis("Horizontal") < -axisDeadZone;
-            case (Direction.UpLeft):
-                return Input.GetAxis("Vertical") > axisDeadZone && Input.GetAxis("Horizontal") < -axisDeadZone;
-        }
-
-        return false; //should never run
-    }
+    
     public int getFacingDirection()
     {
         return (int)facingDirection;
