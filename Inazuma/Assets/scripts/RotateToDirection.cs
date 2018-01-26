@@ -8,13 +8,25 @@ public class RotateToDirection : MonoBehaviour {
     private PlayerController controller;
     public float rotationSpeed;
     private float desiredAngle;
+    private TrailRenderer tr;
 	void Start () {
         controller = GetComponentInParent<PlayerController>();
+        tr = GetComponentInChildren<TrailRenderer>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         desiredAngle = controller.getAimDirection() * 45f;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0, desiredAngle)),rotationSpeed*Time.deltaTime);
+        
+        if(Mathf.Abs(desiredAngle - transform.rotation.eulerAngles.z) < 5f)
+        {
+            tr.Clear();
+            tr.enabled = false;
+        } else
+        {
+            tr.enabled = true;
+        }
+            
 	}
 }

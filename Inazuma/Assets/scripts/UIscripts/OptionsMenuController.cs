@@ -14,6 +14,9 @@ public class OptionsMenuController : MonoBehaviour {
     void Start() {
         ctrlLayoutSelectText = ctrlLayoutSelectButton.GetComponentInChildren<Text>();
         keyLayoutSelectText = keyLayoutSelectButton.GetComponentInChildren<Text>();
+        ctrlLayoutSelectText.text = ctrlLayoutText[GameState.controlLayout];
+        keyLayoutSelectText.text = keyLayoutText[GameState.keyboardLayout];
+
     }
 
     // Update is called once per frame
