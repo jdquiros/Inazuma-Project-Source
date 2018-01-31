@@ -16,17 +16,20 @@ public class RotateToDirection : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        desiredAngle = controller.getAimDirection() * 45f;
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0, desiredAngle)),rotationSpeed*Time.deltaTime);
-        
-        if(Mathf.Abs(desiredAngle - transform.rotation.eulerAngles.z) < 5f)
+        if (GameState.compareState(GameState.State.InGame))
         {
-            tr.Clear();
-            tr.enabled = false;
-        } else
-        {
-            tr.enabled = true;
+            desiredAngle = controller.getAimDirection() * 45f;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0, desiredAngle)), rotationSpeed * Time.deltaTime);
+
+            if (Mathf.Abs(desiredAngle - transform.rotation.eulerAngles.z) < 5f)
+            {
+                tr.Clear();
+                tr.enabled = false;
+            }
+            else
+            {
+                tr.enabled = true;
+            }
         }
-            
 	}
 }

@@ -61,13 +61,13 @@ public class LightningLine : MonoBehaviour {
     }
     private void drawLine(int minIndex, int maxIndex, float step)
     {
+        orthoVector = new Vector3(-vectorFromA.y, vectorFromA.x, 0).normalized;
         for (int i = minIndex; i < maxIndex; i++)
         {
 
             int rngSign = Random.value > 0.5f ? 1 : -1;
             point = Vector3.Lerp(endPointA.position, endPointB.position, i * step + (randomOffset * Random.value * rngSign));
             vectorFromA = point - endPointA.position;
-            orthoVector = new Vector3(-vectorFromA.y, vectorFromA.x, 0).normalized;
             rngSign = Random.value > 0.5f ? 1 : -1;
             point += orthoVector * (lineWidth / 2 * Random.value) * rngSign;
             lineRenderer.SetPosition(i, point);
@@ -77,5 +77,7 @@ public class LightningLine : MonoBehaviour {
     public void setIsDrawing(bool x)
     {
         isDrawing = x;
+        lineRenderer.positionCount = (x) ? vertexCount : 0;
+
     }
 }

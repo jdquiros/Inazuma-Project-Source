@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge, OnLadder, Hover
+        Paralyzed, Free, Dash, Lunge, OnLadder, Hover, Grappled
     }
     public MovementState movementState = MovementState.Free;
 
@@ -91,6 +91,9 @@ public class PlayerController : MonoBehaviour
                                                 //distance of (0.707,0.707) is 1
                                                 //distance of (1,1) is 1.414
                                                 //basically diagonal lunges go farther if this is higher, relative to flat lunges
+    public float grappleMoveSpeed;
+    public float grappleMaxDistance;
+    public LayerMask grappleLayer;
 
     public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
 
@@ -169,11 +172,13 @@ public class PlayerController : MonoBehaviour
     private bool flipSwing = false;
     public float spawnAnimDuration = .2f;
     private bool inSpawnAnimation = false;
-
-
+    private Transform grapplePoint;
+    public LightningLine line;
+    private RaycastHit2D[] debugHits;
     private SceneController sceneController;
     private PlayerInputHandler pInput;
-    
+    private Vector3 posLastFrame;
+    public GameObject movingLineEnd;
     private void Awake()
     {
         sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
@@ -196,6 +201,7 @@ public class PlayerController : MonoBehaviour
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
         hoverCoroutine = hoverForDuration(lungeHoverDuration);
         //charController.warpToGrounded();
+        debugHits = new RaycastHit2D[0];
         
     }
 
@@ -226,6 +232,12 @@ public class PlayerController : MonoBehaviour
         }
         if (!PauseMenuController.paused)
         {
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                grappleRaycast(getAimVector(aimDirection));
+
+            }
             switch (movementState)
             {
                 case MovementState.Free:
@@ -331,6 +343,38 @@ public class PlayerController : MonoBehaviour
                         dash(facingDirection);
                     }
                     break;
+                case MovementState.Grappled:
+                    movingLineEnd.transform.position = Vector3.Lerp(movingLineEnd.transform.position,grapplePoint.position,0.4f);
+
+                    line.setIsDrawing(true);
+                    if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed*Time.deltaTime)
+                    {
+
+                        line.setIsDrawing(false);
+                        if (pInput.jumpButton(PlayerInputHandler.Action.Down))
+                        {
+                            movementState = MovementState.Free;
+                            jump();
+                        }
+                        else if (pInput.dashButton(PlayerInputHandler.Action.Down))
+                        {
+                            dash(facingDirection);
+                        }
+                        forcedMoveVector = Vector3.zero;
+                    }
+                    else if (Vector2.Distance(posLastFrame,transform.position)  < .1)
+                    {
+                        line.setIsDrawing(false);
+                        movementState = MovementState.Free;
+                    }
+                    else
+                    {
+                        forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
+
+                    }
+                    posLastFrame = transform.position;
+
+                    break;
             }
             if (ladderGrabTimer > 0)
             {
@@ -350,21 +394,7 @@ public class PlayerController : MonoBehaviour
     private void checkForAttackInput()
     {
 
-        //if (Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Attack")      //"attack" is no longer used.  
-        //    || Input.GetButtonDown("keyLayout"+GameState.keyboardLayout+"Attack"))      //Lunge is used instead
-        //{
-        //    if (canAttack)
-        //    {
-        //        source.Stop();
 
-        //        StartCoroutine(attack(getAimVector(aimDirection).normalized));
-        //        if (attacksEndDashes)
-        //        {
-        //            endDash();
-        //        }
-        //    }
-
-        //}
         if (pInput.lungeButton(PlayerInputHandler.Action.Down)
             || (pInput.maxedRightStickThisFrame() && GameState.controlLayout == 0 
             && PlayerInputHandler.controlType == PlayerInputHandler.ControlType.Controller))
@@ -610,6 +640,9 @@ public class PlayerController : MonoBehaviour
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
                 break;
+            case MovementState.Grappled:
+                xVelocity = forcedMoveVector.x;
+                break;
         }
 
 
@@ -715,6 +748,9 @@ public class PlayerController : MonoBehaviour
                     yVelocity += velocityRestrictionRate * Time.deltaTime;
                     yVelocity = Mathf.Min(yVelocity, 0);
                 }
+                break;
+            case (MovementState.Grappled):
+                yVelocity = forcedMoveVector.y;
                 break;
         }
 
@@ -911,6 +947,9 @@ public class PlayerController : MonoBehaviour
                 else if (pInput.holdingDirection(Direction.Left))
                     facingDirection = Direction.Left;
             
+        } else if(movementState == MovementState.Grappled)
+        {
+            facingDirection = (transform.position.x < grapplePoint.position.x) ? Direction.Right : Direction.Left;
         }
         
             aimDirection = pInput.calculateAimDirection(aimDirection);
@@ -1182,6 +1221,59 @@ public class PlayerController : MonoBehaviour
         invulnerable = true;
         preventCooldown = false;
     }
+    
+    private void grappleRaycast(Vector3 direction)
+    {
+        RaycastHit2D[] hits;
+        LayerMask combinedMask = grappleLayer;
+        LayerMask groundLayer = LayerMask.NameToLayer("groundLayer");
+        grappleLayer |= (1 << groundLayer);
+        hits = Physics2D.RaycastAll(transform.position, direction, grappleMaxDistance, combinedMask);
+        Transform closestGrapplePoint = null;
+        
+        float minGrappleDistance = 1;
+        float minGroundDistance = 1;
+        if (hits.Length > 0){
+            debugHits = hits;   //debug information
+            for(int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.gameObject.layer == LayerMask.NameToLayer("grappleLayer"))         //if hit is on grappelayer
+                {
+                    if (hits[i].fraction > 0.01f)       //if the ray didn't start inside the object
+                    {
+                        if (hits[i].fraction < minGrappleDistance)      //track smallest distance object
+                        {
+                            minGrappleDistance = hits[i].fraction;
+                            closestGrapplePoint = hits[i].transform;
+                        }
+                    }
+                } else if(hits[i].collider.gameObject.layer == groundLayer) //if hit is on groundlayer
+                {
+                    if(hits[i].fraction > 0.01f)                            //if the ray didn't start inside the object
+                    {
+                        if(hits[i].fraction < minGroundDistance)            //track smallest distance ground object
+                        {
+                            minGroundDistance = hits[i].fraction;
+                        }
+                    }
+                }
+                
+            }
+        }
+        if(minGroundDistance < minGrappleDistance)              //if the ground was hit before a grapple object
+        {
+            closestGrapplePoint = null; //do not do grapple movement
+        }
+        if(closestGrapplePoint != null)
+        {
+            movementState = MovementState.Grappled;
+            grapplePoint = closestGrapplePoint;
+            line.endPointB = movingLineEnd.transform;
+            movingLineEnd.transform.position = transform.position;
+            posLastFrame = new Vector3(0, 0, -100000);
+        }
+
+    }
     private void spawnTrail(float rotationSpeed)
     {
         GameObject trailObject = (GameObject)Instantiate(Resources.Load("DashTrail"));
@@ -1381,5 +1473,14 @@ public class PlayerController : MonoBehaviour
     {
         return inSpawnAnimation;
     }
-    
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+       
+        Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*getAimVector(aimDirection));
+        for(int i = 0; i < debugHits.Length; i++)
+        {
+            Gizmos.DrawWireSphere(debugHits[i].transform.position, 1);
+        }
+    }
 }
