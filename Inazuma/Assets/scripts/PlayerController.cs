@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
      */
     public enum MovementState
     {
-        Paralyzed, Free, Dash, Lunge, OnLadder, Hover, Grappled
+        Paralyzed, Free, Dash, Lunge, OnLadder, Hover, Grappled, Clinging
     }
     public MovementState movementState = MovementState.Free;
 
@@ -178,7 +178,7 @@ public class PlayerController : MonoBehaviour
     private SceneController sceneController;
     private PlayerInputHandler pInput;
     private Vector3 posLastFrame;
-    public GameObject movingLineEnd;
+    public Transform aimIndicator;
     private void Awake()
     {
         sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
@@ -233,11 +233,7 @@ public class PlayerController : MonoBehaviour
         if (!PauseMenuController.paused)
         {
 
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                grappleRaycast(getAimVector(aimDirection));
-
-            }
+            
             switch (movementState)
             {
                 case MovementState.Free:
@@ -247,8 +243,12 @@ public class PlayerController : MonoBehaviour
                         {
                             jump();
                         }
-                    }
+                    } else if (Input.GetKeyDown(KeyCode.K))
+                    {
+                        grapple();
 
+                    }
+                    grappleRaycast();
                     if (isMovingHorizontal && isGrounded())
                     {
                         //For playing footsteps and for fading out the footstep sound gradually
@@ -344,36 +344,47 @@ public class PlayerController : MonoBehaviour
                     }
                     break;
                 case MovementState.Grappled:
-                    movingLineEnd.transform.position = Vector3.Lerp(movingLineEnd.transform.position,grapplePoint.position,0.4f);
-
                     line.setIsDrawing(true);
                     if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed*Time.deltaTime)
                     {
-
-                        line.setIsDrawing(false);
-                        if (pInput.jumpButton(PlayerInputHandler.Action.Down))
-                        {
-                            movementState = MovementState.Free;
-                            jump();
-                        }
-                        else if (pInput.dashButton(PlayerInputHandler.Action.Down))
-                        {
-                            dash(facingDirection);
-                        }
-                        forcedMoveVector = Vector3.zero;
+                        //if reached grapplePoint
+                        invulnerable = false;
+                        movementState = MovementState.Clinging;
                     }
-                    else if (Vector2.Distance(posLastFrame,transform.position)  < .1)
+                    else if (Vector2.Distance(posLastFrame,transform.position)  < .1f)
                     {
+                        //Run if the player is supposed to be moving, but isnt
+                        //Detects if the player is stuck
                         line.setIsDrawing(false);
+                        invulnerable = false;
                         movementState = MovementState.Free;
                     }
                     else
                     {
+                        //set vector to move by
                         forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
 
                     }
-                    posLastFrame = transform.position;
-
+                    break;
+                case MovementState.Clinging:
+                    checkForAttackInput();
+                    grappleRaycast();
+                    line.setIsDrawing(false);
+                    if (pInput.jumpButton(PlayerInputHandler.Action.Down))
+                    {
+                        //if jump, jump
+                        movementState = MovementState.Free;
+                        jump();
+                    }
+                    else if (pInput.dashButton(PlayerInputHandler.Action.Down))
+                    {
+                        //if dash, dash
+                        dash(facingDirection);
+                    } else if (pInput.grappleButton(PlayerInputHandler.Action.Down))
+                    {
+                        //player can grapple
+                        grapple();
+                    }
                     break;
             }
             if (ladderGrabTimer > 0)
@@ -643,6 +654,9 @@ public class PlayerController : MonoBehaviour
             case MovementState.Grappled:
                 xVelocity = forcedMoveVector.x;
                 break;
+            case MovementState.Clinging:
+                xVelocity = 0;
+                break;
         }
 
 
@@ -751,6 +765,9 @@ public class PlayerController : MonoBehaviour
                 break;
             case (MovementState.Grappled):
                 yVelocity = forcedMoveVector.y;
+                break;
+            case (MovementState.Clinging):
+                yVelocity = 0;
                 break;
         }
 
@@ -939,7 +956,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateDirections()
     {
-        if (movementState == MovementState.Free || movementState == MovementState.OnLadder || movementState == MovementState.Hover)                             //you cannot change your facing direction while dashing
+        if (movementState == MovementState.Free || movementState == MovementState.OnLadder || movementState == MovementState.Hover || movementState == MovementState.Clinging)                             //you cannot change your facing direction while dashing
         {
             
                 if (pInput.holdingDirection(Direction.Right))
@@ -1221,14 +1238,30 @@ public class PlayerController : MonoBehaviour
         invulnerable = true;
         preventCooldown = false;
     }
-    
-    private void grappleRaycast(Vector3 direction)
+    private void grapple()
     {
+        if (grappleRaycast())
+        {
+            canJump = true;
+            canDash = true;
+            invulnerable = true;
+            movementState = MovementState.Grappled;
+            posLastFrame = new Vector3(0, 0, -10000);
+        }
+        //grapple state ends if you are supposed to move, but are not moving
+        //This should never be true on the first frame of grapple, thus we do this
+    }
+    private bool grappleRaycast()
+    {
+        //Return true if valid grapple point is found
+        //Does not actually cause the player to change state
+        //also shows player what they will grapple to
         RaycastHit2D[] hits;
         LayerMask combinedMask = grappleLayer;
         LayerMask groundLayer = LayerMask.NameToLayer("groundLayer");
         grappleLayer |= (1 << groundLayer);
-        hits = Physics2D.RaycastAll(transform.position, direction, grappleMaxDistance, combinedMask);
+        Vector3 dir = new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(aimIndicator.eulerAngles.z * Mathf.Deg2Rad));
+        hits = Physics2D.RaycastAll(transform.position, dir, grappleMaxDistance, combinedMask);
         Transform closestGrapplePoint = null;
         
         float minGrappleDistance = 1;
@@ -1241,6 +1274,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (hits[i].fraction > 0.01f)       //if the ray didn't start inside the object
                     {
+                        
                         if (hits[i].fraction < minGrappleDistance)      //track smallest distance object
                         {
                             minGrappleDistance = hits[i].fraction;
@@ -1266,12 +1300,12 @@ public class PlayerController : MonoBehaviour
         }
         if(closestGrapplePoint != null)
         {
-            movementState = MovementState.Grappled;
-            grapplePoint = closestGrapplePoint;
-            line.endPointB = movingLineEnd.transform;
-            movingLineEnd.transform.position = transform.position;
-            posLastFrame = new Vector3(0, 0, -100000);
+            grapplePoint = closestGrapplePoint;         //set the grapple point to the raycast target
+            line.endPointB = grapplePoint;              //set the line end point to the raycast target
+            grapplePoint.gameObject.SendMessage("HitByRaycast");
+            return true;
         }
+        return false;
 
     }
     private void spawnTrail(float rotationSpeed)
@@ -1308,7 +1342,7 @@ public class PlayerController : MonoBehaviour
     public void knockBackPlayer(Vector3 enemyPos)
     {
         //enemy MUST supply its own location
-        
+       
         if ((movementState != MovementState.Paralyzed) && !invulnerable)
         {
            
@@ -1477,7 +1511,7 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.blue;
        
-        Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*getAimVector(aimDirection));
+        Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*(new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z*Mathf.Deg2Rad),Mathf.Sin(aimIndicator.eulerAngles.z*Mathf.Deg2Rad))));
         for(int i = 0; i < debugHits.Length; i++)
         {
             Gizmos.DrawWireSphere(debugHits[i].transform.position, 1);

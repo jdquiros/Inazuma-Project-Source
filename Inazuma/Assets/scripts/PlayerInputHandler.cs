@@ -135,6 +135,23 @@ public class PlayerInputHandler : MonoBehaviour {
         }
         return false;
     }
+    public bool grappleButton(Action a)
+    {
+
+        switch (a)
+        {
+            case (Action.Up):
+                return Input.GetButtonUp("ctrlLayout" + GameState.controlLayout + "Grapple")
+                            || Input.GetButtonUp("keyLayout" + GameState.keyboardLayout + "Grapple");
+            case (Action.Down):
+                return Input.GetButtonDown("ctrlLayout" + GameState.controlLayout + "Grapple")
+                            || Input.GetButtonDown("keyLayout" + GameState.keyboardLayout + "Grapple");
+            case (Action.Pressed):
+                return Input.GetButton("ctrlLayout" + GameState.controlLayout + "Grapple")
+                            || Input.GetButton("keyLayout" + GameState.keyboardLayout + "Grapple");
+        }
+        return false;
+    }
     public bool restartButton(Action a)
     {
         switch (a)
