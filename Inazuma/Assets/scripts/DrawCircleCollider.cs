@@ -17,6 +17,6 @@ public class DrawCircleCollider : MonoBehaviour {
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, col.radius);
+        Gizmos.DrawWireSphere(transform.position, col.radius*transform.localScale.x);
     }
 }

@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour
     public float airAccelerationFactor = 1f;    //from 0.0 to 1.0
     public float highDecelerationFactor = 0f;    //acceleration = highDecelerationDuration if speed < highDecelerationFactor
     public float highDecelerationThreshold = 1f; //use highDecelerationFactor wihle speed < highDecelerationThreshold.  Should be > 1 for more resisting force
+    public bool allowFastFall;
+    private float fastFallMultiplier;
+    public float fastFallSpeedFactor;
     public float gravity = 0;                   //should be positive
     public float jumpForce = 0;                 //should be positive
     public float jumpButtonReleaseFactor = 1f;  //total velocity will be mulitiplied by this factor when the jump button is released
@@ -94,8 +97,8 @@ public class PlayerController : MonoBehaviour
     public float grappleMoveSpeed;
     public float grappleMaxDistance;
     public LayerMask grappleLayer;
-
-    public float velocityRestrictionRate = 0f;  //rate that velocity > maxVelocity returns to maxVelocity
+    public float weakVelocityRestrictionRate = 0f;      //used to gradually reduce player to maximum speed
+    public float strongVelocityRestrictionRate = 0f;  //used to rapidly and near instantly reduce player to maximum speed
 
     public float instantDropDistance = 0.2f;    //instantly moves player down this distance when dropping through a platform.  If the character does not drop, increase this value
 
@@ -187,6 +190,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         source = GetComponent<AudioSource>();
         pInput = GetComponent<PlayerInputHandler>();
+
     }
     void Start()
     {
@@ -237,18 +241,21 @@ public class PlayerController : MonoBehaviour
             switch (movementState)
             {
                 case MovementState.Free:
+                    updateGrappling();
                     if (pInput.jumpButton(PlayerInputHandler.Action.Down))
                     {
                         if ((charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
                         {
                             jump();
                         }
-                    } else if (Input.GetKeyDown(KeyCode.K))
-                    {
-                        grapple();
-
                     }
-                    grappleRaycast();
+                    if (pInput.holdingDirection(Direction.Down))
+                    {
+                        fastFallMultiplier = fastFallSpeedFactor;
+                    } else
+                    {
+                        fastFallMultiplier = 1;
+                    }
                     if (isMovingHorizontal && isGrounded())
                     {
                         //For playing footsteps and for fading out the footstep sound gradually
@@ -308,6 +315,7 @@ public class PlayerController : MonoBehaviour
                         spriteRenderer.color = Color.black;
                     break;
                 case MovementState.OnLadder:
+                    updateGrappling();
                     updateLadderMovement();
                     canJump = true;
                     preventCooldown = false;
@@ -344,47 +352,12 @@ public class PlayerController : MonoBehaviour
                     }
                     break;
                 case MovementState.Grappled:
-                    line.setIsDrawing(true);
-                    if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed*Time.deltaTime)
-                    {
-                        //if reached grapplePoint
-                        invulnerable = false;
-                        movementState = MovementState.Clinging;
-                    }
-                    else if (Vector2.Distance(posLastFrame,transform.position)  < .1f)
-                    {
-                        //Run if the player is supposed to be moving, but isnt
-                        //Detects if the player is stuck
-                        line.setIsDrawing(false);
-                        invulnerable = false;
-                        movementState = MovementState.Free;
-                    }
-                    else
-                    {
-                        //set vector to move by
-                        forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
-
-                    }
+                    updateGrappling();
                     break;
                 case MovementState.Clinging:
                     checkForAttackInput();
-                    grappleRaycast();
-                    line.setIsDrawing(false);
-                    if (pInput.jumpButton(PlayerInputHandler.Action.Down))
-                    {
-                        //if jump, jump
-                        movementState = MovementState.Free;
-                        jump();
-                    }
-                    else if (pInput.dashButton(PlayerInputHandler.Action.Down))
-                    {
-                        //if dash, dash
-                        dash(facingDirection);
-                    } else if (pInput.grappleButton(PlayerInputHandler.Action.Down))
-                    {
-                        //player can grapple
-                        grapple();
-                    }
+                    updateGrappling();
+                    
                     break;
             }
             if (ladderGrabTimer > 0)
@@ -399,6 +372,71 @@ public class PlayerController : MonoBehaviour
             updatePosition();
             updateDirections();
             wasMovingHorizontal = isMovingHorizontal;
+
+        }
+    }
+    private void updateGrappling()
+    {
+        switch (movementState)
+        {
+            case MovementState.Free:
+                grappleRaycast();
+                if (Input.GetKeyDown(KeyCode.K))
+                {
+                    grapple();
+                }
+                break;
+            case MovementState.OnLadder:
+                grappleRaycast();
+                if (Input.GetKeyDown(KeyCode.K))
+                {
+                    grapple();
+                }
+                break;
+            case MovementState.Grappled:
+                line.setIsDrawing(true);
+                if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed * Time.deltaTime)
+                {
+                    //if reached grapplePoint
+                    invulnerable = false;
+                    movementState = MovementState.Clinging;
+                }
+                else if (Vector2.Distance(posLastFrame, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
+                {
+                    //Run if the player is supposed to be moving, but isnt
+                    //Detects if the player is stuck
+                    line.setIsDrawing(false);
+                    invulnerable = false;
+                    movementState = MovementState.Free;
+                }
+                else
+                {
+                    //set vector to move by
+                    forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
+
+                }
+                posLastFrame = transform.position;
+                break;
+            case MovementState.Clinging:
+                grappleRaycast();
+                line.setIsDrawing(false);
+                if (pInput.jumpButton(PlayerInputHandler.Action.Down))
+                {
+                    //if jump, jump
+                    movementState = MovementState.Free;
+                    jump();
+                }
+                else if (pInput.dashButton(PlayerInputHandler.Action.Down))
+                {
+                    //if dash, dash
+                    dash(facingDirection);
+                }
+                else if (pInput.grappleButton(PlayerInputHandler.Action.Down))
+                {
+                    //player can grapple
+                    grapple();
+                }
+                break;
 
         }
     }
@@ -485,6 +523,7 @@ public class PlayerController : MonoBehaviour
     }
     private void updateHorizontalVelocity()
     {
+        float restrictRate;
         float xVelToAdd = 0f;
 
         switch (movementState)
@@ -536,23 +575,30 @@ public class PlayerController : MonoBehaviour
                     }
                 }
                 if (!charController.isGrounded)
+                {
                     xVelToAdd *= airAccelerationFactor;
+                    restrictRate = acceleration * airAccelerationFactor + weakVelocityRestrictionRate;
+                } else
+                {
+                    restrictRate = acceleration+weakVelocityRestrictionRate;
+
+                }
                 //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
 
-
-                xVelocity = xVelocity + xVelToAdd;      //set speeds
-
                 //clamp to speed maximums
+                xVelocity = xVelocity + xVelToAdd;
                 if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
                 {
-                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += -restrictRate * Time.deltaTime;
                     xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
                 }
                 else if (xVelocity < (-maxHorizontalVelocity))
                 {
-                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += restrictRate * Time.deltaTime;
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
+                    
+                
                 break;
             case (MovementState.Dash):
                 switch (facingDirection)
@@ -578,12 +624,12 @@ public class PlayerController : MonoBehaviour
                     xVelocity *= 0.5f;
                 if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
                 {
-                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += -strongVelocityRestrictionRate * Time.deltaTime;
                     xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
                 }
                 else if (xVelocity < (-maxHorizontalVelocity))
                 {
-                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += strongVelocityRestrictionRate * Time.deltaTime;
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
                 break;
@@ -633,23 +679,32 @@ public class PlayerController : MonoBehaviour
                     }
                 }
                 if (!charController.isGrounded)
+                {
                     xVelToAdd *= airAccelerationFactor;
+                    restrictRate = acceleration * airAccelerationFactor + strongVelocityRestrictionRate;
+                } else
+                {
+                    restrictRate = acceleration + strongVelocityRestrictionRate;
+
+                }
                 //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
 
 
-                xVelocity = xVelocity + xVelToAdd;      //set speeds
 
                 //clamp to speed maximums
+                xVelocity = xVelocity + xVelToAdd;
                 if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
                 {
-                    xVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += -restrictRate * Time.deltaTime;
                     xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
                 }
                 else if (xVelocity < (-maxHorizontalVelocity))
                 {
-                    xVelocity += velocityRestrictionRate * Time.deltaTime;
+                    xVelocity += restrictRate * Time.deltaTime;
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
+
+                
                 break;
             case MovementState.Grappled:
                 xVelocity = forcedMoveVector.x;
@@ -663,13 +718,21 @@ public class PlayerController : MonoBehaviour
     }
     private void updateVerticalVelocity()
     {
+        float restrictRate;
         float yVelToAdd = 0;
         switch (movementState)
         {
             case (MovementState.Free):
                 if (!isGrounded())
                 {
-                    yVelToAdd = (-gravity) * Time.deltaTime;
+                    if (allowFastFall)
+                    {
+                        yVelToAdd = (-gravity) * fastFallMultiplier * Time.deltaTime;
+                    }
+                    else
+                    {
+                        yVelToAdd = (-gravity) * Time.deltaTime;
+                    }
                 }
                 if (jumping)
                 {
@@ -708,18 +771,19 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    
-                    yVelocity += yVelToAdd;
-                    if (yVelocity > maxVerticalVelocity)           //gradually decrease speed to max speed
+                    restrictRate = acceleration + strongVelocityRestrictionRate;
+                    if(yVelocity > maxVerticalVelocity)
                     {
-                        yVelocity += -velocityRestrictionRate * Time.deltaTime;
+                        yVelocity += -restrictRate * Time.deltaTime;
                         yVelocity = Mathf.Max(yVelocity, maxVerticalVelocity);
                     }
-                    else if (yVelocity < (-maxVerticalVelocity))
+                    else if (yVelocity > -maxVerticalVelocity*fastFallMultiplier || Mathf.Abs(yVelocity + yVelToAdd) < Mathf.Abs(yVelocity))
                     {
-                        yVelocity += velocityRestrictionRate * Time.deltaTime;
-                        yVelocity = Mathf.Min(yVelocity, -maxVerticalVelocity);
+                        yVelocity = yVelocity + yVelToAdd;      //set speeds
+                                                                //Do not change if you are over maximum velocity, UNLESS it would slow you down
+                                                                //do not change if you are falling too fast
                     }
+                   
                 }
                 break;
             case (MovementState.Dash):
@@ -745,21 +809,25 @@ public class PlayerController : MonoBehaviour
                 {
                     yVelToAdd = (-gravity) * Time.deltaTime;
                 }
+                
                 yVelocity += yVelToAdd;
+                yVelocity = Mathf.Clamp(yVelocity, -maxVerticalVelocity, maxVerticalVelocity);
                 if (isGrounded() && !jumping)
                 {
                     yVelocity = -25f;       //downward force so you stick to slopes
                 }
                 break;
             case (MovementState.Hover):
+
+                restrictRate = acceleration+strongVelocityRestrictionRate;
                 if (yVelocity > 0)           //gradually decrease speed to 0
                 {
-                    yVelocity += -velocityRestrictionRate * Time.deltaTime;
+                    yVelocity += -restrictRate * Time.deltaTime;
                     yVelocity = Mathf.Max(yVelocity, 0);
                 }
                 else if (yVelocity < 0)
                 {
-                    yVelocity += velocityRestrictionRate * Time.deltaTime;
+                    yVelocity += restrictRate * Time.deltaTime;
                     yVelocity = Mathf.Min(yVelocity, 0);
                 }
                 break;
@@ -1022,6 +1090,7 @@ public class PlayerController : MonoBehaviour
     private void endLunge()
     {
         //terminate a lunge
+        xVelocity = Mathf.Clamp(xVelocity, -maxHorizontalVelocity, maxHorizontalVelocity);
         invulnerable = false;
         dashTimer = 0;
         isDashing = false;
@@ -1403,6 +1472,7 @@ public class PlayerController : MonoBehaviour
     {
         if(!playerDead)
             setHealth(health - dmg);
+        line.setIsDrawing(false);
     }
     private void setHealth(int hp)
     {
@@ -1516,5 +1586,7 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.DrawWireSphere(debugHits[i].transform.position, 1);
         }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, xVelocity / 10);
     }
 }

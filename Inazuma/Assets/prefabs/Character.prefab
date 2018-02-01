@@ -648,6 +648,8 @@ MonoBehaviour:
   airAccelerationFactor: 0.2
   highDecelerationFactor: 1.5
   highDecelerationThreshold: 10
+  allowFastFall: 1
+  fastFallSpeedFactor: 2
   gravity: 30
   jumpForce: 13
   jumpButtonReleaseFactor: 0.3
@@ -672,7 +674,8 @@ MonoBehaviour:
   grappleLayer:
     serializedVersion: 2
     m_Bits: 8192
-  velocityRestrictionRate: 750
+  weakVelocityRestrictionRate: 5
+  strongVelocityRestrictionRate: 600
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
@@ -809,7 +812,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.2
+    widthMultiplier: 0.25
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -821,7 +824,7 @@ LineRenderer:
         tangentMode: 0
       - serializedVersion: 2
         time: 1
-        value: 1
+        value: 0.26086807
         inSlope: 0
         outSlope: 0
         tangentMode: 0

@@ -27,7 +27,7 @@ public class HitBoxReport : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (col.enabled)
         {
             if(enableTimer > 0)
