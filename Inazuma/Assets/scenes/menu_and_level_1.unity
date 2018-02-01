@@ -67962,7 +67962,8 @@ MonoBehaviour:
   xMax: 529.54
   yMin: -151.4
   yMax: 39.9
-  speedFactor: 4
+  speedFactor: 2.5
+  extensionDistance: 5
 --- !u!81 &961633001
 AudioListener:
   m_ObjectHideFlags: 0
