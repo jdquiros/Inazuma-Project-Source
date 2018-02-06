@@ -15,7 +15,7 @@ public class Barrier : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider2D>();
         stateData = GetComponent<LevelState>();
         stateData.initialLoad();        //forces stateData to load its data, regardless of if its Awake() will be run in the future
-        active = (stateData.getLoadState() == 1);
+        active = (stateData.getState() == 1);
         if (active)
         {
             turnOnBarrier();
@@ -32,7 +32,7 @@ public class Barrier : MonoBehaviour {
         {
             lineList[i].setIsDrawing(false);
         }
-        stateData.setLoadState(INACTIVE);
+        stateData.setState(INACTIVE);
     }
     public void turnOnBarrier()
     {
@@ -41,7 +41,7 @@ public class Barrier : MonoBehaviour {
         {
             lineList[i].setIsDrawing(true);
         }
-        stateData.setLoadState(ACTIVE);
+        stateData.setState(ACTIVE);
 
     }
 }

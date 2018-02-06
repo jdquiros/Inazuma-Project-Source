@@ -42,7 +42,7 @@ public abstract class EnemySpawner : MonoBehaviour {
             activateOnPlayerEnter = false;
         stateData = GetComponent<LevelState>();
         stateData.initialLoad();
-        state = (State)stateData.getLoadState();
+        state = (State)stateData.getState();
         setActive((int)state);
 	}
     private void Update()

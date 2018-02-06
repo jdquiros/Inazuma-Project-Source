@@ -14,7 +14,7 @@ public class Checkpoint : MonoBehaviour {
         checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
         stateData = GetComponent<LevelState>();
         stateData.initialLoad();        //forces stateData to load its data, regardless of if its Awake() will be run in the future
-        active = (stateData.getLoadState() == 1);  //1 is active, 0 is inactive
+        active = (stateData.getState() == 1);  //1 is active, 0 is inactive
 		gameObject.GetComponent<Animator>().SetBool("active", active);
     }
     void Start () 
@@ -27,12 +27,12 @@ public class Checkpoint : MonoBehaviour {
         disableAllCheckpoints();
 		enabled = true;
 		gameObject.GetComponent<Animator> ().SetBool ("active", true);
-        stateData.setLoadState(1);
+        stateData.setState(1);
 	}
     public void disableCheckpoint(GameObject checkpoint)
     {
         checkpoint.GetComponent<Checkpoint>().active = false;	
-        checkpoint.GetComponent<LevelState>().setLoadState(0);
+        checkpoint.GetComponent<LevelState>().setState(0);
 		checkpoint.GetComponent<Animator> ().SetBool ("active", false);
 
     }
