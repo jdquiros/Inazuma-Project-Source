@@ -29,8 +29,6 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("dead", playerController.isDead ());
 
 
-
-		//consolidate attack & lunging anims to just "attack"? with "successful lunge" anim as a possible transition?
 // 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover
 //		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5
 
