@@ -58,25 +58,28 @@ public class MainMenuController : MonoBehaviour {
         creditsCanvas.enabled = false;
         optionsCanvas.enabled = false;
         creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
-    }
-    void Start () {
-
-        if (GameState.compareState(GameState.State.InGame))
+        if (GameState.compareState(GameState.State.InGame) || SceneManager.GetActiveScene().name == "menu_and_level_1")
         {
             skipToGame();
-        } else if (GameState.compareState(GameState.State.MainMenu))
+        }
+        else if (GameState.compareState(GameState.State.MainMenu))
         {
             if (SceneManager.GetActiveScene().name == "menu_and_level_1")
             {
                 menuState = MenuState.MainMenu;
                 mainMenuCanvas.enabled = true;
-            } else
+            }
+            else
             {
                 menuState = MenuState.None;
                 mainMenuCanvas.enabled = false;
                 skipToGame();
             }
         }
+    }
+    void Start () {
+
+        
         outlineList[0].resetOutline();
 	}
 	

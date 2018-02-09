@@ -180,7 +180,8 @@ public class PlayerController : MonoBehaviour
     private RaycastHit2D[] debugHits;
     private SceneController sceneController;
     private PlayerInputHandler pInput;
-    private Vector3 posLastFrame;
+    private Vector3 posLastFrameForGrapple;                     //grapple code needs to manually mess with this value, so it is a separate variable from posLastFrame
+    private Vector2 movementVector;
     public Transform aimIndicator;
     private void Awake()
     {
@@ -372,7 +373,6 @@ public class PlayerController : MonoBehaviour
             updatePosition();
             updateDirections();
             wasMovingHorizontal = isMovingHorizontal;
-
         }
     }
     private void updateGrappling()
@@ -401,7 +401,7 @@ public class PlayerController : MonoBehaviour
                     invulnerable = false;
                     movementState = MovementState.Clinging;
                 }
-                else if (Vector2.Distance(posLastFrame, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
+                else if (Vector2.Distance(posLastFrameForGrapple, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
                 {
                     //Run if the player is supposed to be moving, but isnt
                     //Detects if the player is stuck
@@ -415,7 +415,7 @@ public class PlayerController : MonoBehaviour
                     forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
 
                 }
-                posLastFrame = transform.position;
+                posLastFrameForGrapple = transform.position;
                 break;
             case MovementState.Clinging:
                 grappleRaycast();
@@ -483,6 +483,7 @@ public class PlayerController : MonoBehaviour
             //true when hitting walls
             soundEffectPlayer.PlayOneShot(wallCollisionSound);
         }
+        movementVector = new Vector2(transform.position.x - position.x, movementVector.y);
     }
     private void moveVertical(float yV)
     {
@@ -515,6 +516,7 @@ public class PlayerController : MonoBehaviour
             soundEffectPlayer.PlayOneShot(landingSound);
             landedThisFrame = true;
         }
+        movementVector = new Vector2(movementVector.x, transform.position.y - position.y);
     }
     private void updatePosition()
     {
@@ -1315,7 +1317,7 @@ public class PlayerController : MonoBehaviour
             canDash = true;
             invulnerable = true;
             movementState = MovementState.Grappled;
-            posLastFrame = new Vector3(0, 0, -10000);
+            posLastFrameForGrapple = new Vector3(0, 0, -10000);
         }
         //grapple state ends if you are supposed to move, but are not moving
         //This should never be true on the first frame of grapple, thus we do this
@@ -1576,6 +1578,10 @@ public class PlayerController : MonoBehaviour
     public bool isSpawning()
     {
         return inSpawnAnimation;
+    }
+    public Vector2 distanceMoved()
+    {
+        return movementVector;
     }
     private void OnDrawGizmos()
     {

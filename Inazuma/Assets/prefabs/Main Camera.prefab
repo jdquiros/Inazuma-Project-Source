@@ -342,8 +342,12 @@ MonoBehaviour:
   xMax: 201.7
   yMin: 0
   yMax: 15
-  speedFactor: 5
-  extensionDistance: 0.05
+  speedFactor: 7.5
+  ySpeedFactor: 0
+  lowSpeedFactor: 0.25
+  lowSpeedDistance: 4
+  extensionDuration: 1.7
+  extensionDistance: 0.1
   xBounds: {x: 0.35, y: 0.65}
 --- !u!114 &114445307851215662
 MonoBehaviour:
