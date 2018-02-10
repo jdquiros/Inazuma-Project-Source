@@ -1487,6 +1487,7 @@ public class PlayerController : MonoBehaviour
         {
             //this code runs only once when the player dies
             playerDead = true;
+			isLungeAttacking = false;
             print("Player is Dead");
             allowPlayerInput = false;
             if (debugColors)
