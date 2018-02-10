@@ -1431,6 +1431,7 @@ public class PlayerController : MonoBehaviour
                 xVelocity = knockbackBackVelocity;
             }
             isDashing = false;
+			isLungeAttacking = false;
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
             source.Stop();
             soundEffectPlayer.PlayOneShot(hitTakenSound);
