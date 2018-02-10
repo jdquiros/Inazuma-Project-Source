@@ -5,26 +5,53 @@ using UnityEngine;
 public class Barrier : MonoBehaviour {
 
     // Use this for initialization
-    private const int ACTIVE = 1;
-    private const int INACTIVE = 0;
+    public enum Type
+    {
+        Any, All
+    }
+    public Type activationType;
+    public LevelState[] linkedStates;
+    public int ACTIVE = 1;
+    public int INACTIVE = 0;
     private BoxCollider2D boxCollider;
     public LightningLine[] lineList;
     private LevelState stateData;
-    private bool active;
-	void Awake () {
+    private int stateLastFrame;
+    private int state;
+	void Start () {
         boxCollider = GetComponent<BoxCollider2D>();
         stateData = GetComponent<LevelState>();
-        stateData.initialLoad();        //forces stateData to load its data, regardless of if its Awake() will be run in the future
-        active = (stateData.getState() == 1);
-        if (active)
+        stateLastFrame = stateData.getState();
+        state = stateData.getState();
+    }
+    private void Update()
+    {
+        switch (activationType)
         {
-            turnOnBarrier();
-        } else
+            case Type.All:
+                if (linkedStates.Length > 0)
+                {
+                    state = LevelState.allActive(linkedStates, ACTIVE) ? ACTIVE : INACTIVE;
+                }
+                break;
+            case Type.Any:
+                if (linkedStates.Length > 0)
+                {
+                    state = LevelState.anyActive(linkedStates, ACTIVE) ? ACTIVE : INACTIVE;
+                }
+                break;
+        }
+        
+        if(state == ACTIVE && stateLastFrame == INACTIVE)       //when barrier changes from inactive to active
+        {
+            turnOnBarrier();    
+        }
+        else if(state == INACTIVE && stateLastFrame == ACTIVE)  //when barrier changes from active to inactive
         {
             turnOffBarrier();
         }
+        stateLastFrame = state;
     }
-	
     public void turnOffBarrier()
     {
         boxCollider.enabled = false;
@@ -44,4 +71,5 @@ public class Barrier : MonoBehaviour {
         stateData.setState(ACTIVE);
 
     }
+
 }
