@@ -17,7 +17,9 @@ public class DashTrailScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (playerController.movementState != PlayerController.MovementState.Dash && playerController.movementState != PlayerController.MovementState.Lunge || !playerController.moving())
+        if (playerController.movementState != PlayerController.MovementState.Dash
+            && playerController.movementState != PlayerController.MovementState.Lunge
+            || !playerController.moving())
         {
             if (transform.parent != null)
             {

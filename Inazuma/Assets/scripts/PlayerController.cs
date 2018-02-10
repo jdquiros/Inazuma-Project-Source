@@ -636,6 +636,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
+                /*
                 if (pInput.holdingDirection(Direction.Left))
                 {
                     if (xVelocity <= 0)
@@ -680,6 +681,7 @@ public class PlayerController : MonoBehaviour
                         xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
                     }
                 }
+                
                 if (!charController.isGrounded)
                 {
                     xVelToAdd *= airAccelerationFactor;
@@ -705,8 +707,10 @@ public class PlayerController : MonoBehaviour
                     xVelocity += restrictRate * Time.deltaTime;
                     xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
                 }
+                */
+                restrictRate = 3f;
+                xVelocity += -xVelocity * restrictRate * Time.deltaTime;
 
-                
                 break;
             case MovementState.Grappled:
                 xVelocity = forcedMoveVector.x;
@@ -820,7 +824,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-
+                /*
                 restrictRate = acceleration+strongVelocityRestrictionRate;
                 if (yVelocity > 0)           //gradually decrease speed to 0
                 {
@@ -832,6 +836,9 @@ public class PlayerController : MonoBehaviour
                     yVelocity += restrictRate * Time.deltaTime;
                     yVelocity = Mathf.Min(yVelocity, 0);
                 }
+                */
+                restrictRate = 3;
+                yVelocity += -yVelocity * restrictRate * Time.deltaTime;
                 break;
             case (MovementState.Grappled):
                 yVelocity = forcedMoveVector.y;
@@ -1402,13 +1409,8 @@ public class PlayerController : MonoBehaviour
             offset = new Vector3(xVelocity*.075f, yVelocity*0.05f) ;
         else
             offset = new Vector3(xVelocity*.075f, 0,0);
-        if (!isGrounded())
-        {
-            flipSwing = yVelocity < 0;
-            flipSwing = xVelocity < 0 ? !flipSwing : flipSwing;
-        }
+        flipSwing = true;
         trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform.position,offset,flipSwing);
-        flipSwing = !flipSwing;
     }
     public void knockBackPlayer(Vector3 enemyPos)
     {
