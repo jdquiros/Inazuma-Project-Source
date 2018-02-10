@@ -87,6 +87,7 @@ public class PlayerController : MonoBehaviour
     public float lungeCooldown = 0f;             //cooldown between dashes
 
     public float lungeHoverDuration;
+    private float hoverTimer;
     private bool isLungeAttacking = false;
     [Range(0.707f, 1f)]
     public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) * speed (which is the distance of a (1,1) vector)
@@ -171,7 +172,6 @@ public class PlayerController : MonoBehaviour
     private bool playerHitThisFrame = false;
 
     public float axisDeadZone = 0.1f;                              //general tolerance for axis-related code (used both as an upper and lower bound threshold)
-    private IEnumerator hoverCoroutine;
     private bool flipSwing = false;
     public float spawnAnimDuration = .2f;
     private bool inSpawnAnimation = false;
@@ -204,10 +204,9 @@ public class PlayerController : MonoBehaviour
         }
         allowPlayerInput = true;
         fadeSound = fadeAndStop(footstepSoundFadeDuration,source);
-        hoverCoroutine = hoverForDuration(lungeHoverDuration);
         //charController.warpToGrounded();
         debugHits = new RaycastHit2D[0];
-        
+        hoverTimer = 0;
     }
 
     // Update is called once per frame
@@ -250,6 +249,7 @@ public class PlayerController : MonoBehaviour
                             jump();
                         }
                     }
+                    /*
                     if (pInput.holdingDirection(Direction.Down))
                     {
                         fastFallMultiplier = fastFallSpeedFactor;
@@ -257,6 +257,7 @@ public class PlayerController : MonoBehaviour
                     {
                         fastFallMultiplier = 1;
                     }
+                    */
                     if (isMovingHorizontal && isGrounded())
                     {
                         //For playing footsteps and for fading out the footstep sound gradually
@@ -337,20 +338,32 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case MovementState.Lunge:
-                    checkForAttackInput();
+
                     break;
                 case MovementState.Hover:
                     if (isGrounded())
                     {
                         //If you are touching the ground, end hover state and move to free state
                         movementState = MovementState.Free;
-                        StopCoroutine(hoverCoroutine);
+                        endHover();
+                        break;
                     }
                     if (pInput.dashButton(PlayerInputHandler.Action.Down) && canDash)
                     {
-                        StopCoroutine(hoverCoroutine);
+                        endHover();
                         dash(facingDirection);
+                        break;
                     }
+                    if(hoverTimer > 0)
+                    {
+                        hoverTimer -= Time.deltaTime;
+                    } else
+                    {
+                        endHover();
+                        movementState = MovementState.Free;
+                        break;
+                    }
+                    checkForAttackInput();
                     break;
                 case MovementState.Grappled:
                     updateGrappling();
@@ -777,6 +790,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
+                    /*
                     restrictRate = acceleration + strongVelocityRestrictionRate;
                     if(yVelocity > maxVerticalVelocity)
                     {
@@ -789,6 +803,9 @@ public class PlayerController : MonoBehaviour
                                                                 //Do not change if you are over maximum velocity, UNLESS it would slow you down
                                                                 //do not change if you are falling too fast
                     }
+                    */
+                    yVelocity += yVelToAdd;
+                    yVelocity = Mathf.Clamp(yVelocity, -maxVerticalVelocity, maxVerticalVelocity);
                    
                 }
                 break;
@@ -912,20 +929,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-                if (!canDash)
-                {
-                    if (dashCooldownTimer > 0)
-                    {
-                        dashCooldownTimer -= Time.deltaTime;
-                    }
-                    else if (!preventCooldown)       //do not finish cooldown until you are grounded
-                    {
-                        dashCooldownTimer = 0;
-                        canDash = true;
-                        if(debugColors)
-                            spriteRenderer.color = Color.yellow;
-                    }
-                }
+                
                 break;
         
         }
@@ -1106,17 +1110,14 @@ public class PlayerController : MonoBehaviour
         if(debugColors)
             spriteRenderer.color = Color.yellow;
         canAttack = true;
-        StopCoroutine(hoverCoroutine);
-
-        hoverCoroutine = hoverForDuration(lungeHoverDuration);
-        StartCoroutine(hoverCoroutine);
-        
-    }
-    private IEnumerator hoverForDuration(float time)
-    {
+        canDash = true;
         movementState = MovementState.Hover;
-        yield return new WaitForSeconds(time);
-        movementState = MovementState.Free;
+        hoverTimer = lungeHoverDuration;
+        dashCooldownTimer = 0;
+    }
+    private void endHover()
+    {
+        hoverTimer = 0;
     }
     void onHitBoxCollision(Collider2D other)
     {
@@ -1409,7 +1410,7 @@ public class PlayerController : MonoBehaviour
             offset = new Vector3(xVelocity*.075f, yVelocity*0.05f) ;
         else
             offset = new Vector3(xVelocity*.075f, 0,0);
-        flipSwing = true;
+        flipSwing = (facingDirection == Direction.Left);
         trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform.position,offset,flipSwing);
     }
     public void knockBackPlayer(Vector3 enemyPos)
@@ -1430,6 +1431,7 @@ public class PlayerController : MonoBehaviour
                 xVelocity = knockbackBackVelocity;
             }
             isDashing = false;
+			isLungeAttacking = false;
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
             source.Stop();
             soundEffectPlayer.PlayOneShot(hitTakenSound);
@@ -1485,6 +1487,7 @@ public class PlayerController : MonoBehaviour
         {
             //this code runs only once when the player dies
             playerDead = true;
+			isLungeAttacking = false;
             print("Player is Dead");
             allowPlayerInput = false;
             if (debugColors)

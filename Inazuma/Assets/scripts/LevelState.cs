@@ -6,6 +6,7 @@ public class LevelState : MonoBehaviour
 {
 
     // Use this for initialization
+    
     public bool preserveStateAcrossScenes = true;
     public int levelNumber = 0;
     public int initialState = 0;            //when game is first opened, state should be this
@@ -48,6 +49,27 @@ public class LevelState : MonoBehaviour
         }
         state = val;
     }
-
+    public static bool allActive(LevelState[] stateList, int activeStateValue)
+    {
+        for(int i = 0; i < stateList.Length; i++)
+        {
+            if(stateList[i].getState() != activeStateValue)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    public static bool anyActive(LevelState[] stateList, int activeStateValue)
+    {
+        for (int i = 0; i < stateList.Length; i++)
+        {
+            if (stateList[i].getState() == activeStateValue)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
