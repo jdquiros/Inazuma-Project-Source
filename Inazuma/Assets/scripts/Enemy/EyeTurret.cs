@@ -7,9 +7,12 @@ public class EyeTurret : MonoBehaviour {
     // Use this for initialization
     public float activationDistance;
     public Transform bulletType;
+    public int burstCount;
     public float fireDelay;
+    public float burstFireDelay;
     private float fireTimer;
     public float bulletVelocity;
+    public float aimDeviation;
     public Vector2 randomLookDuration;
     private float randomLookTimer = 0;
     public float lookSpeed;
@@ -66,27 +69,36 @@ public class EyeTurret : MonoBehaviour {
 
         while (true)
         {
-            if (fireTimer < fireDelay / 2)
+            if (fireTimer < fireDelay)
             {
                 fireTimer += Time.deltaTime;
                 lookAtTarget(playerTransform.position);
             }
-            else if (fireTimer < fireDelay)
-                fireTimer += Time.deltaTime;
             else
                 break;
             yield return null;
         }
 
+        fireBullet(0);
+        for(int i = 0; i < burstCount-1; i++)
+        {
+            yield return new WaitForSeconds(burstFireDelay);
+            fireBullet(aimDeviation);
+        }
         fireTimer = 0;
-        fireBullet();
+
         firing = false;
 
     }
  
-    private void fireBullet()
+    private void fireBullet(float deviation)
     {
+        int rngSign = Random.value > 0.5f ? 1 : -1;
         GameObject bullet = Instantiate(bulletType,eyeObject.transform.position,eyeObject.transform.rotation,null).gameObject;
-        bullet.GetComponent<Bullet>().setVelocity(new Vector3(Mathf.Cos(desiredAngle*Mathf.Deg2Rad),Mathf.Sin(desiredAngle*Mathf.Deg2Rad)), bulletVelocity);
+        float shootAngle = Mathf.Deg2Rad*(desiredAngle+ rngSign * Random.value * deviation);
+        bullet.GetComponent<Bullet>().setVelocity(new Vector3(Mathf.Cos(shootAngle),
+            Mathf.Sin(shootAngle)), bulletVelocity);
+        
+       
     }
 }
