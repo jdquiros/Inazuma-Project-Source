@@ -1,3 +1,20 @@
+Quarter 2:
+
+# Overall Goals
+- [x] Implement Grapple
+- [x] Finish Attack Animation
+- [ ] Re-work Camera
+- [ ] Jump/Fall Animations
+- [ ] SFX, start on BGM
+- [ ] Background art  
+- [ ] Tweak mechanics
+- [ ] Finalize level objects
+- [ ] Level designs: (1) no grapple, (1) w/ grapple
+
+
+
+Quarter 1:
+
 # Week 7
 - [x] Credits screen
 - [x] Fix jumping not cancelling dashes up slopes
