@@ -52,9 +52,7 @@ public class PlayerController : MonoBehaviour
     public float airAccelerationFactor = 1f;    //from 0.0 to 1.0
     public float highDecelerationFactor = 0f;    //acceleration = highDecelerationDuration if speed < highDecelerationFactor
     public float highDecelerationThreshold = 1f; //use highDecelerationFactor wihle speed < highDecelerationThreshold.  Should be > 1 for more resisting force
-    public bool allowFastFall;
-    private float fastFallMultiplier;
-    public float fastFallSpeedFactor;
+
     public float gravity = 0;                   //should be positive
     public float jumpForce = 0;                 //should be positive
     public float jumpButtonReleaseFactor = 1f;  //total velocity will be mulitiplied by this factor when the jump button is released
@@ -249,15 +247,7 @@ public class PlayerController : MonoBehaviour
                             jump();
                         }
                     }
-                    /*
-                    if (pInput.holdingDirection(Direction.Down))
-                    {
-                        fastFallMultiplier = fastFallSpeedFactor;
-                    } else
-                    {
-                        fastFallMultiplier = 1;
-                    }
-                    */
+                   
                     if (isMovingHorizontal && isGrounded())
                     {
                         //For playing footsteps and for fading out the footstep sound gradually
@@ -744,14 +734,9 @@ public class PlayerController : MonoBehaviour
             case (MovementState.Free):
                 if (!isGrounded())
                 {
-                    if (allowFastFall)
-                    {
-                        yVelToAdd = (-gravity) * fastFallMultiplier * Time.deltaTime;
-                    }
-                    else
-                    {
-                        yVelToAdd = (-gravity) * Time.deltaTime;
-                    }
+                   
+                    yVelToAdd = (-gravity) * Time.deltaTime;
+                    
                 }
                 if (jumping)
                 {
