@@ -29,8 +29,9 @@ public class animatorController : MonoBehaviour {
 		anim.SetBool ("dead", playerController.isDead ());
 
 
-// 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover
-//		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5
+// 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover, Grappled, Clinging
+//		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5   ,    6    ,    7
+
 
 		//"lunging" = movementState 3;
 
@@ -39,6 +40,40 @@ public class animatorController : MonoBehaviour {
 			transform.localScale = new Vector3 (theScale.x, transform.localScale.y, transform.localScale.z);
 		} else {
 			transform.localScale = new Vector3(-theScale.x, transform.localScale.y, transform.localScale.z);
+		}
+
+
+
+		// aimDirection:	Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
+		// int equivalent:    0  ,    1   ,  2,    3  ,  4  ,    5    ,   6 ,   7   
+
+
+	
+		if ((int)playerController.movementState == 6) { //if grappled
+			switch (playerController.getAimDirection()) {
+			case 1: //UpRight
+				transform.localEulerAngles = new Vector3(0, 0, 45);
+				print ("upright");
+				break;
+			case 2: //Up
+				transform.localEulerAngles = new Vector3(0, 0, -90);				
+				break;
+			case 3: //UpLeft
+				transform.localEulerAngles = new Vector3(0, 0, -45);				
+				break;
+			case 5: //DownLeft
+				transform.localEulerAngles = new Vector3(0, 0, 45);				
+				break;
+			case 6: //Down
+				transform.localEulerAngles = new Vector3(0, 0, -90);				
+				break;
+			case 7: //DownRight
+				transform.localEulerAngles = new Vector3(0, 0, -45);				
+				break;
+			}
+		}
+		if ((int)playerController.movementState == 7) { //if clinging
+			transform.localEulerAngles = new Vector3 (0, 0, 0);
 		}
 	}
 }
