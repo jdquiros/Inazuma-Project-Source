@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1764238026569398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.29, y: 5.95, z: -0.26171875}
+  m_LocalPosition: {x: -63.12134, y: -55.365765, z: -0.26171875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a9296fd63117b44bff74fdb0eff69a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPrefab: {fileID: 4893110211141880, guid: 60d71ef1efd581f45bebd9a8ec88504e,
+  spawnPrefab: {fileID: 4356871677585998, guid: 8accfd404f3866045a8467cf1dc17a90,
     type: 2}
   desiredEnemyCount: 1
   enemyCount: 0
@@ -98,9 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1d8fca1bc9a6b499082c0fb87ccf0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preserveStateAcrossScenes: 1
   levelNumber: 0
-  category: EnemySpawner
-  objName: 
   initialState: 1
 --- !u!212 &212817989376889618
 SpriteRenderer:
