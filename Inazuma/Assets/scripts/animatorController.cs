@@ -52,21 +52,14 @@ public class animatorController : MonoBehaviour {
 		if ((int)playerController.movementState == 6) { //if grappled
 			switch (playerController.getAimDirection()) {
 			case 1: //UpRight
+			case 5: //DownLeft
 				transform.localEulerAngles = new Vector3(0, 0, 45);
-				print ("upright");
 				break;
 			case 2: //Up
-				transform.localEulerAngles = new Vector3(0, 0, -90);				
-				break;
-			case 3: //UpLeft
-				transform.localEulerAngles = new Vector3(0, 0, -45);				
-				break;
-			case 5: //DownLeft
-				transform.localEulerAngles = new Vector3(0, 0, 45);				
-				break;
 			case 6: //Down
 				transform.localEulerAngles = new Vector3(0, 0, -90);				
 				break;
+			case 3: //UpLeft
 			case 7: //DownRight
 				transform.localEulerAngles = new Vector3(0, 0, -45);				
 				break;
