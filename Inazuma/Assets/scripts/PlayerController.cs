@@ -1575,6 +1575,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
+        /*
         Gizmos.color = Color.blue;
        
         Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*(new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z*Mathf.Deg2Rad),Mathf.Sin(aimIndicator.eulerAngles.z*Mathf.Deg2Rad))));
@@ -1584,5 +1585,6 @@ public class PlayerController : MonoBehaviour
         }
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, xVelocity / 10);
+        */
     }
 }

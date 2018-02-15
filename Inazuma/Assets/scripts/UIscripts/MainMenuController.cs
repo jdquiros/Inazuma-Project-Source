@@ -58,7 +58,7 @@ public class MainMenuController : MonoBehaviour {
         creditsCanvas.enabled = false;
         optionsCanvas.enabled = false;
         creditsFunc = revealCredits(creditsInitialDelay, creditsRepeatDelay);
-        if (GameState.compareState(GameState.State.InGame) || SceneManager.GetActiveScene().name == "menu_and_level_1")
+        if (GameState.compareState(GameState.State.InGame) || SceneManager.GetActiveScene().name != "menu_and_level_1")
         {
             skipToGame();
         }
@@ -251,6 +251,7 @@ public class MainMenuController : MonoBehaviour {
         creditsButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         quitButton.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
         title.gameObject.GetComponent<Text>().color = new Color(0, 0, 0, 0);
+        mainMenuCanvas.enabled = false;
         eventSystem.SetSelectedGameObject(null);
         resetAllOutlines();
         if (!debug)

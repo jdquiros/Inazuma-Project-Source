@@ -14,11 +14,11 @@ public class ButtonOutlineController : MonoBehaviour {
     public float sizeScaleY;
 	void Awake () {
 
-        outlineList = GetComponentsInChildren<ButtonOutlineDrawer>();
-        string[] res = UnityEditor.UnityStats.screenRes.Split('x');
-        screenWidth = int.Parse(res[0]);
-        screenHeight = int.Parse(res[1]);
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
+        outlineList = GetComponentsInChildren<ButtonOutlineDrawer>();
+        screenWidth = mainCam.pixelWidth;
+        screenHeight = mainCam.pixelHeight;
         Vector3 leftBorder = mainCam.ScreenToWorldPoint(new Vector3(0, screenHeight / 2));
         Vector3 rightBorder = mainCam.ScreenToWorldPoint(new Vector3(screenWidth, screenHeight / 2));
         Vector3 bottomBorder = mainCam.ScreenToWorldPoint(new Vector3(0, 0));
