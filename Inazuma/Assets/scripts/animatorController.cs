@@ -65,7 +65,7 @@ public class animatorController : MonoBehaviour {
 				break;
 			}
 		}
-		if ((int)playerController.movementState == 7) { //if clinging
+		if ((int)playerController.movementState != 6) { //if not grappling
 			transform.localEulerAngles = new Vector3 (0, 0, 0);
 		}
 	}
