@@ -28,10 +28,8 @@ public class animatorController : MonoBehaviour {
 		anim.SetInteger ("movementState", (int)playerController.movementState);
 		anim.SetBool ("dead", playerController.isDead ());
 
-
 // 		movementState: Paralyzed, Free, Dash, Lunge, OnLadder, Hover, Grappled, Clinging
 //		int equivalent:    0    ,   1 ,  2  ,  3   ,     4   ,  5   ,    6    ,    7
-
 
 		//"lunging" = movementState 3;
 
@@ -41,14 +39,10 @@ public class animatorController : MonoBehaviour {
 		} else {
 			transform.localScale = new Vector3(-theScale.x, transform.localScale.y, transform.localScale.z);
 		}
-
-
-
+			
 		// aimDirection:	Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
 		// int equivalent:    0  ,    1   ,  2,    3  ,  4  ,    5    ,   6 ,   7   
 
-
-	
 		if ((int)playerController.movementState == 6) { //if grappled
 			switch (playerController.getAimDirection()) {
 			case 1: //UpRight
