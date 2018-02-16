@@ -1117,6 +1117,10 @@ public class PlayerController : MonoBehaviour
                     transform.position = other.transform.position;
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
+                for (int i = 0; i < 3; i++)
+                {
+                    spawnHitProjectile(other.transform.position);
+                }
             }
         } else if (other.gameObject.CompareTag("EnemyProjectile"))
         {
@@ -1397,6 +1401,32 @@ public class PlayerController : MonoBehaviour
             offset = new Vector3(xVelocity*.075f, 0,0);
         flipSwing = (facingDirection == Direction.Left);
         trailObject.GetComponent<SwordTrail>().startSwing(1800, new Vector2(startAngle,startAngle+90),transform.position,offset,flipSwing);
+    }
+    private Vector3 rad2Vec(float rad)
+    {
+        return new Vector3(Mathf.Cos(rad), Mathf.Sin(rad));
+    }
+    private float vecToRad(Vector3 vec)
+    {
+        return Mathf.Atan2(vec.y, vec.x);
+    }
+    private int rngSign()
+    {
+        return (Random.value > 0.5f) ? 1 :-1;
+    }
+    private void spawnHitProjectile(Vector3 enemyPos)
+    {
+        GameObject hitProjectile = (GameObject)Instantiate(Resources.Load("HitProjectile"),enemyPos,new Quaternion(0,0,0,0));
+
+
+        float rngAngle = (Mathf.PI/2 * Random.value+Mathf.PI/4)*rngSign();      //radians
+        rngAngle += vecToRad(transform.position - enemyPos);      //radians
+        hitProjectile.transform.position = enemyPos + rad2Vec(rngAngle)*5;
+        hitProjectile.GetComponent<ConstantMovement>().dirVector = -(Vector3)(Vector2)(hitProjectile.transform.position - enemyPos);
+
+        hitProjectile.GetComponent<ConstantMovement>().speed = 90;
+        hitProjectile.transform.rotation = Quaternion.Euler(new Vector3(0,0,vecToRad(hitProjectile.transform.position - enemyPos)*Mathf.Rad2Deg));
+
     }
     public void knockBackPlayer(Vector3 enemyPos)
     {
