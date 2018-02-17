@@ -67,10 +67,12 @@ public class PlayerController : MonoBehaviour
 
     public float dashDuration = 0f;             //duration of dash
     private float dashTimer = 0f;
-    public float dashAcceleration = 0f;         //acceleration of dash
+    //public float dashAcceleration = 0f;         //acceleration of dash
     public float dashMaxVelocity = 0f;          //maximum velocity during dash
     public float dashCooldown = 0f;             //cooldown between dashes
     private float dashCooldownTimer = 0f;
+    public float dashHoverDuration;
+    public float dashHoverRestrictRate;
     public float minDashTime = 0;               //minimum time before player can cancel dash
     private float minDashTimer;
     private bool canDash = true;                //can the player dash this frame.  you cannot dash while attacking
@@ -85,6 +87,8 @@ public class PlayerController : MonoBehaviour
     public float lungeCooldown = 0f;             //cooldown between dashes
 
     public float lungeHoverDuration;
+    public float lungeHoverRestrictRate;
+    private float hoverRestrictRate;
     private float hoverTimer;
     private bool isLungeAttacking = false;
     [Range(0.707f, 1f)]
@@ -96,7 +100,6 @@ public class PlayerController : MonoBehaviour
     public float grappleMoveSpeed;
     public float grappleMaxDistance;
     public LayerMask grappleLayer;
-    public float weakVelocityRestrictionRate = 0f;      //used to gradually reduce player to maximum speed
     public float strongVelocityRestrictionRate = 0f;  //used to rapidly and near instantly reduce player to maximum speed
 
     public float instantDropDistance = 0.2f;    //instantly moves player down this distance when dropping through a platform.  If the character does not drop, increase this value
@@ -401,15 +404,14 @@ public class PlayerController : MonoBehaviour
                 if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed * Time.deltaTime)
                 {
                     //if reached grapplePoint
-                    invulnerable = false;
-                    movementState = MovementState.Clinging;
+                    line.setIsDrawing(false);
+                    movementState = MovementState.Free;
                 }
                 else if (Vector2.Distance(posLastFrameForGrapple, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
                 {
                     //Run if the player is supposed to be moving, but isnt
                     //Detects if the player is stuck
                     line.setIsDrawing(false);
-                    invulnerable = false;
                     movementState = MovementState.Free;
                 }
                 else
@@ -458,9 +460,9 @@ public class PlayerController : MonoBehaviour
                 aimDirection = pInput.calculateAimDirection(aimDirection);
                 dashDirection = aimDirection;
                 StartCoroutine(lungeAttack(getAimVector(aimDirection).normalized));
-                if (attacksEndDashes)
+                if (attacksEndDashes && movementState == MovementState.Dash)
                 {
-                    endDash();
+                    movementState = MovementState.Free;
                 }
             }
         }
@@ -528,7 +530,6 @@ public class PlayerController : MonoBehaviour
     }
     private void updateHorizontalVelocity()
     {
-        float restrictRate;
         float xVelToAdd = 0f;
 
         switch (movementState)
@@ -582,26 +583,12 @@ public class PlayerController : MonoBehaviour
                 if (!charController.isGrounded)
                 {
                     xVelToAdd *= airAccelerationFactor;
-                    restrictRate = acceleration * airAccelerationFactor + weakVelocityRestrictionRate;
-                } else
-                {
-                    restrictRate = acceleration+weakVelocityRestrictionRate;
-
-                }
+                } 
                 //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
 
                 //clamp to speed maximums
                 xVelocity = xVelocity + xVelToAdd;
-                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
-                {
-                    xVelocity += -restrictRate * Time.deltaTime;
-                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
-                }
-                else if (xVelocity < (-maxHorizontalVelocity))
-                {
-                    xVelocity += restrictRate * Time.deltaTime;
-                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
-                }
+                xVelocity = Mathf.Clamp(xVelocity, -maxHorizontalVelocity, maxHorizontalVelocity);
                     
                 
                 break;
@@ -609,14 +596,10 @@ public class PlayerController : MonoBehaviour
                 switch (facingDirection)
                 {
                     case Direction.Right:
-                        xVelocity += dashAcceleration * Time.deltaTime;
-                        xVelocity = Mathf.Min(xVelocity, dashMaxVelocity);
-                        //cap max speed, else increase it
+                        xVelocity = dashMaxVelocity;
                         break;
                     case Direction.Left:
-                        xVelocity += (-dashAcceleration) * Time.deltaTime;
-                        xVelocity = Mathf.Max(xVelocity, -dashMaxVelocity);
-                        //cap max speed, else increase it
+                        xVelocity = -dashMaxVelocity;
                         break;
                 }
                 break;
@@ -639,95 +622,23 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-                /*
-                if (pInput.holdingDirection(Direction.Left))
-                {
-                    if (xVelocity <= 0)
-                    {
-                        //accelerating left
-                        xVelToAdd = (-acceleration) * Time.deltaTime;
-                    }
-                    else
-                    {
-                        //decelerating left
-                        xVelToAdd = (-deceleration) * Time.deltaTime;
-                    }
-                }
-                else if (pInput.holdingDirection(Direction.Right))
-                {
-                    if (xVelocity >= 0)
-                    {
-                        //accelerating right
-                        xVelToAdd = acceleration * Time.deltaTime;
-                    }
-                    else
-                    {
-                        //decelerating right
-                        xVelToAdd = deceleration * Time.deltaTime;
-                    }
-                }
-                else
-                {
-                    //not moving left or right.  slow down through passive deceleration
-                    if (xVelocity > 0)
-                    {
-                        xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
-                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                            xVelToAdd *= highDecelerationFactor;
-                        xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
-                    }
-                    else if (xVelocity < 0)
-                    {
-                        xVelToAdd = passiveDeceleration * Time.deltaTime;
-                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                            xVelToAdd *= highDecelerationFactor;
-                        xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
-                    }
-                }
                 
-                if (!charController.isGrounded)
-                {
-                    xVelToAdd *= airAccelerationFactor;
-                    restrictRate = acceleration * airAccelerationFactor + strongVelocityRestrictionRate;
-                } else
-                {
-                    restrictRate = acceleration + strongVelocityRestrictionRate;
-
-                }
-                //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
-
-
-
-                //clamp to speed maximums
-                xVelocity = xVelocity + xVelToAdd;
-                if (xVelocity > maxHorizontalVelocity)           //gradually decrease speed to max speed
-                {
-                    xVelocity += -restrictRate * Time.deltaTime;
-                    xVelocity = Mathf.Max(xVelocity, maxHorizontalVelocity);
-                }
-                else if (xVelocity < (-maxHorizontalVelocity))
-                {
-                    xVelocity += restrictRate * Time.deltaTime;
-                    xVelocity = Mathf.Min(xVelocity, -maxHorizontalVelocity);
-                }
-                */
-                restrictRate = 3f;
-                xVelocity += -xVelocity * restrictRate * Time.deltaTime;
+                xVelocity += -xVelocity * hoverRestrictRate * Time.deltaTime;
 
                 break;
             case MovementState.Grappled:
                 xVelocity = forcedMoveVector.x;
                 break;
             case MovementState.Clinging:
-                xVelocity = 0;
+                //xVelocity = 0;
                 break;
+           
         }
 
 
     }
     private void updateVerticalVelocity()
     {
-        float restrictRate;
         float yVelToAdd = 0;
         switch (movementState)
         {
@@ -775,20 +686,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    /*
-                    restrictRate = acceleration + strongVelocityRestrictionRate;
-                    if(yVelocity > maxVerticalVelocity)
-                    {
-                        yVelocity += -restrictRate * Time.deltaTime;
-                        yVelocity = Mathf.Max(yVelocity, maxVerticalVelocity);
-                    }
-                    else if (yVelocity > -maxVerticalVelocity*fastFallMultiplier || Mathf.Abs(yVelocity + yVelToAdd) < Mathf.Abs(yVelocity))
-                    {
-                        yVelocity = yVelocity + yVelToAdd;      //set speeds
-                                                                //Do not change if you are over maximum velocity, UNLESS it would slow you down
-                                                                //do not change if you are falling too fast
-                    }
-                    */
+                   
                     yVelocity += yVelToAdd;
                     yVelocity = Mathf.Clamp(yVelocity, -maxVerticalVelocity, maxVerticalVelocity);
                    
@@ -826,21 +724,8 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case (MovementState.Hover):
-                /*
-                restrictRate = acceleration+strongVelocityRestrictionRate;
-                if (yVelocity > 0)           //gradually decrease speed to 0
-                {
-                    yVelocity += -restrictRate * Time.deltaTime;
-                    yVelocity = Mathf.Max(yVelocity, 0);
-                }
-                else if (yVelocity < 0)
-                {
-                    yVelocity += restrictRate * Time.deltaTime;
-                    yVelocity = Mathf.Min(yVelocity, 0);
-                }
-                */
-                restrictRate = 3;
-                yVelocity += -yVelocity * restrictRate * Time.deltaTime;
+               
+                yVelocity += -yVelocity * hoverRestrictRate * Time.deltaTime;
                 break;
             case (MovementState.Grappled):
                 yVelocity = forcedMoveVector.y;
@@ -1081,7 +966,9 @@ public class PlayerController : MonoBehaviour
         minDashTimer = 0;
         dashCooldownTimer = dashCooldown;
         isDashing = false;
-        movementState = MovementState.Free;
+        movementState = MovementState.Hover;
+        hoverTimer = dashHoverDuration;
+        hoverRestrictRate = dashHoverRestrictRate;
         if(debugColors)
             spriteRenderer.color = Color.gray;
     }
@@ -1098,6 +985,7 @@ public class PlayerController : MonoBehaviour
         canDash = true;
         movementState = MovementState.Hover;
         hoverTimer = lungeHoverDuration;
+        hoverRestrictRate = lungeHoverRestrictRate;
         dashCooldownTimer = 0;
     }
     private void endHover()
@@ -1110,8 +998,8 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().damageEnemy(1, other.transform.position - transform.position);
-            ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)      //Only activate the movement portion of the lunge ONCE
+            
+            if (isLungeAttacking && movementState != MovementState.Lunge)      //Only activate the movement portion of the lunge ONCE
             {
                 if(moveToEnemyOnHit)
                     transform.position = other.transform.position;
@@ -1125,19 +1013,17 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("EnemyProjectile"))
         {
             other.gameObject.GetComponent<Bullet>().hitByPlayer();
-            ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
+            if (isLungeAttacking && movementState != MovementState.Lunge)
             {
                 if(moveToEnemyOnHit)
-                transform.position = other.transform.position;
+                    transform.position = other.transform.position;
                 lungeDash(getAimVector(dashDirection));
                 isLungeAttacking = false;
             }
         } else if (other.gameObject.CompareTag("HittableObject"))
         {
             other.gameObject.GetComponent<HittableObject>().hitByPlayer(transform.position);
-            ++enemyHits;
-            if (enemyHits == 1 && isLungeAttacking && movementState == MovementState.Free)
+            if (isLungeAttacking && movementState != MovementState.Lunge)
             {
                 if (moveToEnemyOnHit)
                     transform.position = other.transform.position;
@@ -1224,11 +1110,7 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(attackWindUp);
 
-        if(movementState != MovementState.Free)
-        {
-            canAttack = true;
-            yield break;
-        }
+        
         spawnAttackTrail(aimDirection);
 
         enemyHits = 0;
@@ -1312,7 +1194,6 @@ public class PlayerController : MonoBehaviour
         {
             canJump = true;
             canDash = true;
-            invulnerable = true;
             movementState = MovementState.Grappled;
             posLastFrameForGrapple = new Vector3(0, 0, -10000);
         }
@@ -1432,9 +1313,12 @@ public class PlayerController : MonoBehaviour
     {
         //enemy MUST supply its own location
        
-        if ((movementState != MovementState.Paralyzed) && !invulnerable)
+        if ((movementState != MovementState.Paralyzed) && !invulnerable && !isLungeAttacking)
         {
-           
+            if(movementState == MovementState.Grappled)
+            {
+                line.setIsDrawing(false);
+            }
             yVelocity = knockbackUpVelocity;
             charController.move(new Vector2(0, .2f));
             if (transform.position.x < enemyPos.x)
@@ -1605,7 +1489,8 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        /*
+        if (!Application.isPlaying) return;
+
         Gizmos.color = Color.blue;
        
         Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*(new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z*Mathf.Deg2Rad),Mathf.Sin(aimIndicator.eulerAngles.z*Mathf.Deg2Rad))));
@@ -1615,6 +1500,6 @@ public class PlayerController : MonoBehaviour
         }
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, xVelocity / 10);
-        */
+        
     }
 }
