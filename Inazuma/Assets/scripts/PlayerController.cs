@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
     private float hoverRestrictRate;
     private float hoverTimer;
     private bool isLungeAttacking = false;
-    [Range(0.707f, 1f)]
+    [Range(0.5656f, 1f)]
     public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) * speed (which is the distance of a (1,1) vector)
                                                 //this value changes that speed to the distance of a (lungeDiagonalScale,lungeDiagonalScale) vector
                                                 //distance of (0.707,0.707) is 1
@@ -623,7 +623,7 @@ public class PlayerController : MonoBehaviour
                 break;
             case (MovementState.Hover):
                 
-                xVelocity += -xVelocity * hoverRestrictRate * Time.deltaTime;
+                xVelocity += -xVelocity * hoverRestrictRate * Time.deltaTime * 1.25f;
 
                 break;
             case MovementState.Grappled:
@@ -725,7 +725,7 @@ public class PlayerController : MonoBehaviour
                 break;
             case (MovementState.Hover):
                
-                yVelocity += -yVelocity * hoverRestrictRate * Time.deltaTime;
+                yVelocity += -yVelocity * hoverRestrictRate * Time.deltaTime * 1.25f;
                 break;
             case (MovementState.Grappled):
                 yVelocity = forcedMoveVector.y;
