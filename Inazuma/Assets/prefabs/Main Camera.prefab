@@ -262,8 +262,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1383981431656490}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -25.18, y: -0.79, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4513339613037288}
@@ -304,7 +304,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 13.83
+  orthographic size: 12
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -340,14 +340,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xMin: -55.39
   xMax: 201.7
-  yMin: 0
+  yMin: -15
   yMax: 15
-  speedFactor: 4.5
-  ySpeedFactor: 8
-  lowSpeedFactor: 0.25
-  lowSpeedDistance: 4
+  speedFactor: 5
+  ySpeedFactor: 3
+  lowSpeedFactor: 0.1
+  lowSpeedDistance: 5
   extensionDuration: 1.7
-  extensionDistance: 0.1
+  extensionDistance: -0.02
   xBounds: {x: 0.42, y: 0.58}
 --- !u!114 &114445307851215662
 MonoBehaviour:
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isStatic: 0
-  halfViewboxSize: {x: 24.832533, y: 13.9683}
+  halfViewboxSize: {x: 21.546669, y: 12.12}
 --- !u!114 &114926962181208266
 MonoBehaviour:
   m_ObjectHideFlags: 1
