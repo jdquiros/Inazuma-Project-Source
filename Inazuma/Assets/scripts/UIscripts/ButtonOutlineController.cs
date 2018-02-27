@@ -36,6 +36,8 @@ public class ButtonOutlineController : MonoBehaviour {
     }
     public void resetOutline()
     {
+        if (outlineList == null)
+            return;
         for(int i = 0; i < outlineList.Length; i++)
         {
             outlineList[i].resetLine();
@@ -43,7 +45,9 @@ public class ButtonOutlineController : MonoBehaviour {
     }
     public void drawOutline()
     {
-        for(int i= 0; i < outlineList.Length; i++)
+        if (outlineList == null)
+            return;
+        for (int i= 0; i < outlineList.Length; i++)
         {
             outlineList[i].drawLine();
         }

@@ -85,6 +85,8 @@ public class ButtonOutlineDrawer : MonoBehaviour {
     }
     public void resetLine()
     {
+        if (lineRenderer == null)
+            return;
         isMoving = false;
         atHeight = false;
         transform.localPosition = originalPosition;

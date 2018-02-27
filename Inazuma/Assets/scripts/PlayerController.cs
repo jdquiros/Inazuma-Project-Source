@@ -456,7 +456,7 @@ public class PlayerController : MonoBehaviour
             if (canAttack)
             {
                 source.Stop();
-
+                detachTrails();
                 aimDirection = pInput.calculateAimDirection(aimDirection);
                 dashDirection = aimDirection;
                 StartCoroutine(lungeAttack(getAimVector(aimDirection).normalized));
@@ -991,6 +991,7 @@ public class PlayerController : MonoBehaviour
     private void endHover()
     {
         hoverTimer = 0;
+        detachTrails();
     }
     void onHitBoxCollision(Collider2D other)
     {
@@ -1175,7 +1176,7 @@ public class PlayerController : MonoBehaviour
     }
     private void lungeDash(Vector3 direction)
     {
-        spawnTrail(2000);
+        spawnTrail(700);
         forcedMoveVector = direction;
         canDash = false;
         isDashing = true;
@@ -1271,6 +1272,13 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+    private void detachTrails()
+    {
+        /*
+         * Runs when you start an attack, end a hover, die, or get knocked back
+         */
+        BroadcastMessage("onDetach",SendMessageOptions.DontRequireReceiver);
+    }
     private void spawnAttackTrail(Direction dir)
     {
         GameObject trailObject = (GameObject)Instantiate(Resources.Load("SwordSwing"));
@@ -1319,6 +1327,7 @@ public class PlayerController : MonoBehaviour
             {
                 line.setIsDrawing(false);
             }
+            detachTrails();
             yVelocity = knockbackUpVelocity;
             charController.move(new Vector2(0, .2f));
             if (transform.position.x < enemyPos.x)
@@ -1385,6 +1394,7 @@ public class PlayerController : MonoBehaviour
         if (health <= 0 && !playerDead)
         {
             //this code runs only once when the player dies
+            detachTrails();
             playerDead = true;
 			isLungeAttacking = false;
             print("Player is Dead");
