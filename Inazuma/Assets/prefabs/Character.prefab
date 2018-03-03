@@ -129,7 +129,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1869389459080256}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -81.2, y: -57, z: 0.171875}
+  m_LocalPosition: {x: 10.324257, y: 1.5227165, z: 0.171875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4384532297776512}
@@ -764,11 +764,12 @@ MonoBehaviour:
   lungeHoverRestrictRate: 3
   lungeDiagonalScale: 0.707
   grappleMoveSpeed: 30
-  grappleMaxDistance: 4
+  grappleMaxDistance: 7
+  grappleCircleCastRadius: 2
+  afterGrappleDecelGracePeriod: 0.1
   grappleLayer:
     serializedVersion: 2
     m_Bits: 8192
-  weakVelocityRestrictionRate: 5
   strongVelocityRestrictionRate: 6
   instantDropDistance: 0.2
   soundEffectPlayer: {fileID: 0}

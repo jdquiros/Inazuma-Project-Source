@@ -99,6 +99,10 @@ public class PlayerController : MonoBehaviour
                                                 //basically diagonal lunges go farther if this is higher, relative to flat lunges
     public float grappleMoveSpeed;
     public float grappleMaxDistance;
+    public float grappleCircleCastRadius;
+    public float afterGrappleDecelGracePeriod;
+    private float decelTimer = 0;
+    private float grappleTimer = 0;
     public LayerMask grappleLayer;
     public float strongVelocityRestrictionRate = 0f;  //used to rapidly and near instantly reduce player to maximum speed
 
@@ -184,6 +188,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 posLastFrameForGrapple;                     //grapple code needs to manually mess with this value, so it is a separate variable from posLastFrame
     private Vector2 movementVector;
     public Transform aimIndicator;
+
+    private bool disableDeclerationUntilInput = false;
     private void Awake()
     {
         sceneController = GameObject.FindGameObjectWithTag("SceneController").GetComponent<SceneController>();
@@ -235,6 +241,8 @@ public class PlayerController : MonoBehaviour
         {
             source.Stop();
         }
+        if (movementState != MovementState.Free)
+            disableDeclerationUntilInput = false;
         if (!PauseMenuController.paused)
         {
 
@@ -243,6 +251,8 @@ public class PlayerController : MonoBehaviour
             {
                 case MovementState.Free:
                     updateGrappling();
+                    handleAfterGrappleSpecialCase();
+                    
                     if (pInput.jumpButton(PlayerInputHandler.Action.Down))
                     {
                         if ((charController.isGrounded || jumpInAirTimer > 0) && !jumping && canJump)
@@ -381,6 +391,46 @@ public class PlayerController : MonoBehaviour
             wasMovingHorizontal = isMovingHorizontal;
         }
     }
+    private void handleAfterGrappleSpecialCase()
+    {
+        //Case 1: character is -maxVel < xVelocity < maxVel.  Return control immediately on input
+        //Case 2: character is xVelocity > maxVel.  Return control if the player tries to decelerate
+        //Case 3: character is xVelocity < -maxVel.  Return control if the player tries to decelerate
+        //Always return control when the player lands
+        if (!disableDeclerationUntilInput)
+            return;
+        if (decelTimer > 0)
+            decelTimer -= Time.deltaTime;
+        else
+        {
+            if (isGrounded())
+            {
+                disableDeclerationUntilInput = false;
+                return;
+            }
+
+            if (xVelocity < maxHorizontalVelocity && xVelocity > -maxHorizontalVelocity)
+            {
+                if (pInput.holdingDirection(Direction.Left) || pInput.holdingDirection(Direction.Right))
+                {
+                    disableDeclerationUntilInput = false;
+                    return;
+                }
+            }
+
+            if (pInput.holdingDirection(Direction.Left) && xVelocity > 0)
+            {
+                disableDeclerationUntilInput = false;
+                return;
+            }
+
+            if (pInput.holdingDirection(Direction.Right) && xVelocity < 0)
+            {
+                disableDeclerationUntilInput = false;
+                return;
+            }
+        }
+    }
     private void updateGrappling()
     {
         switch (movementState)
@@ -401,25 +451,26 @@ public class PlayerController : MonoBehaviour
                 break;
             case MovementState.Grappled:
                 line.setIsDrawing(true);
-                if (Vector2.Distance(grapplePoint.position, transform.position) < grappleMoveSpeed * Time.deltaTime)
+                if(grappleTimer > 0)
+                {
+                    grappleTimer -= Time.deltaTime;
+                    if (Vector2.Distance(posLastFrameForGrapple, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
+                    {
+                        //Run if the player is supposed to be moving, but isnt
+                        //Detects if the player is stuck
+                        line.setIsDrawing(false);
+                        movementState = MovementState.Free;
+                    }
+                }
+                else
                 {
                     //if reached grapplePoint
                     line.setIsDrawing(false);
                     movementState = MovementState.Free;
+                    disableDeclerationUntilInput = true;
                 }
-                else if (Vector2.Distance(posLastFrameForGrapple, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
-                {
-                    //Run if the player is supposed to be moving, but isnt
-                    //Detects if the player is stuck
-                    line.setIsDrawing(false);
-                    movementState = MovementState.Free;
-                }
-                else
-                {
-                    //set vector to move by
-                    forcedMoveVector = ((Vector2)(grapplePoint.position - transform.position)).normalized * grappleMoveSpeed;
-
-                }
+                
+               
                 posLastFrameForGrapple = transform.position;
                 break;
             case MovementState.Clinging:
@@ -536,61 +587,66 @@ public class PlayerController : MonoBehaviour
         {
             case (MovementState.Free):
                 //regular movement, not dashing
-                if (pInput.holdingDirection(Direction.Left))
+                if (!disableDeclerationUntilInput)      //Do not run no-input deceleration after a grapple until a movement key is input
                 {
-                    if (xVelocity <= 0)
+                    if (pInput.holdingDirection(Direction.Left))
                     {
-                        //accelerating left
-                        xVelToAdd = (-acceleration) * Time.deltaTime;
+                        if (xVelocity <= 0)
+                        {
+                            //accelerating left
+                            xVelToAdd = (-acceleration) * Time.deltaTime;
+                        }
+                        else
+                        {
+                            //decelerating left
+                            xVelToAdd = (-deceleration) * Time.deltaTime;
+                        }
+                    }
+                    else if (pInput.holdingDirection(Direction.Right))
+                    {
+                        if (xVelocity >= 0)
+                        {
+                            //accelerating right
+                            xVelToAdd = acceleration * Time.deltaTime;
+                        }
+                        else
+                        {
+                            //decelerating right
+                            xVelToAdd = deceleration * Time.deltaTime;
+                        }
                     }
                     else
                     {
-                        //decelerating left
-                        xVelToAdd = (-deceleration) * Time.deltaTime;
-                    }
-                }
-                else if (pInput.holdingDirection(Direction.Right))
-                {
-                    if (xVelocity >= 0)
-                    {
-                        //accelerating right
-                        xVelToAdd = acceleration * Time.deltaTime;
-                    }
-                    else
-                    {
-                        //decelerating right
-                        xVelToAdd = deceleration * Time.deltaTime;
-                    }
-                }
-                else
-                {
-                    //not moving left or right.  slow down through passive deceleration
-                    if (xVelocity > 0)
-                    {
-                        xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
-                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                            xVelToAdd *= highDecelerationFactor;
-                        xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
-                    }
-                    else if (xVelocity < 0)
-                    {
-                        xVelToAdd = passiveDeceleration * Time.deltaTime;
-                        if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
-                            xVelToAdd *= highDecelerationFactor;
-                        xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
-                    }
-                }
-                if (!charController.isGrounded)
-                {
-                    xVelToAdd *= airAccelerationFactor;
-                } 
-                //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
+                        //not moving left or right.  slow down through passive deceleration
 
-                //clamp to speed maximums
-                xVelocity = xVelocity + xVelToAdd;
-                xVelocity = Mathf.Clamp(xVelocity, -maxHorizontalVelocity, maxHorizontalVelocity);
-                    
-                
+
+                        if (xVelocity > 0)
+                        {
+                            xVelToAdd = (-passiveDeceleration) * Time.deltaTime;
+                            if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                                xVelToAdd *= highDecelerationFactor;
+                            xVelToAdd = (xVelocity + xVelToAdd < 0) ? -xVelocity : xVelToAdd;    //make you stop instead of reverse direction
+                        }
+                        else if (xVelocity < 0)
+                        {
+                            xVelToAdd = passiveDeceleration * Time.deltaTime;
+                            if (Mathf.Abs(xVelocity) < highDecelerationThreshold)
+                                xVelToAdd *= highDecelerationFactor;
+                            xVelToAdd = (xVelocity + xVelToAdd > 0) ? -xVelocity : xVelToAdd;    //set velocity to zero instead of reversing direction
+                        }
+
+                    }
+                    if (!charController.isGrounded)
+                    {
+                        xVelToAdd *= airAccelerationFactor;
+                    }
+                    //if char is in the air, it would add acceleration * airAccelerationFactor * time.deltaTime;
+
+                    //clamp to speed maximums
+                    xVelocity = xVelocity + xVelToAdd;
+                    xVelocity = Mathf.Clamp(xVelocity, -maxHorizontalVelocity, maxHorizontalVelocity);
+
+                }
                 break;
             case (MovementState.Dash):
                 switch (facingDirection)
@@ -1197,6 +1253,9 @@ public class PlayerController : MonoBehaviour
             canDash = true;
             movementState = MovementState.Grappled;
             posLastFrameForGrapple = new Vector3(0, 0, -10000);
+            forcedMoveVector = getAimVector(aimDirection) * grappleMoveSpeed;
+            grappleTimer = (grapplePoint.position - transform.position).magnitude / grappleMoveSpeed;
+            decelTimer = afterGrappleDecelGracePeriod;
         }
         //grapple state ends if you are supposed to move, but are not moving
         //This should never be true on the first frame of grapple, thus we do this
@@ -1211,11 +1270,19 @@ public class PlayerController : MonoBehaviour
         LayerMask groundLayer = LayerMask.NameToLayer("groundLayer");
         grappleLayer |= (1 << groundLayer);
         Vector3 dir = new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(aimIndicator.eulerAngles.z * Mathf.Deg2Rad));
-        hits = Physics2D.RaycastAll(transform.position, dir, grappleMaxDistance, combinedMask);
+        hits = Physics2D.CircleCastAll(transform.position, grappleCircleCastRadius, dir, grappleMaxDistance, combinedMask);
+        Vector3 debugCenterLine = dir * (grappleMaxDistance+grappleCircleCastRadius/2);
+        Vector3 debugOrthoLine = new Vector3(-debugCenterLine.y, debugCenterLine.x).normalized;
+        Debug.DrawLine(transform.position, transform.position + debugCenterLine,Color.blue);
+        Debug.DrawLine(transform.position + debugOrthoLine, transform.position + debugOrthoLine + dir * grappleMaxDistance,Color.blue);
+        Debug.DrawLine(transform.position - debugOrthoLine, transform.position - debugOrthoLine + dir * grappleMaxDistance,Color.blue);
+
         Transform closestGrapplePoint = null;
         
         float minGrappleDistance = 1;
         float minGroundDistance = 1;
+        Transform originGrapplePoint = null;    //This holds the position of any grapple point that the circle cast begins inside
+                                                //This is only used if closestGrapplePoint is null
         if (hits.Length > 0){
             debugHits = hits;   //debug information
             for(int i = 0; i < hits.Length; i++)
@@ -1230,6 +1297,9 @@ public class PlayerController : MonoBehaviour
                             minGrappleDistance = hits[i].fraction;
                             closestGrapplePoint = hits[i].transform;
                         }
+                    } else
+                    {
+                        originGrapplePoint = hits[i].transform;
                     }
                 } else if(hits[i].collider.gameObject.layer == groundLayer) //if hit is on groundlayer
                 {
@@ -1251,6 +1321,12 @@ public class PlayerController : MonoBehaviour
         if(closestGrapplePoint != null)
         {
             grapplePoint = closestGrapplePoint;         //set the grapple point to the raycast target
+            line.endPointB = grapplePoint;              //set the line end point to the raycast target
+            grapplePoint.gameObject.SendMessage("HitByRaycast");
+            return true;
+        } else if(originGrapplePoint != null)
+        {
+            grapplePoint = originGrapplePoint;         //set the grapple point to the raycast target
             line.endPointB = grapplePoint;              //set the line end point to the raycast target
             grapplePoint.gameObject.SendMessage("HitByRaycast");
             return true;
@@ -1321,7 +1397,7 @@ public class PlayerController : MonoBehaviour
     {
         //enemy MUST supply its own location
        
-        if ((movementState != MovementState.Paralyzed) && !invulnerable && !isLungeAttacking)
+        if ((movementState != MovementState.Paralyzed) && !invulnerable)
         {
             if(movementState == MovementState.Grappled)
             {
@@ -1503,7 +1579,7 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.color = Color.blue;
        
-        Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*(new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z*Mathf.Deg2Rad),Mathf.Sin(aimIndicator.eulerAngles.z*Mathf.Deg2Rad))));
+        //Gizmos.DrawLine(transform.position,transform.position+grappleMaxDistance*(new Vector3(Mathf.Cos(aimIndicator.eulerAngles.z*Mathf.Deg2Rad),Mathf.Sin(aimIndicator.eulerAngles.z*Mathf.Deg2Rad))));
         for(int i = 0; i < debugHits.Length; i++)
         {
             Gizmos.DrawWireSphere(debugHits[i].transform.position, 1);
