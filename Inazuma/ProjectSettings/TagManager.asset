@@ -13,6 +13,7 @@ TagManager:
   - Goal
   - SceneController
   - HittableObject
+  - ZoomZone
   layers:
   - Default
   - TransparentFX
