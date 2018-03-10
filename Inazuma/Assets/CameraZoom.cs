@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraZoom : MonoBehaviour {
 
-	public float zoomSize;   //camera size to zoom to. camera size is default 12
+	public float zoomSize;   //camera size to zoom to. camera size is default 12. it doesnt zoom let you zoom lower than ~7 for some reason
 	public float zoomY; 	//how far to move up/down +/-
 	public float zoomX;     //how far to move right/left +/-
 		
