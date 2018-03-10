@@ -5,6 +5,9 @@ using UnityEngine;
 public class CameraZoom : MonoBehaviour {
 
 	public float zoomSize;   //camera size to zoom to. camera size is default 12
+	public float zoomY; 	//how far to move up/down +/-
+	public float zoomX;     //how far to move right/left +/-
+		
 	public float smoothTime; //how long to transition from current size to zoom sizes
 	public float delay;      //how long to wait before beginning the transition
 
@@ -12,15 +15,15 @@ public class CameraZoom : MonoBehaviour {
 	private float originalSize; //original camera size
 
 	bool triggered;
-	bool playOnce;
 	bool hasTriggered; 
+
 
 	// Use this for initialization
 	void Start () {
 		cam = GameObject.Find ("Main Camera");
 		triggered = false;
 		originalSize = cam.GetComponent<Camera> ().orthographicSize;
-}
+		}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
@@ -46,10 +49,18 @@ public class CameraZoom : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (triggered) {
+			if (!hasTriggered) {
+				cam.transform.position = new Vector3 (cam.transform.position.x + zoomX, cam.transform.position.y + zoomY, cam.transform.position.z);
+				hasTriggered = true;
+			}
 			cam.GetComponent<Camera>().orthographicSize = 
 				Mathf.Lerp (cam.GetComponent<Camera>().orthographicSize, zoomSize, Time.deltaTime / smoothTime);
 		}
 		if (!triggered) {
+			if (hasTriggered) {
+				cam.transform.position = new Vector3 (cam.transform.position.x - zoomX, cam.transform.position.y - zoomY, cam.transform.position.z);
+				hasTriggered = false;
+			}
 			cam.GetComponent<Camera>().orthographicSize = 
 				Mathf.Lerp (cam.GetComponent<Camera>().orthographicSize, originalSize, Time.deltaTime / smoothTime);
 		}
