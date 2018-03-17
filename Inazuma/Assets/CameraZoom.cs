@@ -51,7 +51,7 @@ public class CameraZoom : MonoBehaviour {
 		if (triggered) {
 			if (!hasTriggered) {
 				cam.transform.position = new Vector3 (cam.transform.position.x + zoomX, cam.transform.position.y + zoomY, cam.transform.position.z);
-				hasTriggered = true;
+			hasTriggered = true;
 			}
 			cam.GetComponent<Camera>().orthographicSize = 
 				Mathf.Lerp (cam.GetComponent<Camera>().orthographicSize, zoomSize, Time.deltaTime / smoothTime);
