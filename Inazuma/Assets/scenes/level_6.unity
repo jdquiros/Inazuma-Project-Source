@@ -98500,43 +98500,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1869389459080256, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
-      propertyPath: m_Name
-      value: Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 1869389459080256, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
         type: 2}
       propertyPath: soundEffectPlayer
       value: 
       objectReference: {fileID: 1686392557}
-    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
-        type: 2}
-      propertyPath: moveToEnemyOnHit
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114405829796005324, guid: 96f77149e26581448be77bc05566fb6a,
-        type: 2}
-      propertyPath: ignoreOneWayPlatformsThisFrame
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4052902232383600, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
-        type: 2}
-      propertyPath: allowFastFall
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114363893277261840, guid: 96f77149e26581448be77bc05566fb6a,
-        type: 2}
-      propertyPath: fastFallSpeedFactor
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 96f77149e26581448be77bc05566fb6a, type: 2}
   m_IsPrefabParent: 0

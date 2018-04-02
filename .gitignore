@@ -32,3 +32,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+*.lock
+*.ide
+Inazuma/Assets/scenes/hayden_test_scene.unity
+Inazuma/Assets/scenes/hayden_test_scene.unity

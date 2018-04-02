@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     private bool playerDead = false;
     public float maxHorizontalVelocity = 0;     //should be positive
     public float maxVerticalVelocity = 0;       //should be positive
+    private float deathTimer = 0f;
 
     public float acceleration = 0;              //ACTIVE acceleration (when attempting to move in direction of travel)
     public float deceleration = 0;              //ACTIVE deceleration (when attempting to move against direction of travel)
@@ -91,7 +92,7 @@ public class PlayerController : MonoBehaviour
     private float hoverRestrictRate;
     private float hoverTimer;
     private bool isLungeAttacking = false;
-    [Range(0.5656f, 1f)]
+    [Range(0.3535f, 1f)]
     public float lungeDiagonalScale = 1f;       //when set to 1, diagonal lunges move at Rad(2) * speed (which is the distance of a (1,1) vector)
                                                 //this value changes that speed to the distance of a (lungeDiagonalScale,lungeDiagonalScale) vector
                                                 //distance of (0.707,0.707) is 1
@@ -214,6 +215,7 @@ public class PlayerController : MonoBehaviour
         //charController.warpToGrounded();
         debugHits = new RaycastHit2D[0];
         hoverTimer = 0;
+        deathTimer = 1;
     }
 
     // Update is called once per frame
@@ -312,9 +314,13 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case MovementState.Paralyzed:
-                    if (playerDead && pInput.restartButton(PlayerInputHandler.Action.Down))
+                    //if (playerDead && pInput.restartButton(PlayerInputHandler.Action.Down))
+                    if (playerDead)
                     {
-                        respawn();
+                        if (deathTimer <= 0 || pInput.restartButton(PlayerInputHandler.Action.Down))
+                            respawn();
+
+                        deathTimer -= Time.deltaTime;
                     }
                     if (debugColors)
                         spriteRenderer.color = Color.black;
@@ -347,9 +353,16 @@ public class PlayerController : MonoBehaviour
                     if (isGrounded())
                     {
                         //If you are touching the ground, end hover state and move to free state
-                        movementState = MovementState.Free;
+                        //movementState = MovementState.Free;
+                        //endHover();
+                        //break;
+                    }
+                    if (pInput.jumpButton(PlayerInputHandler.Action.Down)
+                        && (charController.isGrounded || jumpInAirTimer > 0 || charController.isMovingUpSlope())
+                        && !jumping && canJump)
+                    {
+                        jump();
                         endHover();
-                        break;
                     }
                     if (pInput.dashButton(PlayerInputHandler.Action.Down) && canDash)
                     {
@@ -367,6 +380,7 @@ public class PlayerController : MonoBehaviour
                         break;
                     }
                     checkForAttackInput();
+                    updateGrappling();
                     break;
                 case MovementState.Grappled:
                     updateGrappling();
@@ -374,6 +388,7 @@ public class PlayerController : MonoBehaviour
                 case MovementState.Clinging:
                     checkForAttackInput();
                     updateGrappling();
+                
                     
                     break;
             }
@@ -449,9 +464,18 @@ public class PlayerController : MonoBehaviour
                     grapple();
                 }
                 break;
+            case MovementState.Hover:
+                grappleRaycast();
+                if (Input.GetKeyDown(KeyCode.K))
+                {
+                    grapple();
+                }
+                break;
+
             case MovementState.Grappled:
                 line.setIsDrawing(true);
-                if(grappleTimer > 0)
+                detachTrails();
+                if (grappleTimer > 0)
                 {
                     grappleTimer -= Time.deltaTime;
                     if (Vector2.Distance(posLastFrameForGrapple, transform.position) < grappleMoveSpeed * Time.deltaTime / 3)
@@ -938,7 +962,7 @@ public class PlayerController : MonoBehaviour
 
     private void jump()
     {
-        if (movementState == MovementState.Free || movementState == MovementState.Dash)
+        if (movementState == MovementState.Free || movementState == MovementState.Dash || movementState == MovementState.Hover)
         {
             yVelocity = jumpForce;
             canJump = false;
@@ -989,7 +1013,7 @@ public class PlayerController : MonoBehaviour
         switch (dir)
         {
             case Direction.Up:
-                result = new Vector3(0, 1, 0);
+                result = new Vector3(0, lungeDiagonalScale * 1.33f, 0);
                 break;
             case Direction.UpRight:
                 result = new Vector3(lungeDiagonalScale, lungeDiagonalScale, 0);    
@@ -1001,7 +1025,7 @@ public class PlayerController : MonoBehaviour
                 result = new Vector3(lungeDiagonalScale, -lungeDiagonalScale, 0);
                 break;
             case Direction.Down:
-                result = new Vector3(0, -1, 0);
+                result = new Vector3(0, -lungeDiagonalScale * 1.33f, 0);
                 break;
             case Direction.DownLeft:
                 result = new Vector3(-lungeDiagonalScale, -lungeDiagonalScale, 0);
@@ -1253,7 +1277,7 @@ public class PlayerController : MonoBehaviour
             canDash = true;
             movementState = MovementState.Grappled;
             posLastFrameForGrapple = new Vector3(0, 0, -10000);
-            forcedMoveVector = getAimVector(aimDirection) * grappleMoveSpeed;
+            forcedMoveVector = Vector3.Normalize(getAimVector(aimDirection)) * grappleMoveSpeed;
             grappleTimer = (grapplePoint.position - transform.position).magnitude / grappleMoveSpeed;
             decelTimer = afterGrappleDecelGracePeriod;
         }
@@ -1414,6 +1438,7 @@ public class PlayerController : MonoBehaviour
             {
                 xVelocity = knockbackBackVelocity;
             }
+            canAttack = false;
             isDashing = false;
 			isLungeAttacking = false;
             StartCoroutine(stunPlayer(hitStunDuration, hitInvincibilityDuration));
@@ -1442,15 +1467,15 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.color = Color.grey;
 
         yield return new WaitForSeconds(duration);
-       
-        if(!playerDead)
+
+        canAttack = true;
+        if (!playerDead)
             movementState = MovementState.Free;
         spriteRenderer.color = Color.white;
 
         yield return new WaitForSeconds(invincibilityDuration-duration);
 
         invulnerable = false;
-
     }
     public void attemptDamagePlayer(int dmg)
     {

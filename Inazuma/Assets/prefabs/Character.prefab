@@ -129,7 +129,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1869389459080256}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.324257, y: 1.5227165, z: 0.171875}
+  m_LocalPosition: {x: -25, y: 6.7, z: 0.171875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4384532297776512}
@@ -734,44 +734,44 @@ MonoBehaviour:
   debugColors: 0
   movementState: 1
   health: 3
-  maxHorizontalVelocity: 12
-  maxVerticalVelocity: 50
+  maxHorizontalVelocity: 10
+  maxVerticalVelocity: 99999
   acceleration: 150
   deceleration: 250
   passiveDeceleration: 100
   airAccelerationFactor: 0.2
   highDecelerationFactor: 1.5
   highDecelerationThreshold: 10
-  gravity: 30
-  jumpForce: 13
+  gravity: 50
+  jumpForce: 17
   jumpButtonReleaseFactor: 0.3
   attackDuration: 0.05
   attackWindUp: 0.05
   timeBetweenAttacks: 0.05
   attackHitBoxDist: 2
-  dashDuration: 0.2
-  dashMaxVelocity: 23
-  dashCooldown: 0.33
-  dashHoverDuration: 0.3
-  dashHoverRestrictRate: 2.5
+  dashDuration: 0.01
+  dashMaxVelocity: 40
+  dashCooldown: 0.3
+  dashHoverDuration: 0.35
+  dashHoverRestrictRate: 3.5
   minDashTime: 0.1
   isDashing: 0
   lungeDuration: 0.15
   lungeAcceleration: 10
-  lungeMaxVelocity: 15
+  lungeMaxVelocity: 24
   lungeCooldown: 0.001
   lungeHoverDuration: 0.4
   lungeHoverRestrictRate: 3
-  lungeDiagonalScale: 0.707
-  grappleMoveSpeed: 30
-  grappleMaxDistance: 7
+  lungeDiagonalScale: 0.354
+  grappleMoveSpeed: 25
+  grappleMaxDistance: 12
   grappleCircleCastRadius: 2
   afterGrappleDecelGracePeriod: 0.1
   grappleLayer:
     serializedVersion: 2
     m_Bits: 8192
   strongVelocityRestrictionRate: 6
-  instantDropDistance: 0.2
+  instantDropDistance: 0.3
   soundEffectPlayer: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 239dacde5e6f68c4a9200b62d5514dde, type: 3}
   dashSound: {fileID: 8300000, guid: 4baf555c3b7b55647b35f78eec9c1b1a, type: 3}
@@ -786,17 +786,17 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 17d27f0a2b78897409f542364f611921, type: 3}
   spawnSound: {fileID: 8300000, guid: 1f6a6c41b7e06014d909daeadab7a072, type: 3}
   footstepSoundFadeDuration: 0.25
-  jumpInAirDuration: 0.04
-  ladderClimbSpeed: 6
+  jumpInAirDuration: 0.1
+  ladderClimbSpeed: 12
   ladderGrabCooldown: 0.5
   attacksEndDashes: 1
   moveToEnemyOnHit: 1
   knockbackBackVelocity: 6.4
-  knockbackUpVelocity: 8
+  knockbackUpVelocity: 11.5
   hitStunDuration: 0.2
-  hitInvincibilityDuration: 2
+  hitInvincibilityDuration: 4
   axisDeadZone: 0.1
-  spawnAnimDuration: 0.3
+  spawnAnimDuration: 0.2
   line: {fileID: 114918993473218974}
   aimIndicator: {fileID: 4551630665671918}
 --- !u!114 &114405829796005324
