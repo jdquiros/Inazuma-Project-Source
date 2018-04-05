@@ -293,9 +293,9 @@ public class PlayerController : MonoBehaviour
                         dash(facingDirection);
                     }
                     checkForAttackInput();
-                    if ((((pInput.maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
-                        || ((pInput.maxedYAxis() && ladderGrabTimer <= 0)))
-                        && movementState == MovementState.Free
+                    if (  ( ((pInput.maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
+                        || ((pInput.maxedYAxis() && ladderGrabTimer <= 0)) )
+                        && (movementState == MovementState.Free)
                         && inLadder)
                     {
                         movementState = MovementState.OnLadder;
@@ -381,6 +381,24 @@ public class PlayerController : MonoBehaviour
                     }
                     checkForAttackInput();
                     updateGrappling();
+
+                    if ((((pInput.maxedYAxisThisFrame(Direction.Up)) && isGrounded())                  //For grabbing ladders
+                        || ((pInput.maxedYAxis() && ladderGrabTimer <= 0)))
+                        && (movementState == MovementState.Hover)
+                        && inLadder)
+                    {
+                        endHover();
+                        movementState = MovementState.OnLadder;
+                        transform.position = new Vector3(ladderBounds.center.x, transform.position.y, transform.position.z);
+
+                        charController.ignoreOneWayPlatformsThisFrame = true;
+                        if (pInput.maxedYAxisThisFrame(Direction.Down))
+                        {
+                            attemptDropThroughPlatform();
+                        }
+                        xVelocity = 0;
+                    }
+
                     break;
                 case MovementState.Grappled:
                     updateGrappling();
